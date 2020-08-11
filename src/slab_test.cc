@@ -23,8 +23,9 @@ pthread_barrier_t b;
 
 #include <optimized/const_math.h>
 
-using allocator_t =
-    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
+//using allocator_t =
+//    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
+using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>, reclaim_policy::PERCPU>>;
 
 void *
 corr_alloc_test(void * targ) {

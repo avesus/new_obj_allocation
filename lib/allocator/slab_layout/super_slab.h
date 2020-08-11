@@ -16,23 +16,34 @@
 //////////////////////////////////////////////////////////////////////
 // returns whether a an inner_slab_t of base class super_slab or regular slab
 template<typename, typename>
-constexpr bool is_same_template{false};
+constexpr bool is_same_template{ false };
 
-template<
-    template<typename, uint32_t, typename> class T, //typename T in C++17
-    typename generic_T1, uint32_t generic_V1, typename generic_S1,
-    typename generic_T2, uint32_t generic_V2, typename generic_S2
->
-constexpr bool is_same_template<
-    T<generic_T1, generic_V1, generic_S1>,
-    T<generic_T2, generic_V2, generic_S2>,
->{true};
+template<template<typename, uint32_t, typename>
+         typename T,  // typename T in C++17
+         typename generic_T1,
+         uint32_t generic_V1,
+         typename generic_S1,
+         typename generic_T2,
+         uint32_t generic_V2,
+         typename generic_S2>
+constexpr bool is_same_template<T<generic_T1, generic_V1, generic_S1>,
+                                T<generic_T2, generic_V2, generic_S2>>{ true };
 //////////////////////////////////////////////////////////////////////
 
-template<typename T, uint32_t nvec = 8, typename inner_slab_t = slab<T>>
+enum reclaim_policy {
+    PERCPU = 0,  // This will result in faster freeing but slower reclaiming
+    SHARED = 1   // this will result in slower freeing but faster reclaiming
+};
+
+
+template<typename T,
+         uint32_t nvec         = 8,
+         typename inner_slab_t = slab<T>,
+         reclaim_policy rp     = reclaim_policy::SHARED>
 struct super_slab {
+    static constexpr const uint32_t free_idx = rp == reclaim_policy::SHARED ? nvec : 8 * NPROCS;
     uint64_t     available_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    uint64_t     freed_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+    uint64_t     freed_slabs[free_idx] ALIGN_ATTR(CACHE_LINE_SIZE);
     inner_slab_t inner_slabs[64 * nvec];
 
     super_slab() = default;
@@ -46,32 +57,21 @@ struct super_slab {
             sizeof(inner_slab_t);
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
-        #if 0
-        if constexpr (is_same_template<inner_slab_t,
-                                       super_slab<T, nvec, inner_slab_t>>) {
 
-            if ((inner_slabs + pos_idx)->_optimistic_free(addr, start_cpu) ||
-                BRANCH_UNLIKELY(rseq_and(available_slabs + (pos_idx / 64),
-                                         ~((1UL) << (pos_idx % 64)),
-                                         start_cpu))) {
+        (inner_slabs + pos_idx)->_free(addr);
+        if (BRANCH_UNLIKELY(rseq_and(available_slabs + (pos_idx / 64),
+                                     ~((1UL) << (pos_idx % 64)),
+                                     start_cpu))) {
+            if constexpr (rp == reclaim_policy::SHARED) {
                 atomic_or(freed_slabs + (pos_idx / 64),
                           ((1UL) << (pos_idx % 64)));
-                return 1;
             }
-            return 0;
+            else {
+                while (BRANCH_UNLIKELY(
+                    rseq_any_cpu_or(freed_slabs, (1UL) << (pos_idx % 64))))
+                    ;
+            }
         }
-        else {
-#endif
-            (inner_slabs + pos_idx)->_free(addr);
-            if (BRANCH_UNLIKELY(rseq_and(available_slabs + (pos_idx / 64),
-                                         ~((1UL) << (pos_idx % 64)),
-                                         start_cpu))) {
-                atomic_or(freed_slabs + (pos_idx / 64),
-                          ((1UL) << (pos_idx % 64)));
-                //return 1;
-            }
-            //return 0;
-            //        }
     }
 
     void
@@ -85,12 +85,23 @@ struct super_slab {
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
+
         (inner_slabs + pos_idx)->_free(addr);
-        atomic_or(freed_slabs + (pos_idx / 64), (1UL) << (pos_idx % 64));
+
+        if constexpr (rp == reclaim_policy::SHARED) {
+            atomic_or(freed_slabs + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+        }
+        else {
+            while (BRANCH_UNLIKELY(
+                rseq_any_cpu_or(freed_slabs, (1UL) << (pos_idx % 64))))
+                ;
+        }
     }
+
     uint64_t
     _allocate(const uint32_t start_cpu) {
         for (uint32_t i = 0; i < nvec; ++i) {
+            uint32_t _i;
             while (1) {
                 while (BRANCH_LIKELY(available_slabs[i] != FULL_ALLOC_VEC)) {
                     const uint32_t idx =
@@ -112,20 +123,42 @@ struct super_slab {
                     }
                     return FAILED_RSEQ;
                 }
-                if (freed_slabs[i] != EMPTY_FREE_VEC) {
-                    const uint64_t reclaimed_slabs =
-                        try_reclaim_all_free_slots(available_slabs + i,
-                                                   freed_slabs + i,
-                                                   start_cpu);
-                    if (BRANCH_LIKELY(reclaimed_slabs)) {
-                        atomic_xor(freed_slabs + i, reclaimed_slabs);
-                        continue;
+                if constexpr (rp == reclaim_policy::SHARED) {
+                    if (freed_slabs[i] != EMPTY_FREE_VEC) {
+                        const uint64_t reclaimed_slabs =
+                            try_reclaim_all_free_slots(available_slabs + i,
+                                                       freed_slabs + i,
+                                                       start_cpu);
+                        if (BRANCH_LIKELY(reclaimed_slabs)) {
+                            atomic_xor(freed_slabs + i, reclaimed_slabs);
+                            continue;
+                        }
+                        return FAILED_RSEQ;
                     }
-                    return FAILED_RSEQ;
+                    // continues will reset, if we ever faill through to here we
+                    // want to stop
+                    break;
                 }
-                // continues will reset, if we ever faill through to here we
-                // want to stop
-                break;
+                else {
+                    if(_i) {
+                        break;
+                    }
+                    for (_i = 0; _i < 8 * NPROCS; _i += 8) {
+                        if (freed_slabs[_i + i] != EMPTY_FREE_VEC) {
+                            const uint64_t reclaimed_slabs =
+                                try_reclaim_all_free_slots(available_slabs + i,
+                                                           freed_slabs + _i + i,
+                                                           start_cpu);
+                    
+                            if (BRANCH_LIKELY(reclaimed_slabs)) {
+                                atomic_xor(freed_slabs + _i + i,
+                                           reclaimed_slabs);
+                                continue;
+                            }
+                            return FAILED_RSEQ;
+                        }
+                    }
+                }
             }
         }
         return FAILED_VEC_FULL;
