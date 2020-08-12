@@ -31,7 +31,7 @@ struct slab {
     uint64_t freed_slots_lock;
 
     uint64_t freed_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    T        obj_arr[64 * nvec];
+    T        obj_arr[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);;
 
 
     slab() = default;
@@ -80,6 +80,9 @@ struct slab {
                 }
                 return ((uint64_t)&obj_arr[64 * i + idx]);
             }
+        }
+        if (freed_slots_lock) {
+            return FAILED_TRY_NEXT;
         }
         if (BRANCH_UNLIKELY(acquire_lock(&freed_slots_lock, start_cpu))) {
             return FAILED_RSEQ;

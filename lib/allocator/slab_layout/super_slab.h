@@ -41,10 +41,12 @@ template<typename T,
          typename inner_slab_t = slab<T>,
          reclaim_policy rp     = reclaim_policy::SHARED>
 struct super_slab {
-    static constexpr const uint32_t free_idx = rp == reclaim_policy::SHARED ? nvec : 8 * NPROCS;
+    static constexpr const uint32_t free_idx =
+        rp == reclaim_policy::SHARED ? nvec : 8 * NPROCS;
     uint64_t     available_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     uint64_t     freed_slabs[free_idx] ALIGN_ATTR(CACHE_LINE_SIZE);
-    inner_slab_t inner_slabs[64 * nvec];
+    inner_slab_t inner_slabs[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+    ;
 
     super_slab() = default;
 
@@ -63,8 +65,11 @@ struct super_slab {
                                      ~((1UL) << (pos_idx % 64)),
                                      start_cpu))) {
             if constexpr (rp == reclaim_policy::SHARED) {
-                atomic_or(freed_slabs + (pos_idx / 64),
-                          ((1UL) << (pos_idx % 64)));
+                if (!(freed_slabs[(pos_idx / 64)] &
+                      ((1UL) << (pos_idx % 64)))) {
+                    atomic_or(freed_slabs + (pos_idx / 64),
+                              ((1UL) << (pos_idx % 64)));
+                }
             }
             else {
                 while (BRANCH_UNLIKELY(
@@ -89,7 +94,10 @@ struct super_slab {
         (inner_slabs + pos_idx)->_free(addr);
 
         if constexpr (rp == reclaim_policy::SHARED) {
-            atomic_or(freed_slabs + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+            if (!(freed_slabs[(pos_idx / 64)] & ((1UL) << (pos_idx % 64)))) {
+                atomic_or(freed_slabs + (pos_idx / 64),
+                          ((1UL) << (pos_idx % 64)));
+            }
         }
         else {
             while (BRANCH_UNLIKELY(
@@ -100,12 +108,16 @@ struct super_slab {
 
     uint64_t
     _allocate(const uint32_t start_cpu) {
+
         for (uint32_t i = 0; i < nvec; ++i) {
-            uint32_t _i;
+            uint32_t _i            = 0;
+            uint64_t try_next_skip = ~(0UL);
             while (1) {
-                while (BRANCH_LIKELY(available_slabs[i] != FULL_ALLOC_VEC)) {
-                    const uint32_t idx =
-                        bits::find_first_zero<uint64_t>(available_slabs[i]);
+                while (BRANCH_LIKELY((available_slabs[i] & try_next_skip) !=
+                                     FULL_ALLOC_VEC)) {
+
+                    const uint32_t idx = bits::find_first_zero<uint64_t>(
+                        available_slabs[i] & try_next_skip);
                     const uint64_t ret =
                         (inner_slabs + 64 * i + idx)->_allocate(start_cpu);
 
@@ -114,15 +126,21 @@ struct super_slab {
                         return ret;
                     }
                     else if (ret) {  // full
-                        if (or_if_unset(available_slabs + i,
-                                        ((1UL) << idx),
-                                        start_cpu)) {
+
+                        if (ret == FAILED_TRY_NEXT) {
+                            try_next_skip = ~((1UL) << idx);
+                        }
+                        else if (or_if_unset(available_slabs + i,
+                                             ((1UL) << idx),
+                                             start_cpu)) {
                             return FAILED_RSEQ;
                         }
+
                         continue;
                     }
                     return FAILED_RSEQ;
                 }
+                try_next_skip = ~(0UL);
                 if constexpr (rp == reclaim_policy::SHARED) {
                     if (freed_slabs[i] != EMPTY_FREE_VEC) {
                         const uint64_t reclaimed_slabs =
@@ -140,16 +158,16 @@ struct super_slab {
                     break;
                 }
                 else {
-                    if(_i) {
+                    if (_i) {
                         break;
                     }
-                    for (_i = 0; _i < 8 * NPROCS; _i += 8) {
+                    for (; _i < 8 * NPROCS; _i += 8) {
                         if (freed_slabs[_i + i] != EMPTY_FREE_VEC) {
                             const uint64_t reclaimed_slabs =
                                 try_reclaim_all_free_slots(available_slabs + i,
                                                            freed_slabs + _i + i,
                                                            start_cpu);
-                    
+
                             if (BRANCH_LIKELY(reclaimed_slabs)) {
                                 atomic_xor(freed_slabs + _i + i,
                                            reclaimed_slabs);
@@ -159,6 +177,90 @@ struct super_slab {
                         }
                     }
                 }
+            }
+        }
+        return FAILED_VEC_FULL;
+    }
+
+    uint64_t
+    _allocate2(const uint32_t start_cpu) {
+
+        uint32_t       _i            = 0;
+        const uint64_t try_next_skip = ~(0UL);
+        uint32_t       i             = 0;
+        while (1) {
+            for (; i < nvec; ++i) {
+                while (BRANCH_LIKELY((available_slabs[i] & try_next_skip) !=
+                                     FULL_ALLOC_VEC)) {
+
+                    const uint32_t idx = bits::find_first_zero<uint64_t>(
+                        available_slabs[i] & try_next_skip);
+                    const uint64_t ret =
+                        (inner_slabs + 64 * i + idx)->_allocate(start_cpu);
+
+                    if (BRANCH_LIKELY(successful(
+                            ret))) {  // fast path of successful allocation
+                        return ret;
+                    }
+                    else if (ret) {  // full
+                                     //      try_next_skip = ~(0UL);
+                        //                        if(ret == FAILED_TRY_NEXT) {
+                        //                            try_next_skip = ~((1UL) <<
+                        //                            idx);
+                        //                        }
+                        //                        else
+                        if (or_if_unset(available_slabs + i,
+                                        ((1UL) << idx),
+                                        start_cpu)) {
+                            return FAILED_RSEQ;
+                        }
+
+                        continue;
+                    }
+                    return FAILED_RSEQ;
+                }
+            }
+            for (i = 0; i < nvec; ++i) {
+                if constexpr (rp == reclaim_policy::SHARED) {
+                    if (freed_slabs[i] != EMPTY_FREE_VEC) {
+                        const uint64_t reclaimed_slabs =
+                            try_reclaim_all_free_slots(available_slabs + i,
+                                                       freed_slabs + i,
+                                                       start_cpu);
+                        if (BRANCH_LIKELY(reclaimed_slabs)) {
+                            atomic_xor(freed_slabs + i, reclaimed_slabs);
+                            break;
+                        }
+                        return FAILED_RSEQ;
+                    }
+                    // continues will reset, if we ever faill through to here we
+                    // want to stop
+                }
+                else {
+                    uint32_t reclaimed_any = 0;
+                    for (; _i < 8 * NPROCS; _i += 8) {
+                        if (freed_slabs[_i + i] != EMPTY_FREE_VEC) {
+                            const uint64_t reclaimed_slabs =
+                                try_reclaim_all_free_slots(available_slabs + i,
+                                                           freed_slabs + _i + i,
+                                                           start_cpu);
+
+                            if (BRANCH_LIKELY(reclaimed_slabs)) {
+                                reclaimed_any = 1;
+                                atomic_xor(freed_slabs + _i + i,
+                                           reclaimed_slabs);
+                                continue;
+                            }
+                            return FAILED_RSEQ;
+                        }
+                    }
+                    if (reclaimed_any) {
+                        break;
+                    }
+                }
+            }
+            if (i == nvec) {
+                break;
             }
         }
         return FAILED_VEC_FULL;
