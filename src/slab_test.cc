@@ -25,11 +25,11 @@ pthread_barrier_t b;
 
 //using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
-using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
-//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 4, slab<uint64_t, 1>, reclaim_policy::SHARED>, reclaim_policy::SHARED>>;
+//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
+using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
 corr_alloc_test(void * targ) {
-    expected_allocs = 64 * 64 * 64 * cmath::min<uint32_t>(nthread, NPROCS);
+    expected_allocs = allocator_t::capacity * cmath::min<uint32_t>(8, nthread);
     total_allocs    = 0;
     uint64_t sum    = 0;
     init_thread();
@@ -53,7 +53,7 @@ corr_alloc_test(void * targ) {
 
 void *
 corr_alloc_then_free_test(void * targ) {
-    expected_allocs = nthread * test_size;
+    expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
     init_thread();
@@ -81,7 +81,7 @@ corr_alloc_then_free_test(void * targ) {
 
 void *
 corr_batch_alloc_then_free_test(void * targ) {
-    expected_allocs = nthread * test_size;
+    expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
     init_thread();

@@ -14,12 +14,11 @@
 
 #include <stdint.h>
 
-#define RECLAIM_OPTION_B
 struct empty {};
-
 template<typename T, uint32_t nvec = 7, typename _T = empty>
 struct slab {
-
+    static constexpr const uint64_t capacity = 64 * nvec;
+    
     uint64_t available_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     // the freed_slots_lock is necesary to prevent a race condition where thread
     // A see available_slots == vec::FULL, get preempted by thread B (on same
@@ -34,7 +33,6 @@ struct slab {
 
     uint64_t freed_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     T        obj_arr[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-
 
 
     slab() = default;
@@ -83,13 +81,10 @@ struct slab {
                 return ((uint64_t)&obj_arr[64 * i + idx]);
             }
         }
-        if (freed_slots_lock) {
-            return FAILED_TRY_NEXT;
-        }
         if (BRANCH_UNLIKELY(acquire_lock(&freed_slots_lock, start_cpu))) {
             return FAILED_RSEQ;
         }
-#if defined RECLAIM_OPTION_B
+
         for (uint32_t i = 0; i < nvec; ++i) {
             if (BRANCH_UNLIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
                 const uint32_t idx =
@@ -103,7 +98,6 @@ struct slab {
                 freed_slots_lock = 0;
                 return ((uint64_t)&obj_arr[64 * i + idx]);
             }
-            // try free
             if (freed_slots[i] != EMPTY_FREE_VEC) {
                 const uint64_t reclaimed_slots = freed_slots[i];
                 atomic_xor(freed_slots + i, reclaimed_slots);
@@ -114,42 +108,6 @@ struct slab {
                              bits::find_first_one<uint64_t>(reclaimed_slots)]));
             }
         }
-#elif defined RECLAIM_OPTION_C
-        uint32_t ret_idx = 64 * nvec;
-        for (uint32_t i = 0; i < nvec; ++i) {
-            if (BRANCH_UNLIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
-                const uint32_t idx =
-                    bits::find_first_zero<uint64_t>(available_slots[i]);
-                if (BRANCH_UNLIKELY(or_if_unset(available_slots + i,
-                                                ((1UL) << idx),
-                                                start_cpu))) {
-                    freed_slots_lock = 0;
-                    return FAILED_RSEQ;
-                }
-                freed_slots_lock = 0;
-                return ((uint64_t)&obj_arr[64 * i + idx]);
-            }
-            // try free
-            if (freed_slots[i] != EMPTY_FREE_VEC) {
-                const uint64_t reclaimed_slots = freed_slots[i];
-                atomic_xor(freed_slots + i, reclaimed_slots);
-                if (ret_idx == 64 * nvec) {
-                    available_slots[i] ^=
-                        (reclaimed_slots & (reclaimed_slots - 1));
-                    ret_idx = 64 * i +
-                              bits::find_first_one<uint64_t>(reclaimed_slots);
-                }
-                else {
-                    available_slots[i] ^= reclaimed_slots;
-                }
-            }
-        }
-
-        if (ret_idx != 64 * nvec) {
-            freed_slots_lock = 0;
-            return (uint64_t)(&obj_arr[ret_idx]);
-        }
-#endif
         freed_slots_lock = 0;
         return FAILED_VEC_FULL;
     }

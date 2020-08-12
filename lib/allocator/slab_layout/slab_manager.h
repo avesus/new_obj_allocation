@@ -31,6 +31,8 @@ struct internal_slab_manager {
 
 template<typename T, typename slab_t>
 struct slab_manager {
+    static constexpr const uint64_t capacity = slab_t::capacity;
+    
     using internal_manager_t = internal_slab_manager<T, slab_t>;
 
     internal_manager_t * m;
