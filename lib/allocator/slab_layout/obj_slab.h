@@ -37,7 +37,7 @@ struct slab {
 
     slab() = default;
 
-    uint32_t
+    void
     _optimistic_free(T * const addr, const uint32_t start_cpu) {
         IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&obj_arr[0])));
         const uint64_t pos_idx =
@@ -49,9 +49,7 @@ struct slab {
                                      ((1UL) << (pos_idx % 64)),
                                      start_cpu))) {
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
-            return 1;
         }
-        return 0;
     }
 
 
@@ -73,6 +71,9 @@ struct slab {
             if (BRANCH_LIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
                 const uint32_t idx =
                     bits::find_first_zero<uint64_t>(available_slots[i]);
+                if(BRANCH_UNLIKELY(idx == 64)) {
+                    continue;
+                }
                 if (BRANCH_UNLIKELY(or_if_unset(available_slots + i,
                                                 ((1UL) << idx),
                                                 start_cpu))) {

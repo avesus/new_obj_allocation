@@ -25,11 +25,11 @@ pthread_barrier_t b;
 
 //using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
-//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
-using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
+using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
+//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
 corr_alloc_test(void * targ) {
-    expected_allocs = allocator_t::capacity * cmath::min<uint32_t>(8, nthread);
+    expected_allocs = cmath::min<uint32_t>(test_size * nthread, allocator_t::capacity * cmath::min<uint32_t>(NPROCS, nthread));
     total_allocs    = 0;
     uint64_t sum    = 0;
     init_thread();

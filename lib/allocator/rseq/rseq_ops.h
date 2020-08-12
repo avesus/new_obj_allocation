@@ -41,7 +41,7 @@ try_reclaim_free_slots(uint64_t * v_cpu_ptr,
 
 
 uint64_t NEVER_INLINE
-try_reclaim_all_free_slots(uint64_t * v_cpu_ptr,
+try_reclaim_all_free_slabs(uint64_t * v_cpu_ptr,
                            uint64_t * free_v_cpu_ptr,
                            const uint32_t   start_cpu) {
     uint64_t ret_reclaimed_slots = 0;
@@ -50,12 +50,11 @@ try_reclaim_all_free_slots(uint64_t * v_cpu_ptr,
             RSEQ_CMP_CUR_VS_START_CPUS()
         
         "movq (%[free_v_cpu_ptr]), %[ret_reclaimed_slots]\n\t"  // get current free vec
-        "testq %[ret_reclaimed_slots], %[ret_reclaimed_slots]\n\t"              // if is 0 nothing to do
-        "jz 2f\n\t"
-        "xorq %[ret_reclaimed_slots], (%[v_cpu_ptr])\n\t"       // xor bits
+        "notq %[ret_reclaimed_slots]\n\t"
+        "andq %[ret_reclaimed_slots], (%[v_cpu_ptr])\n\t"       // xor bits
         "2:\n\t"
         RSEQ_START_ABORT_DEF()
-        "movq $0, %[ret_reclaimed_slots]\n\t"
+        "movq $-1, %[ret_reclaimed_slots]\n\t"
         "jmp 2b\n\t"
         RSEQ_END_ABORT_DEF()
         : [ ret_reclaimed_slots ] "+r"(ret_reclaimed_slots)
@@ -64,7 +63,7 @@ try_reclaim_all_free_slots(uint64_t * v_cpu_ptr,
           [ v_cpu_ptr ] "g"(v_cpu_ptr),
           [ free_v_cpu_ptr ] "g"(free_v_cpu_ptr)
         : "memory", "cc", "rax");
-    return ret_reclaimed_slots;
+    return ~ret_reclaimed_slots;
 }
 
 

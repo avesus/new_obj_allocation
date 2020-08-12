@@ -33,8 +33,9 @@ constexpr bool is_same_template<T<generic_T1, generic_V1, generic_S1>,
 
 template<typename T, uint32_t nvec = 7, typename inner_slab_t = slab<T>>
 struct super_slab {
-    static constexpr const uint64_t capacity = 64 * nvec * inner_slab_t::capacity;
-    
+    static constexpr const uint64_t capacity =
+        64 * nvec * inner_slab_t::capacity;
+
     uint64_t     available_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     uint64_t     freed_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     inner_slab_t inner_slabs[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
@@ -91,6 +92,9 @@ struct super_slab {
 
                     const uint32_t idx =
                         bits::find_first_zero<uint64_t>(available_slabs[i]);
+                    if (BRANCH_UNLIKELY(idx == 64)) {
+                        break;
+                    }
                     const uint64_t ret =
                         (inner_slabs + 64 * i + idx)->_allocate(start_cpu);
 
@@ -102,15 +106,15 @@ struct super_slab {
                         if (or_if_unset(available_slabs + i,
                                         ((1UL) << idx),
                                         start_cpu)) {
-                            return FAILED_RSEQ;
+                                return FAILED_RSEQ;
                         }
                         continue;
                     }
-                    return FAILED_RSEQ;
+                        return FAILED_RSEQ;
                 }
                 if (freed_slabs[i] != EMPTY_FREE_VEC) {
                     const uint64_t reclaimed_slabs =
-                        try_reclaim_all_free_slots(available_slabs + i,
+                        try_reclaim_all_free_slabs(available_slabs + i,
                                                    freed_slabs + i,
                                                    start_cpu);
                     if (BRANCH_LIKELY(reclaimed_slabs)) {
