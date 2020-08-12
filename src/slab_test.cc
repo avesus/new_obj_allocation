@@ -25,7 +25,7 @@ pthread_barrier_t b;
 
 //using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
-using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>, reclaim_policy::SHARED>, reclaim_policy::SHARED>, reclaim_policy::SHARED>>;
+using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
 //using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 4, slab<uint64_t, 1>, reclaim_policy::SHARED>, reclaim_policy::SHARED>>;
 void *
 corr_alloc_test(void * targ) {

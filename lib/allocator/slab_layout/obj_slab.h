@@ -10,6 +10,8 @@
 #include <allocator/common/internal_returns.h>
 #include <allocator/common/safe_atomics.h>
 
+#include <allocator/slab_layout/obj_slab.h>
+
 #include <stdint.h>
 
 #define RECLAIM_OPTION_B
@@ -32,7 +34,7 @@ struct slab {
 
     uint64_t freed_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     T        obj_arr[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    ;
+
 
 
     slab() = default;
@@ -87,28 +89,7 @@ struct slab {
         if (BRANCH_UNLIKELY(acquire_lock(&freed_slots_lock, start_cpu))) {
             return FAILED_RSEQ;
         }
-#ifdef RECLAIM_OPTION_A
-        for (uint32_t i = 0; i < nvec; ++i) {
-            // try free
-            if (freed_slots[i] != EMPTY_FREE_VEC) {
-                const uint64_t reclaimed_slots =
-                    try_reclaim_free_slots(available_slots + i,
-                                           freed_slots + i,
-                                           start_cpu);
-                if (BRANCH_LIKELY(reclaimed_slots)) {
-                    atomic_xor(freed_slots + i, reclaimed_slots);
-                    freed_slots_lock = 0;
-                    return ((uint64_t)(
-                        &obj_arr[64 * i + bits::find_first_one<uint64_t>(
-                                              reclaimed_slots)]));
-                }
-                else {
-                    freed_slots_lock = 0;
-                    return FAILED_RSEQ;
-                }
-            }
-        }
-#elif defined RECLAIM_OPTION_B
+#if defined RECLAIM_OPTION_B
         for (uint32_t i = 0; i < nvec; ++i) {
             if (BRANCH_UNLIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
                 const uint32_t idx =
