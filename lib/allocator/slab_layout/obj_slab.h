@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-#define RECLAIM_OPTION_C
+#define RECLAIM_OPTION_B
 struct empty {};
 
 template<typename T, uint32_t nvec = 7, typename _T = empty>
@@ -31,7 +31,8 @@ struct slab {
     uint64_t freed_slots_lock;
 
     uint64_t freed_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    T        obj_arr[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);;
+    T        obj_arr[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+    ;
 
 
     slab() = default;
@@ -62,7 +63,6 @@ struct slab {
             (((uint64_t)addr) - ((uint64_t)(&obj_arr[0]))) / sizeof(T);
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
-
         atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
     }
 

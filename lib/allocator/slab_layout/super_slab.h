@@ -158,9 +158,6 @@ struct super_slab {
                     break;
                 }
                 else {
-                    if (_i) {
-                        break;
-                    }
                     for (; _i < 8 * NPROCS; _i += 8) {
                         if (freed_slabs[_i + i] != EMPTY_FREE_VEC) {
                             const uint64_t reclaimed_slabs =
@@ -171,10 +168,13 @@ struct super_slab {
                             if (BRANCH_LIKELY(reclaimed_slabs)) {
                                 atomic_xor(freed_slabs + _i + i,
                                            reclaimed_slabs);
-                                continue;
+                                break;
                             }
                             return FAILED_RSEQ;
                         }
+                    }
+                    if(_i == 8 * NPROCS) {
+                        break;
                     }
                 }
             }
