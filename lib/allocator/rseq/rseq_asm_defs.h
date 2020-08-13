@@ -76,11 +76,10 @@
     ""
 /*
   ".pushsection __rseq_failure, \"ax\"\n\t" // create failure section
-    ".byte 0x0f, 0xb9, 0x3d\n\t"            // not 100% sure on this, I think
-                                               this in conjunction with .long
-                                               0x53053053 is storing invalid
-                                               operations to halt execution
-    ".long 0x53053053\n\t"                  // see above
+    ".byte 0x0f, 0xb9, 0x3d\n\t"            // Disassembler-friendly signature:
+                                               ud1 <sig>(%rip),%edi
+    ".long 0x53053053\n\t"                  // invalid operation to avoid code
+                                               injection 
     "4:\n\t"                                // abort label
     ""                                      // not sure why this is needed
 */
