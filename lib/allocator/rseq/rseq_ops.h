@@ -12,7 +12,7 @@
 */
 
 
-uint64_t NEVER_INLINE
+uint64_t NEVER_INLINE ALIGN_ATTR(64)
 restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
     uint64_t idx = 65, temp_v = 0;
     asm volatile(
@@ -51,10 +51,212 @@ restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
           [ v] "g" (v),
           [ start_cpu] "g" (start_cpu),
           [ rseq_abi] "g" (&__rseq_abi)
+        : "memory", "cc", "rax");
+    return idx;
+}
+
+
+
+uint64_t NEVER_INLINE ALIGN_ATTR(64)
+restarting_set_idx4(uint64_t * const v, const uint32_t start_cpu) {
+    uint64_t idx = 65, temp_v = 0;
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        "leaq 3b (%%rip), %%rax\n\t"
+        "movq %%rax, 8(%[rseq_abi])\n\t"
+        "jmp 1f\n\t"
+        ".byte 0x0f, 0xb9, 0x3d\n\t"
+        ".long 0x53053053\n\t"
+        "4:\n\t"
+        "mov $65, %[idx]\n\t"
+        "1:\n\t"
+        // check if migrated        
+        "cmpl %[start_cpu], 4(%[rseq_abi])\n\t"
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // if not migrated temp_v = *v
+        "movq (%[v]), %[idx]\n\t"
+        "movq %[idx], %[temp_v]\n\t"
+        "notq %[idx]\n\t"
+
+        // idx = tzcnt(~*v) (find first zero)
+        "tzcntq %[idx], %[idx]\n\t"
+        // carry flag is set if src == 0 i.e output == 64
+        "jc 2f\n"
+        
+        // temp_v |= ((1UL) << idx)
+        "btsq %[idx], %[temp_v]\n\t"
+        
+        // *v = temp_v
+        "movq %[temp_v], (%[v])\n\t"
+        "2:\n\t"
+        : [ idx] "+r" (idx)
+        : [ temp_v ] "r" (temp_v),
+          [ v] "g" (v),
+          [ start_cpu] "g" (start_cpu),
+          [ rseq_abi] "g" (&__rseq_abi)
+        : "memory", "cc", "rax");
+    return idx;
+}
+
+
+uint64_t NEVER_INLINE ALIGN_ATTR(64)
+restarting_set_idx2(uint64_t * const v, const uint32_t start_cpu, const uint64_t r) {
+    uint64_t idx = 65, temp_v = 0;
+
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF()
+        // check if migrated        
+        "cmpl %[start_cpu], 4(%[rseq_abi])\n\t"
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // if not migrated temp_v = *v
+        "movq (%[v]), %[idx]\n\t"
+        "movq %[idx], %[temp_v]\n\t"
+
+        "movq %[r], %%rcx\n\t"
+        "rorq %%cl, %[idx]\n\t"
+        "notq %[idx]\n\t"
+
+        // idx = tzcnt(~*v) (find first zero)
+        "tzcntq %[idx], %[idx]\n\t"
+        // carry flag is set if src == 0 i.e output == 64
+        "jc 2f\n"
+
+        // restore to original idx
+        "addq %%rcx, %[idx]\n\t"
+        "andq $63, %[idx]\n\t"
+        
+        // temp_v |= ((1UL) << idx)
+        "btsq %[idx], %[temp_v]\n\t"
+        
+        // *v = temp_v
+        "movq %[temp_v], (%[v])\n\t"
+        "2:\n\t"
+        RSEQ_START_ABORT_DEF()
+        // abort go back to start of cs (that will compare cpu)
+        // if migrated jmp 5:, else retry (we were just preempted)
+        
+        // worth noting its possible to put this in same section as cs.
+        // this will make for faster aborts but is ultimately more code
+        // to get through for the fast path
+        "mov $65, %[idx]\n\t"
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+        : [ idx] "+r" (idx)
+        : [ temp_v ] "r" (temp_v),
+          [ r ] "g" (r),
+          [ v] "g" (v),
+          [ start_cpu] "g" (start_cpu),
+          [ rseq_abi] "g" (&__rseq_abi)
         : "memory", "cc", "rax", "rcx");
     return idx;
 }
+
+
+uint64_t NEVER_INLINE
+restarting_set_idx5(uint64_t * const v, const uint32_t start_cpu, const uint64_t r) {
+    uint64_t idx = 65, temp_v = 0;
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF()
+        "jmp 6f\n\t"
+        "4:\n\t"
+        ".byte 0x0f, 0xb9, 0x3d\n\t"
+        ".long 0x53053053\n\t"
+        "mov $65, %[idx]\n\t"
+        "6:\n\t"
+        // check if migrated        
+        "cmpl %[start_cpu], 4(%[rseq_abi])\n\t"
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // if not migrated temp_v = *v
+        "movq (%[v]), %[idx]\n\t"
+        "movq %[idx], %[temp_v]\n\t"
+
+        "movq %[r], %%rcx\n\t"
+        "rorq %%cl, %[idx]\n\t"
+        "notq %[idx]\n\t"
+
+        // idx = tzcnt(~*v) (find first zero)
+        "tzcntq %[idx], %[idx]\n\t"
+        // carry flag is set if src == 0 i.e output == 64
+        "jc 2f\n"
+        "addq %%rcx, %[idx]\n\t"
+        "andq $63, %[idx]\n\t"
         
+        // temp_v |= ((1UL) << idx)
+        "btsq %[idx], %[temp_v]\n\t"
+        
+        // *v = temp_v
+        "movq %[temp_v], (%[v])\n\t"
+        "2:\n\t"
+        : [ idx] "+r" (idx)
+        : [ temp_v ] "r" (temp_v),
+          [ r ] "g" (r),
+          [ v] "g" (v),
+          [ start_cpu] "g" (start_cpu),
+          [ rseq_abi] "g" (&__rseq_abi)
+        : "memory", "cc", "rax", "rcx");
+    return idx;
+}
+
+
+template<uint32_t r>
+uint64_t NEVER_INLINE ALIGN_ATTR(64)
+restarting_set_idx3(uint64_t * const v, const uint32_t start_cpu) {
+    uint64_t idx = 65, temp_v = 0;
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF()
+        // check if migrated        
+        "cmpl %[start_cpu], 4(%[rseq_abi])\n\t"
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // if not migrated temp_v = *v
+        "movq (%[v]), %[temp_v]\n\t"
+        "rorxq %[r], %[temp_v], %[idx]\n\t"
+        "notq %[idx]\n\t"
+
+        // idx = tzcnt(~*v) (find first zero)
+        "tzcntq %[idx], %[idx]\n\t"
+        // carry flag is set if src == 0 i.e output == 64
+        "jc 2f\n"
+        "addq %[r], %[idx]\n\t"
+        "andq $63, %[idx]\n\t"
+        
+        // temp_v |= ((1UL) << idx)
+        "btsq %[idx], %[temp_v]\n\t"
+        
+        // *v = temp_v
+        "movq %[temp_v], (%[v])\n\t"
+        "2:\n\t"
+        RSEQ_START_ABORT_DEF()
+        // abort go back to start of cs (that will compare cpu)
+        // if migrated jmp 5:, else retry (we were just preempted)
+        "mov $65, %[idx]\n\t"
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+        : [ idx] "+r" (idx)
+        : [ temp_v ] "r" (temp_v),
+          [ r ] "i" (r),
+          [ v] "g" (v),
+          [ start_cpu] "g" (start_cpu),
+          [ rseq_abi] "g" (&__rseq_abi)
+        : "memory", "cc", "rax");
+    return idx;
+}
+
+
 uint64_t NEVER_INLINE
 try_reclaim_free_slots(uint64_t * v_cpu_ptr,
                        uint64_t * free_v_cpu_ptr_then_temp,

@@ -1,0 +1,56 @@
+#include <util/arg.h>
+#include <util/verbosity.h>
+
+#include <timing/thread_helper.h>
+#include <timing/timers.h>
+
+#include <allocator/rseq/rseq_base.h>
+#include <optimized/const_math.h>
+
+#include <assert.h>
+
+uint32_t test_size = (1 << 20);
+uint32_t nthread   = (32);
+
+uint64_t total_nsec = 0;
+
+__thread uint32_t sum      = 0;
+
+pthread_barrier_t b;
+
+
+void *
+tlv_test(void * targ) {
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        volatile uint64_t sink = tlv_rand;
+    }
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    return NULL;
+}
+
+void *
+pthread_self_test(void * targ) {
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        volatile uint64_t sink = pthread_self();
+    }
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    return NULL;
+}

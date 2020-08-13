@@ -1,18 +1,19 @@
 #include <timing/stats.h>
 
 #include <util/verbosity.h>
-#include <numeric>
 #include <algorithm>
+#include <numeric>
 
 namespace stats {
 static constexpr uint64_t sci_notation_bound = 10 * 1000 * 1000;
 
+static const char possible_fmts[2][8] = { "%.4E", "%lu" };
 static const char *
 best_format(uint64_t value) {
     if (value > (sci_notation_bound)) {
-        return "%.4E";
+        return possible_fmts[0];
     }
-    return "%lu";
+    return possible_fmts[1];
 }
 
 void
@@ -27,7 +28,7 @@ stats_out::print(bool format, FILE * outfile) {
 
 void
 stats_out::print_hr(FILE * outfile) {
-    char fmt_buf[256];
+    char fmt_buf[256] = "";
     sprintf(fmt_buf,
             "----------------------------------------\n"
             "Median : %s %s\n"
@@ -72,33 +73,34 @@ stats_out::print_csv(FILE * outfile) {
 
 void
 stats_out::sorted_array_to_stats(uint64_t * data, uint32_t n) {
-    if(n == 1) {
+    if (n == 1) {
         median = data[0];
-        mean = data[0];
-        max = data[0];
-        min = data[0];
-        p99 = data[0];
-        p95 = data[0];
-        p90 = data[0];
+        mean   = data[0];
+        max    = data[0];
+        min    = data[0];
+        p99    = data[0];
+        p95    = data[0];
+        p90    = data[0];
     }
     else {
-        median = (n % 2) ? (data[n / 2]) : ((data[n / 2] + data[(n / 2) + 1]) / 2);
+        median =
+            (n % 2) ? (data[n / 2]) : ((data[n / 2] + data[(n / 2) + 1]) / 2);
         mean = std::accumulate(data, data + n, 0) / n;
-        max = data[n - 1];
-        min = data[0];
+        max  = data[n - 1];
+        min  = data[0];
 
         uint64_t p99_idx = .99 * ((double)n);
         uint64_t p95_idx = .95 * ((double)n);
         uint64_t p90_idx = .90 * ((double)n);
-        p99 = data[p99_idx];
-        p95 = data[p95_idx];
-        p90 = data[p90_idx];
+        p99              = data[p99_idx];
+        p95              = data[p95_idx];
+        p90              = data[p90_idx];
     }
 }
-    
+
 void
 stats_out::get_stats(uint64_t * data, uint32_t n) {
-    if(n == 0 || data == NULL) {
+    if (n == 0 || data == NULL) {
         errv_print("Error: No data to collect stats on\n");
         return;
     }

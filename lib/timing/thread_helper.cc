@@ -26,7 +26,7 @@ thelper::spawn_n(uint32_t   nthreads,
 
     // this is arbitrary. generally large enough and decreases thread spawn
     // overhead DRASTICALLY
-    ERROR_ASSERT(!pthread_attr_setstacksize(&attr, 65336));
+    ERROR_ASSERT(!pthread_attr_setstacksize(&attr, 16384));
 
     // this is relatively expensive but I guess the price you pay for generic
     // programming. Could replace cpu_set_t with a uint64_t but this is a mile
