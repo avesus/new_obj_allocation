@@ -653,7 +653,7 @@ ALIGN_ATTR(64) restarting_xor(uint64_t * const v_cpu_ptr,
         /* end input labels */
         : "memory", "cc");
     // clang-format on
-    return _RSEQ_SUCCESS;
+    return ret;
 }
 
 
@@ -826,9 +826,7 @@ ALIGN_ATTR(64) restarting_and(uint64_t * const v_cpu_ptr,
         /* end input labels */
         : "memory", "cc");
     // clang-format on
-    return _RSEQ_SUCCESS;
-abort:
-    return _RSEQ_MIGRATED;
+    return ret;
 }
 
 
@@ -902,7 +900,7 @@ ALIGN_ATTR(64) restartable_acquire_lock(uint64_t * const lock_ptr,
         "jmp 1b\n\t"
         RSEQ_END_ABORT_DEF()
         /* start output labels */
-        :
+        : [ret] "+r" [ret]
         /* end output labels */
 
         /* start input labels */
