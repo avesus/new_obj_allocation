@@ -79,7 +79,8 @@ ALIGN_ATTR(64) restarting_fast_abort_set_idx(uint64_t * const v,
     asm volatile(
         RSEQ_INFO_DEF(32)
         RSEQ_CS_ARR_DEF()
-        "leaq 3b (%%rip), 8(%[rseq_abi])\n\t"
+        "leaq 3b (%%rip), %fs:__rseq_abi@tpoff+8\n\t"
+    "1:\n\t"
         "jmp 1f\n\t"
         ".byte 0x0f, 0xb9, 0x3d\n\t"
         ".long 0x53053053\n\t"
@@ -195,7 +196,8 @@ ALIGN_ATTR(64) restarting_fast_abort_set_rand_idx(uint64_t * const v,
     asm volatile(
         RSEQ_INFO_DEF(32)
         RSEQ_CS_ARR_DEF()
-        "leaq 3b (%%rip), 8(%[rseq_abi])\n\t"
+        "leaq 3b (%%rip), %fs:__rseq_abi@tpoff+8\n\t"
+    "1:\n\t"
         "jmp 1f\n\t"
         ".byte 0x0f, 0xb9, 0x3d\n\t"
         ".long 0x53053053\n\t"
@@ -256,9 +258,9 @@ ALIGN_ATTR(64) restarting_fast_abort_set_rand_idx(uint64_t * const v,
 
 
 uint64_t NEVER_INLINE
-ALIGN_ATTR(64) try_reclaim_all_free_slabs(uint64_t * const v_cpu_ptr,
-                                          uint64_t * const free_v_cpu_ptr,
-                                          const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_reclaim_free_slabs(uint64_t * const v_cpu_ptr,
+                                             uint64_t * const free_v_cpu_ptr,
+                                             const uint32_t   start_cpu) {
     register uint64_t ret_reclaimed_slots asm("rax") = (~(0UL));
     // clang-format off
     asm volatile(
@@ -294,15 +296,17 @@ ALIGN_ATTR(64) try_reclaim_all_free_slabs(uint64_t * const v_cpu_ptr,
 
 
 uint64_t NEVER_INLINE
-ALIGN_ATTR(64) try_reclaim_all_free_slabs(uint64_t * const v_cpu_ptr,
-                                          uint64_t * const free_v_cpu_ptr,
-                                          const uint32_t   start_cpu) {
+ALIGN_ATTR(64)
+    restarting_fast_abort_reclaim_free_slabs(uint64_t * const v_cpu_ptr,
+                                             uint64_t * const free_v_cpu_ptr,
+                                             const uint32_t   start_cpu) {
     register uint64_t ret_reclaimed_slots asm("rax") = (~(0UL));
     // clang-format off
     asm volatile(
         RSEQ_INFO_DEF(32)
         RSEQ_CS_ARR_DEF()
-        "leaq 3b (%%rip), 8(%[rseq_abi])\n\t"
+        "leaq 3b (%%rip), %fs:__rseq_abi@tpoff+8\n\t"
+        "1:\n\t"
         "jmp 1f\n\t"
         ".byte 0x0f, 0xb9, 0x3d\n\t"
         ".long 0x53053053\n\t"
