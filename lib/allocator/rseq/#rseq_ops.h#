@@ -341,9 +341,9 @@ ALIGN_ATTR(64) try_reclaim_all_free_slabs(uint64_t * const v_cpu_ptr,
 
 
 uint32_t NEVER_INLINE
-restarting_goto_set_bit(uint64_t *     v_cpu_ptr,
-                        const uint32_t bit,
-                        const uint32_t start_cpu) {
+ALIGN_ATTR(64) restarting_goto_set_bit(uint64_t *     v_cpu_ptr,
+                                       const uint32_t bit,
+                                       const uint32_t start_cpu) {
 
     uint64_t temp_v;
     // clang-format off
@@ -398,9 +398,9 @@ no_set:
 }
 
 uint32_t NEVER_INLINE
-restarting_set_bit(uint64_t *     v_cpu_ptr,
-                   const uint32_t bit,
-                   const uint32_t start_cpu) {
+ALIGN_ATTR(64) restarting_set_bit(uint64_t *     v_cpu_ptr,
+                                  const uint32_t bit,
+                                  const uint32_t start_cpu) {
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;
     uint64_t          temp_v;
@@ -456,9 +456,9 @@ restarting_set_bit(uint64_t *     v_cpu_ptr,
 
 
 uint32_t NEVER_INLINE
-restarting_goto_unset_bit(uint64_t *     v_cpu_ptr,
-                          const uint32_t bit,
-                          const uint32_t start_cpu) {
+ALIGN_ATTR(64) restarting_goto_unset_bit(uint64_t *     v_cpu_ptr,
+                                         const uint32_t bit,
+                                         const uint32_t start_cpu) {
 
     uint64_t temp_v;
     // clang-format off
@@ -516,9 +516,9 @@ no_unset:
 
 
 uint32_t NEVER_INLINE
-restarting_unset_bit(uint64_t *     v_cpu_ptr,
-                     const uint32_t bit,
-                     const uint32_t start_cpu) {
+ALIGN_ATTR(64) restarting_unset_bit(uint64_t *     v_cpu_ptr,
+                                    const uint32_t bit,
+                                    const uint32_t start_cpu) {
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;
     uint64_t          temp_v;
@@ -573,9 +573,9 @@ restarting_unset_bit(uint64_t *     v_cpu_ptr,
 }
 
 uint32_t NEVER_INLINE
-restarting_goto_xor(uint64_t * const v_cpu_ptr,
-                    const uint64_t   new_bit_mask,
-                    const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_goto_xor(uint64_t * const v_cpu_ptr,
+                                   const uint64_t   new_bit_mask,
+                                   const uint32_t   start_cpu) {
     // clang-format off
     asm volatile goto(
         RSEQ_INFO_DEF(32)
@@ -615,9 +615,9 @@ abort:
 }
 
 uint32_t NEVER_INLINE
-restarting_xor(uint64_t * const v_cpu_ptr,
-               const uint64_t   new_bit_mask,
-               const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_xor(uint64_t * const v_cpu_ptr,
+                              const uint64_t   new_bit_mask,
+                              const uint32_t   start_cpu) {
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;
     // clang-format off
@@ -658,9 +658,9 @@ restarting_xor(uint64_t * const v_cpu_ptr,
 
 
 uint32_t NEVER_INLINE
-restarting_goto_or(uint64_t * const v_cpu_ptr,
-                   const uint64_t   new_bit_mask,
-                   const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_goto_or(uint64_t * const v_cpu_ptr,
+                                  const uint64_t   new_bit_mask,
+                                  const uint32_t   start_cpu) {
     // clang-format off
     asm volatile goto(
         RSEQ_INFO_DEF(32)
@@ -703,9 +703,9 @@ abort:
 // use this or goto version if you want to set bit w.o setting its previous
 // value (1UL) << bit will compiler to shlx which is cheap
 uint32_t NEVER_INLINE
-restarting_or(uint64_t * const v_cpu_ptr,
-              const uint64_t   new_bit_mask,
-              const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_or(uint64_t * const v_cpu_ptr,
+                             const uint64_t   new_bit_mask,
+                             const uint32_t   start_cpu) {
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;
     // clang-format off
@@ -745,9 +745,9 @@ restarting_or(uint64_t * const v_cpu_ptr,
 }
 
 uint32_t NEVER_INLINE
-restarting_goto_and(uint64_t * const v_cpu_ptr,
-                    const uint64_t   new_bit_mask,
-                    const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_goto_and(uint64_t * const v_cpu_ptr,
+                                   const uint64_t   new_bit_mask,
+                                   const uint32_t   start_cpu) {
     // clang-format off
     asm volatile goto(
         RSEQ_INFO_DEF(32)
@@ -788,9 +788,9 @@ abort:
 
 // not is free so use this if you need andn
 uint32_t NEVER_INLINE
-restarting_and(uint64_t * const v_cpu_ptr,
-               const uint64_t   new_bit_mask,
-               const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restarting_and(uint64_t * const v_cpu_ptr,
+                              const uint64_t   new_bit_mask,
+                              const uint32_t   start_cpu) {
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;
     // clang-format off
@@ -833,8 +833,8 @@ abort:
 
 
 uint32_t NEVER_INLINE
-restartable_goto_acquire_lock(uint64_t * const lock_ptr,
-                              const uint32_t   start_cpu) {
+ALIGN_ATTR(64) restartable_goto_acquire_lock(uint64_t * const lock_ptr,
+                                             const uint32_t   start_cpu) {
     // clang-format off
 
     asm volatile goto(
@@ -877,7 +877,8 @@ abort:
 
 
 uint32_t NEVER_INLINE
-restartable_acquire_lock(uint64_t * const lock_ptr, const uint32_t start_cpu) {
+ALIGN_ATTR(64) restartable_acquire_lock(uint64_t * const lock_ptr,
+                                        const uint32_t   start_cpu) {
     // clang-format off
 
     register uint32_t ret asm("rax") = _RSEQ_MIGRATED;

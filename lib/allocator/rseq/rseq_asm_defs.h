@@ -47,8 +47,8 @@
 */
 
 #define RSEQ_PREP_CS_DEF()                                                     \
-    "leaq 3b (%%rip), %%rax\n\t"                                               \
-    "movq %%rax, 8(%[rseq_abi])\n\t"                                           \
+    //    "leaq 3b (%%rip), 8(%[rseq_abi])\n\t"
+    "leaq 3b (%%rip), %fs:__rseq_abi@tpoff+8\n\t"
     "1:\n\t"
 
 /*
@@ -68,6 +68,7 @@
     "jnz 4f\n\t"                            // if not equal abort (label 4)
 */
 
+    
 #define RSEQ_START_ABORT_DEF()                                                 \
     ".pushsection __rseq_failure, \"ax\"\n\t"                                  \
     ".byte 0x0f, 0xb9, 0x3d\n\t"                                               \
