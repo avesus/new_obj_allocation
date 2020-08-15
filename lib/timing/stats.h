@@ -17,27 +17,42 @@ static constexpr bool csv            = false;
 
 struct stats_out {
 
+    uint64_t N;
+    double   median;
+    double   mean;
+    double   max;
+    double   min;
 
-    uint64_t median;
-    uint64_t mean;
-    uint64_t max;
-    uint64_t min;
+    double p99;
+    double p95;
+    double p90;
 
-    uint64_t p99;
-    uint64_t p95;
-    uint64_t p90;
+    double stddev;
+    double variance;
 
     timers::time_units units;
 
     void print(bool format, FILE * outfile = stderr);
 
-    void print_csv(FILE * outfile);
-    void print_hr(FILE * outfile);
+    void print_csv(FILE * outfile = stderr);
+    void print_hr(FILE * outfile = stderr);
 
-    void get_stats(uint64_t * data, uint32_t n);
-    void get_stats(std::vector<uint64_t> & data);
+    void get_stats(uint64_t *         data,
+                   uint32_t           n,
+                   timers::time_units _units = timers::time_units::NSEC);
+    void get_stats(std::vector<uint64_t> & data,
+                   timers::time_units      _units = timers::time_units::NSEC);
 
-    void sorted_array_to_stats(uint64_t * data, uint32_t n);
+    void get_stats(double *           data,
+                   uint32_t           n,
+                   timers::time_units _units = timers::time_units::NSEC);
+    void get_stats(std::vector<double> & data,
+                   timers::time_units    _units = timers::time_units::NSEC);
+
+    void sorted_array_to_stats(
+        double *           data,
+        uint32_t           n,
+        timers::time_units _units = timers::time_units::NSEC);
 };
 
 }  // namespace stats

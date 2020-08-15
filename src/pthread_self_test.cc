@@ -29,13 +29,13 @@ tlv_test(void * targ) {
     timers::gettime(timers::ELAPSE, &start_ts);
     
     for (uint32_t i = 0; i < ltest_size; ++i) {
-        volatile uint64_t sink = tlv_rand;
+        //        volatile uint64_t sink = tlv_rand;
     }
     timers::gettime(timers::ELAPSE, &end_ts);
     __atomic_fetch_add(&total_nsec,
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
-
+    (void)(targ);
     return NULL;
 }
 
@@ -54,6 +54,7 @@ pthread_self_test(void * targ) {
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
 
+    (void)(targ);
     return NULL;
 }
 

@@ -1,6 +1,10 @@
 #ifndef _RSEQ_ASM_DEFS_H_
 #define _RSEQ_ASM_DEFS_H_
 
+#include <misc/macro_helper.h>
+
+// clang-format off
+
 // label 1 -> begin criical section (include cpu comparison)
 // label 2 -> end critical section
 // label 3 -> rseq info strcut
@@ -46,15 +50,14 @@
     ".popsection\n\t"                               // end section
 */
 
-#define RSEQ_PREP_CS_DEF()                                                     \
-    //    "leaq 3b (%%rip), 8(%[rseq_abi])\n\t"
-    "leaq 3b (%%rip), %fs:__rseq_abi@tpoff+8\n\t"
-    "1:\n\t"
+//   "leaq 3b (%%rip), (%%fs:__rseq_abi@tpoff+8)\n\t"           
+#define RSEQ_PREP_CS_DEF(TEMP_REGISTER)                                        \
+    "leaq 3b (%%rip), " V_TO_STR(TEMP_REGISTER) "\n\t"                         \
+    "movq " V_TO_STR(TEMP_REGISTER) ", 8(%[rseq_abi])\n\t"              \
 
 /*
     "leaq 3b (%%rip), %%rax\n\t"        // get set for rseq_info struct
     "movq %%rax, 8(%[rseq_abi])\n\t"    // store in ptr field in __rseq_abi
-    "1:\n\t"                            // start critical section label
 */
 
 #define RSEQ_CMP_CUR_VS_START_CPUS()                                           \
@@ -119,4 +122,5 @@ foo(..., uint32_t start_cpu)
     #endif
 */
 
+// clang-format-on    
 #endif

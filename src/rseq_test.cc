@@ -10,6 +10,14 @@
 
 #include <assert.h>
 
+#define VDIF  8
+#define liter 8
+
+#define BITWISE_FUNC  do_restarting_xor
+#define ACQ_LOCK_FUNC do_restarting_acquire_lock
+#define BITSET_FUNC   do_restarting_set_bit
+#define BITUNSET_FUNC do_restarting_unset_bit
+#define IDXSET_FUNC   do_restarting_set_rand_idx
 
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -19,107 +27,431 @@ uint32_t test_size = (1 << 20);
 uint32_t nthread   = (32);
 uint32_t trials    = 1;
 
+int64_t  expected   = 0;
 uint64_t total_nsec = 0;
+uint64_t total_sum  = 0;
 
-uint64_t          true_sum = 0;
-__thread uint32_t sum      = 0;
+__thread uint32_t sum = 0;
 
 
-
-#define VDIF  8
-#define liter 1
 pthread_barrier_t b;
 
 uint32_t inline __attribute__((always_inline))
-do_set(uint64_t * v, const uint32_t start_cpu) {
+do_restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
             const uint32_t ret = restarting_set_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < 64, 1)) {
+            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
                 return ret;
             }
-            else if (__builtin_expect(ret == 65, 0)) {
-                return 65;
+            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+                return _RSEQ_SET_IDX_MIGRATED;
             }
         }
     }
-    return 64;
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
 }
 
 uint32_t inline __attribute__((always_inline))
-do_set2(uint64_t * v, const uint32_t start_cpu) {
+do_restarting_fast_abort_set_idx(uint64_t * const v, const uint32_t start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
             const uint32_t ret =
-                restarting_set_idx_fast_abort(v + _i, start_cpu);
-            if (__builtin_expect(ret < 64, 1)) {
+                restarting_fast_abort_set_idx(v + _i, start_cpu);
+            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
                 return ret;
             }
-            else if (__builtin_expect(ret == 65, 0)) {
-                return 65;
+            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+                return _RSEQ_SET_IDX_MIGRATED;
             }
         }
     }
-    return 64;
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
 }
 
 uint32_t inline __attribute__((always_inline))
-do_set3(uint64_t * v, const uint32_t start_cpu) {
+do_restarting_set_rand_idx(uint64_t * const v, const uint32_t start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
             const uint32_t ret = restarting_set_rand_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < 64, 1)) {
+            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
                 return ret;
             }
-            else if (__builtin_expect(ret == 65, 0)) {
-                return 65;
+            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+                return _RSEQ_SET_IDX_MIGRATED;
             }
         }
     }
-    return 64;
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
 }
 
 
 uint32_t inline __attribute__((always_inline))
-do_set4(uint64_t * v, const uint32_t start_cpu) {
+do_restarting_fast_abort_set_rand_idx(uint64_t * const v,
+                                      const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
             const uint32_t ret =
-                restarting_set_rand_idx_fast_abort(v + _i, start_cpu);
-            if (__builtin_expect(ret < 64, 1)) {
+                restarting_fast_abort_set_rand_idx(v + _i, start_cpu);
+            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
                 return ret;
             }
-            else if (__builtin_expect(ret == 65, 0)) {
-                return 65;
+            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+                return _RSEQ_SET_IDX_MIGRATED;
             }
         }
     }
-    return 64;
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_reclaim_free_slabs(uint64_t * const v,
+                                 uint64_t * const f,
+                                 const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] == 0 && f[_i]) {
+            const uint64_t ret =
+                restarting_reclaim_free_slabs(v + _i, f, start_cpu);
+            if (__builtin_expect(ret != 0, 1)) {
+                __atomic_fetch_xor(f + _i, ret, __ATOMIC_RELAXED);
+                return _RSEQ_SUCCESS;
+            }
+            else {
+                return _RSEQ_SET_IDX_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_fast_abort_reclaim_free_slabs(uint64_t * const v,
+                                            uint64_t * const f,
+                                            const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] == 0 && f[_i]) {
+            const uint64_t ret =
+                restarting_reclaim_free_slabs(v + _i, f, start_cpu);
+            if (__builtin_expect(ret != 0, 1)) {
+                __atomic_fetch_xor(f + _i, ret, __ATOMIC_RELAXED);
+                return _RSEQ_SUCCESS;
+            }
+            else {
+                return _RSEQ_SET_IDX_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_set_bit(uint64_t * const v,
+                      const uint32_t   bit,
+                      const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] != (~(0UL))) {
+            const uint32_t ret = restarting_set_bit(v + _i, bit, start_cpu);
+            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
+                return ret;
+            }
+            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
+                return _RSEQ_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_goto_set_bit(uint64_t * const v,
+                           const uint32_t   bit,
+                           const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] != (~(0UL))) {
+            const uint32_t ret =
+                restarting_goto_set_bit(v + _i, bit, start_cpu);
+            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
+                return ret;
+            }
+            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
+                return _RSEQ_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_unset_bit(uint64_t * const v,
+                        const uint32_t   bit,
+                        const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i]) {
+            const uint32_t ret = restarting_unset_bit(v + _i, bit, start_cpu);
+            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
+                return ret;
+            }
+            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
+                return _RSEQ_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
 }
 
 
 uint32_t inline __attribute__((always_inline))
-do_normal_set(uint64_t * v, const uint32_t start_cpu) {
+do_restarting_goto_unset_bit(uint64_t * const v,
+                             const uint32_t   bit,
+                             const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t idx = _tzcnt_u64(~(v[_i]));
-            if (__builtin_expect(idx < 64, 1)) {
-                if (__builtin_expect(
-                        or_if_unset(v + _i, ((1UL) << idx), start_cpu),
-                        0)) {
-                    return 65;
-                }
-                return idx;
+        if (v[_i]) {
+            const uint32_t ret =
+                restarting_goto_unset_bit(v + _i, bit, start_cpu);
+            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
+                return ret;
+            }
+            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
+                return _RSEQ_MIGRATED;
             }
         }
     }
-    return 64;
+    return _RSEQ_OTHER_FAILURE;
+}
+
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_goto_xor(uint64_t * const v,
+                       const uint64_t   mask,
+                       const uint32_t   start_cpu) {
+    return restarting_goto_xor(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_xor(uint64_t * const v,
+                  const uint64_t   mask,
+                  const uint32_t   start_cpu) {
+    return restarting_xor(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_goto_or(uint64_t * const v,
+                      const uint64_t   mask,
+                      const uint32_t   start_cpu) {
+    return restarting_goto_or(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_or(uint64_t * const v,
+                 const uint64_t   mask,
+                 const uint32_t   start_cpu) {
+    return restarting_or(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_goto_and(uint64_t * const v,
+                       const uint64_t   mask,
+                       const uint32_t   start_cpu) {
+    return restarting_goto_and(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_and(uint64_t * const v,
+                  const uint64_t   mask,
+                  const uint32_t   start_cpu) {
+    return restarting_and(v, mask, start_cpu);
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_goto_acquire_lock(uint64_t * const v, const uint32_t start_cpu) {
+    if (*v == 0) {
+        return restarting_goto_acquire_lock(v, start_cpu);
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_acquire_lock(uint64_t * const v, const uint32_t start_cpu) {
+    if (*v == 0) {
+        return restarting_acquire_lock(v, start_cpu);
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+// this is really just a performance test
+void *
+restarting_bitwise_ops_test(void * targ) {
+    expected   = -1;
+    sum        = 0;
+    total_sum  = 0;
+    total_nsec = 0;
+    init_thread();
+    uint64_t * v = (uint64_t *)targ;
+
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        uint32_t ret;
+        do {
+            const uint32_t start_cpu = get_start_cpu();
+            ret = BITWISE_FUNC(v + VDIF * start_cpu, i, start_cpu);
+        } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
+    }
+
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+    return NULL;
+}
+
+
+void *
+restarting_acq_lock_test(void * targ) {
+    expected   = test_size * nthread;
+    total_sum  = 0;
+    total_nsec = 0;
+    init_thread();
+    uint64_t * v        = (uint64_t *)targ;
+    uint64_t * counters = v + NPROCS * VDIF;
+
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        volatile uint32_t ret;
+        do {
+            const uint32_t start_cpu = get_start_cpu();
+            do {
+                ret = ACQ_LOCK_FUNC(v + VDIF * start_cpu, start_cpu);
+                if (ret == _RSEQ_SUCCESS) {
+                    ++counters[VDIF * start_cpu];
+                    v[VDIF * start_cpu] = 0;
+                }
+            } while (ret == _RSEQ_OTHER_FAILURE);
+        } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
+    }
+
+
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    uint64_t local_sum = 0;
+    for (uint32_t i = 0; i < NPROCS; ++i) {
+        local_sum += counters[VDIF * i];
+    }
+    // this is atomic on x86_64 (either way they should all compute the same
+    // value)
+    total_sum = local_sum;
+    return NULL;
+}
+
+
+void *
+restarting_set_bit_test(void * targ) {
+    const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
+    if (test_size < 64) {
+        errv_print(
+            "Test size < 64. It is possible to fail asserts w/o indicating a "
+            "bug\n\t");
+    }
+    expected =
+        cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
+    sum        = 0;
+    total_sum  = 0;
+    total_nsec = 0;
+    init_thread();
+    uint64_t * v = (uint64_t *)targ;
+
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        uint32_t ret;
+        do {
+            const uint32_t start_cpu = get_start_cpu();
+            // if unset test v = -1
+            ret = BITSET_FUNC(v + VDIF * start_cpu, i % 64, start_cpu);
+            if (ret == _RSEQ_SUCCESS) {
+                sum++;
+            }
+        } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
+    }
+
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
+    return NULL;
+}
+
+
+void *
+restarting_unset_bit_test(void * targ) {
+    const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
+    if (test_size < 64) {
+        errv_print(
+            "Test size < 64. It is possible to fail asserts w/o indicating a "
+            "bug\n\t");
+    }
+    expected =
+        cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
+    sum        = 0;
+    total_sum  = 0;
+    total_nsec = 0;
+    init_thread();
+    uint64_t * v = (uint64_t *)targ;
+    for(uint32_t i = 0; i < 2 * VDIF * NPROCS; ++i) {
+        v[i] = (~(0UL));
+    }
+
+    const uint32_t  ltest_size = test_size;
+    struct timespec start_ts, end_ts;
+    pthread_barrier_wait(&b);
+    timers::gettime(timers::ELAPSE, &start_ts);
+    for (uint32_t i = 0; i < ltest_size; ++i) {
+        uint32_t ret;
+        do {
+            const uint32_t start_cpu = get_start_cpu();
+            // if unset test v = -1
+            ret = BITUNSET_FUNC(v + VDIF * start_cpu, i % 64, start_cpu);
+            if (ret == _RSEQ_SUCCESS) {
+                sum++;
+            }
+        } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
+    }
+
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
+    return NULL;
 }
 
 
 void *
 restarting_set_idx_test(void * targ) {
-    true_sum   = 0;
+    _tlv_rand = rand() % 64;
+    const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
+    if (test_size < 64) {
+        errv_print(
+            "Test size < 64. It is possible to fail asserts w/o indicating a "
+            "bug\n\t");
+    }
+    expected =
+        cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
+    sum        = 0;
+    total_sum  = 0;
     total_nsec = 0;
     init_thread();
     uint64_t * v = (uint64_t *)targ;
@@ -132,134 +464,35 @@ restarting_set_idx_test(void * targ) {
         uint32_t ret;
         do {
             const uint32_t start_cpu = get_start_cpu();
-            ret                      = do_set(v + VDIF * start_cpu, start_cpu);
-        } while (__builtin_expect(ret == 65, 0));
-        sum += __builtin_expect(ret < 64, 1) ? 1 : 0;
+            // if unset test v = -1
+            ret = IDXSET_FUNC(v + VDIF * start_cpu, start_cpu);
+            if (ret < _RSEQ_SET_IDX_OTHER_FAILURE) {
+                sum++;
+            }
+        } while (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0));
     }
+
     timers::gettime(timers::ELAPSE, &end_ts);
     __atomic_fetch_add(&total_nsec,
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
 
-    __atomic_fetch_add(&true_sum, sum, __ATOMIC_RELAXED);
+    __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
     return NULL;
 }
 
-void *
-restarting_set_idx_test4(void * targ) {
-    true_sum   = 0;
-    total_nsec = 0;
-    init_thread();
-    uint64_t * v = (uint64_t *)targ;
+#define N_FUNCS 5
+void * (*test_funcs[N_FUNCS])(void *) = { &restarting_bitwise_ops_test,
+                                          &restarting_acq_lock_test,
+                                          &restarting_set_bit_test,
+                                          &restarting_unset_bit_test,
+                                          &restarting_set_idx_test };
 
-    const uint32_t  ltest_size = test_size;
-    struct timespec start_ts, end_ts;
-    pthread_barrier_wait(&b);
-    timers::gettime(timers::ELAPSE, &start_ts);
-    for (uint32_t i = 0; i < ltest_size; ++i) {
-        uint32_t ret;
-        do {
-            const uint32_t start_cpu = get_start_cpu();
-            ret                      = do_set4(v + VDIF * start_cpu, start_cpu);
-        } while (__builtin_expect(ret == 65, 0));
-        sum += __builtin_expect(ret < 64, 1) ? 1 : 0;
-    }
-    timers::gettime(timers::ELAPSE, &end_ts);
-    __atomic_fetch_add(&total_nsec,
-                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
-                       __ATOMIC_RELAXED);
-
-    __atomic_fetch_add(&true_sum, sum, __ATOMIC_RELAXED);
-    return NULL;
-}
-
-void *
-restarting_set_idx_test2(void * targ) {
-    true_sum   = 0;
-    total_nsec = 0;
-    _tlv_rand  = rand() % 64;
-    init_thread();
-    uint64_t * v = (uint64_t *)targ;
-
-    const uint32_t  ltest_size = test_size;
-    struct timespec start_ts, end_ts;
-    pthread_barrier_wait(&b);
-    timers::gettime(timers::ELAPSE, &start_ts);
-    for (uint32_t i = 0; i < ltest_size; ++i) {
-        uint32_t ret;
-        do {
-            const uint32_t start_cpu = get_start_cpu();
-            ret                      = do_set2(v + VDIF * start_cpu, start_cpu);
-        } while (__builtin_expect(ret == 65, 0));
-        sum += __builtin_expect(ret < 64, 1) ? 1 : 0;
-    }
-    timers::gettime(timers::ELAPSE, &end_ts);
-    __atomic_fetch_add(&total_nsec,
-                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
-                       __ATOMIC_RELAXED);
-
-    __atomic_fetch_add(&true_sum, sum, __ATOMIC_RELAXED);
-    return NULL;
-}
-
-
-void *
-restarting_set_idx_test3(void * targ) {
-    true_sum   = 0;
-    total_nsec = 0;
-    _tlv_rand   = rand() % 64;
-    init_thread();
-    uint64_t * v = (uint64_t *)targ;
-
-    const uint32_t  ltest_size = test_size;
-    struct timespec start_ts, end_ts;
-    pthread_barrier_wait(&b);
-    timers::gettime(timers::ELAPSE, &start_ts);
-    for (uint32_t i = 0; i < ltest_size; ++i) {
-        uint32_t ret;
-        do {
-            const uint32_t start_cpu = get_start_cpu();
-            ret                      = do_set3(v + VDIF * start_cpu, start_cpu);
-        } while (__builtin_expect(ret == 65, 0));
-        sum += __builtin_expect(ret < 64, 1) ? 1 : 0;
-    }
-    timers::gettime(timers::ELAPSE, &end_ts);
-    __atomic_fetch_add(&total_nsec,
-                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
-                       __ATOMIC_RELAXED);
-
-    __atomic_fetch_add(&true_sum, sum, __ATOMIC_RELAXED);
-    return NULL;
-}
-
-
-void *
-normal_set_idx_test(void * targ) {
-    true_sum   = 0;
-    total_nsec = 0;
-    init_thread();
-    uint64_t * v = (uint64_t *)targ;
-
-    const uint32_t  ltest_size = test_size;
-    struct timespec start_ts, end_ts;
-    pthread_barrier_wait(&b);
-    timers::gettime(timers::ELAPSE, &start_ts);
-    for (uint32_t i = 0; i < ltest_size; ++i) {
-        uint32_t ret;
-        do {
-            const uint32_t start_cpu = get_start_cpu();
-            ret = do_normal_set(v + start_cpu * VDIF, start_cpu);
-        } while (__builtin_expect(ret == 65, 0));
-        sum += __builtin_expect(ret < 64, 1) ? 1 : 0;
-    }
-    timers::gettime(timers::ELAPSE, &end_ts);
-    __atomic_fetch_add(&total_nsec,
-                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
-                       __ATOMIC_RELAXED);
-
-    __atomic_fetch_add(&true_sum, sum, __ATOMIC_RELAXED);
-    return NULL;
-}
+static const char * test_fnames[N_FUNCS]{ "restarting_bitwise_ops_test",
+                                          "restarting_acq_lock_test",
+                                          "restarting_set_bit_test",
+                                          "restarting_unset_bit_test",
+                                          "restarting_set_idx_test" };
 
 
 int
@@ -273,62 +506,42 @@ main(int argc, char ** argv) {
 
     ERROR_ASSERT(!pthread_barrier_init(&b, NULL, nthread));
 
-    uint64_t * v     = (uint64_t *)aligned_alloc(64, 64 * VDIF);
-    uint64_t * times = (uint64_t *)calloc(trials, sizeof(uint64_t));
-
-    thelp::thelper th;
-    for (uint32_t i = 0; i < trials; i++) {
-        memset(v, 0, 64 * VDIF);
-        if (iter == 0) {
-            th.spawn_n(nthread,
-                       &normal_set_idx_test,
-                       thelp::pin_policy::NONE,
-                       (void *)v,
-                       0);
-        }
-        else if (iter == 1) {
-            th.spawn_n(nthread,
-                       &restarting_set_idx_test,
-                       thelp::pin_policy::NONE,
-                       (void *)v,
-                       0);
-        }
-
-        else if (iter == 2) {
-            th.spawn_n(nthread,
-                       &restarting_set_idx_test2,
-                       thelp::pin_policy::NONE,
-                       (void *)v,
-                       0);
-        }
-        else if (iter == 3) {
-            th.spawn_n(nthread,
-                       &restarting_set_idx_test3,
-                       thelp::pin_policy::NONE,
-                       (void *)v,
-                       0);
-        }
-        else if (iter == 4) {
-            th.spawn_n(nthread,
-                       &restarting_set_idx_test4,
-                       thelp::pin_policy::NONE,
-                       (void *)v,
-                       0);
-        }
-        th.join_all();
-        times[i] = total_nsec / (nthread * test_size);
-        /*        fprintf(stderr, "True Sum: %lu\n", true_sum);
-
-        fprintf(stderr,
-                "[nthread = %d, calls per thread = %d]\n"
-                "nanoseconds per operation  : %.4lf\n",
-                nthread,
-                test_size,
-                ((double)total_nsec) / (nthread * test_size));*/
+    uint64_t * v = (uint64_t *)aligned_alloc(64, 2 * 64 * VDIF);
+    double *   times[N_FUNCS];
+    for (uint32_t i = 0; i < N_FUNCS; ++i) {
+        times[i] = (double *)calloc(trials, sizeof(uint64_t));
     }
 
-    stats::stats_out so;
-    so.get_stats(times, trials);
-    so.units = timers::NSEC;
-    so.print(stats::human_readable);
+    thelp::thelper th;
+
+    for (uint32_t f_idx = 0; f_idx < N_FUNCS; ++f_idx) {
+        for (uint32_t i = 0; i < trials; ++i) {
+            fprintf(stderr, "Testing: %s\n", test_fnames[f_idx]);
+            memset(v, 0, 2 * 8 * VDIF * NPROCS) ;
+
+            th.spawn_n(nthread,
+                       test_funcs[f_idx],
+                       thelp::pin_policy::FIRST_N,
+                       (void *)v,
+                       0);
+            th.join_all();
+            times[f_idx][i] = ((double)total_nsec) / (nthread * test_size);
+            if (expected != (-1)) {
+                fprintf(stderr, "Testing [%lu == %lu]\n", total_sum, expected);
+                assert(total_sum == expected);
+            }
+            total_sum  = 0;
+            total_nsec = 0;
+        }
+    }
+
+    free(v);
+    for (uint32_t i = 0; i < N_FUNCS; ++i) {
+        fprintf(stderr, "\nTimes: %s\n", test_fnames[i]);
+        stats::stats_out so;
+        so.get_stats(times[i], trials);
+        so.units = timers::time_units::NSEC;
+        so.print(stats::human_readable);
+        free(times[i]);
+    }
 }

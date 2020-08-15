@@ -1,6 +1,7 @@
 #include <util/arg.h>
 #include <util/verbosity.h>
 
+#if 0
 uint32_t do_perf_tests = 0;
 uint32_t do_corr_tests = 0;
 uint32_t test_size     = (1 << 20);
@@ -12,16 +13,16 @@ uint64_t          total_nsec      = 0;
 pthread_barrier_t b;
 
 
-#include <timing/thread_helper.h>
-#include <timing/timers.h>
+    #include <timing/thread_helper.h>
+    #include <timing/timers.h>
 
 
-#include <allocator/slab_layout/create_slab_type.h>
-#include <allocator/slab_layout/slab_manager.h>
+    #include <allocator/slab_layout/create_slab_type.h>
+    #include <allocator/slab_layout/slab_manager.h>
 
-#include <allocator/rseq/rseq_base.h>
+    #include <allocator/rseq/rseq_base.h>
 
-#include <optimized/const_math.h>
+    #include <optimized/const_math.h>
 
 //using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
@@ -319,3 +320,6 @@ main(int argc, char ** argv) {
         }
     }
 }
+#endif
+
+int main() {};

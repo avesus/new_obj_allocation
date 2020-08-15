@@ -2,7 +2,7 @@
 #define _MACRO_HELPER_H_
 
 //////////////////////////////////////////////////////////////////////
-/* 
+/*
    This file contains helper macros for using __VA_ARGS__. Currently
    these macros are written so that 20 arguments is the maximum
    allowed. The formats are clear so expanding them to accept more
@@ -13,7 +13,15 @@
 //////////////////////////////////////////////////////////////////////
 
 
-//clang-format off
+// clang-format off
+//////////////////////////////////////////////////////////////////////
+#define PRIMITIVE_CAT(x, y) x ## y
+#define CAT(x, y) PRIMITIVE_CAT(x, y)
+
+#define PRIMITIVE_V_TO_STR(X) #X
+#define V_TO_STR(X) PRIMITIVE_V_TO_STR(X)
+//////////////////////////////////////////////////////////////////////
+
 #define PP_NARG(...) \
          PP_NARG_(__VA_ARGS__,PP_RSEQ_N())
 #define PP_NARG_(...) \
@@ -51,12 +59,6 @@
 //////////////////////////////////////////////////////////////////////
 
 
-
-//////////////////////////////////////////////////////////////////////
-//Helper for all apply/sum macro
-#define PRIMITIVE_CAT(x, y) x ## y
-#define CAT(x, y) PRIMITIVE_CAT(x, y)
-
 //////////////////////////////////////////////////////////////////////
 //Do macro on all args in __VA_ARGS__
 #define APPLY(macro, OP, ...) CAT(APPLY_, PP_NARG(__VA_ARGS__))(macro, __VA_ARGS__)
@@ -81,6 +83,5 @@
 #define APPLY_19(m, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19) m(x1) OP m(x2) OP m(x3) OP m(x4) OP m(x5) OP m(x6) OP m(x7) OP m(x8) OP m(x9) OP m(x10) OP m(x11) OP m(x12) OP m(x13) OP m(x14) OP m(x15) OP m(x16) OP m(x17) OP m(x18) OP m(x19)
 #define APPLY_20(m, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20) m(x1) OP m(x2) OP m(x3) OP m(x4) OP m(x5) OP m(x6) OP m(x7) OP m(x8) OP m(x9) OP m(x10) OP m(x11) OP m(x12) OP m(x13) OP m(x14) OP m(x15) OP m(x16) OP m(x17) OP m(x18) OP m(x19) OP m(x20)
 
-//clang-format on
+// clang-format on
 #endif
-
