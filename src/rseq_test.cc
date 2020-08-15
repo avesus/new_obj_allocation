@@ -11,14 +11,13 @@
 #include <assert.h>
 
 #define VDIF  8
-#define liter 8
+#define liter 2
 
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 #define BITSET_FUNC   do_restarting_set_bit
 #define BITUNSET_FUNC do_restarting_unset_bit
-#define IDXSET_FUNC   do_restarting_set_rand_idx
-
+#define IDXSET_FUNC   do_restarting_const_set_rand_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
 // conditions / performance
@@ -103,6 +102,23 @@ do_restarting_fast_abort_set_rand_idx(uint64_t * const v,
     }
     return _RSEQ_SET_IDX_OTHER_FAILURE;
 }
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_const_set_rand_idx(uint64_t * const v, const uint32_t start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] != (~(0UL))) {
+            const uint32_t ret = restarting_const_set_rand_idx(v + _i, start_cpu);
+            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
+                return ret;
+            }
+            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+                return _RSEQ_SET_IDX_MIGRATED;
+            }
+        }
+    }
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
+}
+
 
 uint32_t inline __attribute__((always_inline))
 do_restarting_reclaim_free_slabs(uint64_t * const v,
@@ -341,6 +357,7 @@ restarting_acq_lock_test(void * targ) {
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
 
+    pthread_barrier_wait(&b);
     uint64_t local_sum = 0;
     for (uint32_t i = 0; i < NPROCS; ++i) {
         local_sum += counters[VDIF * i];
@@ -354,14 +371,9 @@ restarting_acq_lock_test(void * targ) {
 
 void *
 restarting_set_bit_test(void * targ) {
-    const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
-    if (test_size < 64) {
-        errv_print(
-            "Test size < 64. It is possible to fail asserts w/o indicating a "
-            "bug\n\t");
-    }
-    expected =
-        cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
+
+
+
     sum        = 0;
     total_sum  = 0;
     total_nsec = 0;
@@ -390,20 +402,20 @@ restarting_set_bit_test(void * targ) {
                        __ATOMIC_RELAXED);
 
     __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
+    pthread_barrier_wait(&b);
+    uint64_t local_sum = 0;
+    for(uint32_t i = 0; i < NPROCS * VDIF; ++i) {
+        local_sum += bits::bitcount<uint64_t>(v[i]);
+    }
+    expected = local_sum;
     return NULL;
 }
 
 
 void *
 restarting_unset_bit_test(void * targ) {
-    const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
-    if (test_size < 64) {
-        errv_print(
-            "Test size < 64. It is possible to fail asserts w/o indicating a "
-            "bug\n\t");
-    }
-    expected =
-        cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
+
+
     sum        = 0;
     total_sum  = 0;
     total_nsec = 0;
@@ -435,6 +447,13 @@ restarting_unset_bit_test(void * targ) {
                        __ATOMIC_RELAXED);
 
     __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
+
+        pthread_barrier_wait(&b);
+    uint64_t local_sum = 0;
+    for(uint32_t i = 0; i < NPROCS * VDIF; ++i) {
+        local_sum += 64 - bits::bitcount<uint64_t>(v[i]);
+    }
+    expected = local_sum;
     return NULL;
 }
 
@@ -443,11 +462,6 @@ void *
 restarting_set_idx_test(void * targ) {
     _tlv_rand = rand() % 64;
     const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
-    if (test_size < 64) {
-        errv_print(
-            "Test size < 64. It is possible to fail asserts w/o indicating a "
-            "bug\n\t");
-    }
     expected =
         cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
     sum        = 0;
@@ -516,7 +530,7 @@ main(int argc, char ** argv) {
 
     for (uint32_t f_idx = 0; f_idx < N_FUNCS; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
-            fprintf(stderr, "Testing: %s\n", test_fnames[f_idx]);
+            fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
             memset(v, 0, 2 * 8 * VDIF * NPROCS) ;
 
             th.spawn_n(nthread,
@@ -527,9 +541,17 @@ main(int argc, char ** argv) {
             th.join_all();
             times[f_idx][i] = ((double)total_nsec) / (nthread * test_size);
             if (expected != (-1)) {
-                fprintf(stderr, "Testing [%lu == %lu]\n", total_sum, expected);
-                assert(total_sum == expected);
+                if((uint64_t)expected != total_sum) {
+                    fprintf(stderr, "ERROR [%lu != %lu]\n", total_sum, expected);
+                }
+                else {
+                    fprintf(stderr, "PASSED\n");
+                }
             }
+            else {
+                fprintf(stderr, "PASSED\n");
+            }
+            
             total_sum  = 0;
             total_nsec = 0;
         }

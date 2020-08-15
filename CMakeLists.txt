@@ -4,7 +4,7 @@ project(lock-free-parallel-hashing CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-O3 -ggdb -Wall -Wextra -Wno-unused-function -march=native -mtune=native)
+add_compile_options(-O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native)
 link_libraries("-lpthread")
 
 string ( REPLACE "/" "\/" remove_path_regex ${CMAKE_CURRENT_SOURCE_DIR} + "/")
