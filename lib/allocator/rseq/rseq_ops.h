@@ -528,9 +528,9 @@ ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit(uint64_t * const v,
 
 
 uint32_t NEVER_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_hard(uint64_t * const v,
-                                                    const uint64_t   bit,
-                                                    const uint32_t start_cpu) {
+ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_hard3(uint64_t * const v,
+                                                     const uint64_t   bit,
+                                                     const uint32_t start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
     uint64_t temp_v;
@@ -579,6 +579,168 @@ ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_hard(uint64_t * const v,
     return _RSEQ_SUCCESS;
 abort:
     return _RSEQ_MIGRATED;
+}
+
+uint32_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_hard2(uint64_t * const v,
+                                                     const uint64_t   bit,
+                                                     const uint32_t start_cpu) {
+
+#pragma GCC diagnostic ignored "-Wuninitialized"
+    uint64_t temp_v;
+#pragma GCC diagnostic push
+
+    // clang-format off
+    asm volatile goto(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // start critical section
+        "1:\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz %l[abort]\n\t"
+
+        // temp_v = *v;
+        "movq (%[v]), %[temp_v]\n\t"
+
+        // temp_v |= 1 << bit
+        "btsq %[bit], %[temp_v]\n\t"
+        
+        // commit 
+        "movq %[temp_v], (%[v])\n\t"
+        
+        "2:\n\t"
+        // end critical section
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        : 
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ temp_v] "r" (temp_v),
+          [ v ] "g"(v)
+        : "memory", "cc"
+        : abort);
+    // clang-format on
+
+    return _RSEQ_SUCCESS;
+abort:
+    return _RSEQ_MIGRATED;
+}
+
+uint32_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_hard(uint64_t * const v,
+                                                    const uint64_t   bit,
+                                                    const uint32_t start_cpu) {
+
+#pragma GCC diagnostic ignored "-Wuninitialized"
+    uint64_t temp_v;
+#pragma GCC diagnostic push
+
+    // clang-format off
+    asm volatile goto(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // prep to avoid repeating this on preemption
+        "movq $1, %[temp_v]\n\t"
+        "shlx %[bit], %[temp_v], %[temp_v]\n\t"
+        
+        // start critical section
+        "1:\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz %l[abort]\n\t"
+        
+        // commit 
+        "orq %[temp_v], (%[v])\n\t"
+        
+        "2:\n\t"
+        // end critical section
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        : 
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ temp_v] "r" (temp_v),
+          [ v ] "g"(v)
+        : "memory", "cc"
+        : abort);
+    // clang-format on
+
+    return _RSEQ_SUCCESS;
+abort:
+    return _RSEQ_MIGRATED;
+}
+
+
+uint32_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE)
+    restarting_set_bit_hard_ret(uint64_t * const v,
+                                const uint64_t   bit,
+                                const uint32_t   start_cpu) {
+
+    uint64_t temp_v;
+    register uint32_t ret asm("rax");
+
+    // clang-format off
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // start critical section
+        "1:\n\t"
+
+        "mov $" V_TO_STR(_RSEQ_MIGRATED) ", %[ret]\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // temp_v = *v;
+        "movq (%[v]), %[temp_v]\n\t"
+
+        "xorl %[ret], %[ret]\n\t"
+
+        "testq %[temp_v], %[temp_v]\n\t"
+        "setz %%al\n\t"
+
+        // temp_v |= 1 << bit
+        "btsq %[bit], %[temp_v]\n\t"
+        
+        // commit 
+        "movq %[temp_v], (%[v])\n\t"
+        
+        "2:\n\t"
+        // end critical section
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        : [ ret ] "+r" (ret)
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ temp_v ] "r" (temp_v),
+          [ v ] "g"(v)
+        : "memory", "cc");
+    // clang-format on
+
+    return ret;
 }
 
 
@@ -703,9 +865,9 @@ ALIGN_ATTR(CACHE_LINE_SIZE) restarting_unset_bit(uint64_t * const v,
 
 uint32_t NEVER_INLINE
 ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_unset_bit_hard(uint64_t * const v,
-                              const uint64_t   bit,
-                              const uint32_t   start_cpu) {
+    restarting_unset_bit_hard2(uint64_t * const v,
+                               const uint64_t   bit,
+                               const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
     uint64_t temp_v;
@@ -749,6 +911,160 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
           [ temp_v] "r" (temp_v),
           [ v ] "g"(v)
         : "memory", "cc"
+        : abort);
+    // clang-format on
+
+    return _RSEQ_SUCCESS;
+abort:
+    return _RSEQ_MIGRATED;
+}
+
+uint32_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE)
+    restarting_unset_bit_hard(uint64_t * const v,
+                              const uint64_t   bit,
+                              const uint32_t   start_cpu) {
+
+#pragma GCC diagnostic ignored "-Wuninitialized"
+    uint64_t temp_v;
+#pragma GCC diagnostic push
+
+    // clang-format off
+    asm volatile goto(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // start critical section
+        "1:\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz %l[abort]\n\t"
+
+        // temp_v = *v;
+        "movq (%[v]), %[temp_v]\n\t"
+
+        // temp_v |= 1 << bit
+        "btrq %[bit], %[temp_v]\n\t"
+        
+        // commit 
+        "movq %[temp_v], (%[v])\n\t"
+
+        // end critical section
+        "2:\n\t"  
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        :
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ temp_v] "r" (temp_v),
+          [ v ] "g"(v)
+        : "memory", "cc"
+        : abort);
+    // clang-format on
+
+    return _RSEQ_SUCCESS;
+abort:
+    return _RSEQ_MIGRATED;
+}
+
+
+uint64_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE)
+    restarting_unset_bit_hard_ret(uint64_t * const v,
+                                  const uint64_t   bit,
+                                  const uint32_t   start_cpu) {
+
+    register uint64_t temp_v asm("rax");
+
+    // clang-format off
+    asm volatile (
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // start critical section
+        "1:\n\t"
+
+        // in this case 0 return means migrated
+        "xorq %[temp_v], %[temp_v]\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // temp_v = *v;
+        "movq (%[v]), %[temp_v]\n\t"
+
+        // temp_v ^= 1 << bit
+        "btrq %[bit], %[temp_v]\n\t"
+        
+        // commit 
+        "movq %[temp_v], (%[v])\n\t"
+
+        // end critical section
+        "2:\n\t"  
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        : [ temp_v] "+r" (temp_v)
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ v ] "g"(v)
+        : "memory", "cc");
+
+    // clang-format on
+
+    return temp_v;
+}
+
+
+uint32_t NEVER_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE)
+    restarting_unset_bit_hard3(uint64_t * const v,
+                               const uint64_t   bit,
+                               const uint32_t   start_cpu) {
+
+
+    // clang-format off
+    asm volatile goto(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%%rcx)
+
+        // start critical section
+        "1:\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz %l[abort]\n\t"
+
+        "movq %[bit], %%rcx\n\t"
+        "movq $-2, %[bit]\n\t"
+        "rolq %%cl, %[bit]\n\t"
+        "andq %[bit], (%[v])\n\t"
+
+        // end critical section
+        "2:\n\t"  
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        :
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r"(bit),
+          [ v ] "g"(v)
+        : "memory", "cc", "rcx"
         : abort);
     // clang-format on
 

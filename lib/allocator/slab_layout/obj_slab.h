@@ -37,35 +37,29 @@ struct slab {
 
     slab() = default;
 
-    void
-    _optimistic_free(T * const addr, const uint32_t start_cpu) {
+
+    uint32_t
+    _free(void * const parent_addr, T * const addr) {
         IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&obj_arr[0])));
+
         const uint64_t pos_idx =
             (((uint64_t)addr) - ((uint64_t)(&obj_arr[0]))) / sizeof(T);
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
-        if (BRANCH_UNLIKELY(
-                restarting_unset_bit_hard(available_slots + (pos_idx / 64),
-                                          pos_idx,
-                                          start_cpu))) {
+        // if 0 going into this tell others to set bit
+        if (freed_slots[pos_idx / 64] == 0) {
 
-            // this is not SUPER high contention as with super slabs so not
-            // worth it to wrap with if statement
+            // prefetch parent (the lock instruction should take enough time
+            // that this will actually hide some latency)
+            PREFETCH_W(parent_addr);
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+            return 1;
         }
-    }
 
-
-    void
-    _free(T * const addr) {
-        IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&obj_arr[0])));
-
-        const uint64_t pos_idx =
-            (((uint64_t)addr) - ((uint64_t)(&obj_arr[0]))) / sizeof(T);
-
-        IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
+        // otherwise set bit and tell others not to set there own
         atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+        return 0;
     }
 
     uint64_t
@@ -88,6 +82,7 @@ struct slab {
             // this will be corrected by first free
             return FAILED_VEC_FULL;
         }
+
         const uint32_t acq_lock_ret =
             restarting_acquire_lock(&freed_slots_lock, start_cpu);
         if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_MIGRATED)) {
@@ -96,6 +91,8 @@ struct slab {
         else if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_OTHER_FAILURE)) {
             return FAILED_VEC_FULL;
         }
+        // preemptively start invalidating other cores cache line
+        PREFETCH_W(freed_slots);
 
 
         for (uint32_t i = 0; i < nvec; ++i) {

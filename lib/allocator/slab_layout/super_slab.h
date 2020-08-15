@@ -36,15 +36,19 @@ struct super_slab {
     static constexpr const uint64_t capacity =
         64 * nvec * inner_slab_t::capacity;
 
-    uint64_t     available_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    uint64_t     freed_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+    uint64_t available_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+
+    // off core freed_slabs (expensive to touch and REALLY expensive to set)
+    uint64_t freed_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
+
     inner_slab_t inner_slabs[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     ;
 
     super_slab() = default;
 
-    void
-    _optimistic_free(T * const addr, const uint32_t start_cpu) {
+
+    uint32_t
+    _free(void * const parent_addr, T * const addr) {
         IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&inner_slabs[0])));
 
         const uint64_t pos_idx =
@@ -53,39 +57,29 @@ struct super_slab {
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
-        (inner_slabs + pos_idx)->_optimistic_free(addr, start_cpu);
-        if (BRANCH_UNLIKELY(restarting_unset_bit_hard(
-                available_slabs + (pos_idx / 64),
-                // do not need to mod pos_idx.
-                // btr instruction does automatically
-                // https://www.felixcloutier.com/x86/bts
-                pos_idx,
-                start_cpu))) {
-
-            if (!(freed_slabs[(pos_idx / 64)] & ((1UL) << (pos_idx % 64)))) {
-                atomic_or(freed_slabs + (pos_idx / 64),
-                          ((1UL) << (pos_idx % 64)));
-            }
+        // final layer prefetch for child (child will prefetch for parent)
+        if constexpr (is_same_template<inner_slab_t, slab<T>>) {
+            PREFETCH_W(&(inner_slabs[pos_idx].freed_slots));
         }
-    }
 
-    void
-    _free(T * const addr) {
-        IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&inner_slabs[0])));
+        // if we don't need to set just return (and tell parent as much)
+        if (!(inner_slabs + pos_idx)->_free((void * const)freed_slabs, addr)) {
+            return 0;
+        }
 
-
-        const uint64_t pos_idx =
-            (((uint64_t)addr) - ((uint64_t)(&inner_slabs[0]))) /
-            sizeof(inner_slab_t);
-
-        IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
-
-
-        (inner_slabs + pos_idx)->_free(addr);
-
-        if (!(freed_slabs[(pos_idx / 64)] & ((1UL) << (pos_idx % 64)))) {
+        // otherwise check if we need to set and if so tell parent they will
+        // need to as well. There is a race condition here in that multiple
+        // children might tell there parent to set but that is only a
+        // performance issue, not a correctness issue (and dealing with that
+        // race condition costs more performance than it gains)
+        // if (!(freed_slabs[(pos_idx / 64)] & ((1UL) << (pos_idx % 64)))) {
+        if (freed_slabs[pos_idx / 64] == 0) {
+            PREFETCH_W(parent_addr);
             atomic_or(freed_slabs + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+            return 1;
         }
+        atomic_or(freed_slabs + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+        return 0;
     }
 
 
@@ -95,20 +89,22 @@ struct super_slab {
             while (1) {
                 while (available_slabs[i] != FULL_ALLOC_VEC) {
                     uint32_t idx;
-                    if constexpr (is_same_template<inner_slab_t, slab<T>>) {
+
+                    // really not sure if this is worth it
+                    if constexpr (0 && is_same_template<inner_slab_t, slab<T>>) {
                         uint64_t lavailable_slabs = available_slabs[i];
-                        lavailable_slabs          = ~lavailable_slabs;
                         lavailable_slabs =
                             (lavailable_slabs >> _tlv_rand) |
                             (lavailable_slabs << (64 - _tlv_rand));
 
-                        idx = (bits::tzcnt<uint64_t>(lavailable_slabs) +
+                        idx = (bits::tzcnt<uint64_t>(~lavailable_slabs) +
                                _tlv_rand) &
                               63;
                     }
                     else {
                         idx = bits::tzcnt<uint64_t>(~available_slabs[i]);
                     }
+
                     // fast path of successful allocation
                     if (BRANCH_LIKELY(idx < 64)) {
                         const uint64_t ret =
@@ -126,15 +122,17 @@ struct super_slab {
                                     _RSEQ_MIGRATED)) {
                                 return FAILED_RSEQ;
                             }
+                            continue;
                         }
                         // inner alloc ret == failed rseq
                         else {
                             return FAILED_RSEQ;
                         }
                     }
+                    break;
                 }
 
-                // available_slabs[i] == full
+                // available_slabs[i] is full
                 if (freed_slabs[i] != EMPTY_FREE_VEC) {
                     const uint64_t reclaimed_slabs =
                         restarting_reclaim_free_slabs(available_slabs + i,
@@ -146,15 +144,14 @@ struct super_slab {
                     // While it will be slow for migrated thread it should not
                     // interfere with other allocators
                     if (BRANCH_LIKELY(reclaimed_slabs)) {
-                        atomic_xor(freed_slabs + i, reclaimed_slabs);
+                        atomic_unset(freed_slabs + i, reclaimed_slabs);
+                        // continue in while(1)
+                        continue;
                     }
-                    // continue in while(1)
-                    continue;
+                    return FAILED_RSEQ;
                 }
-                // this handles the case where available_slabs[i] was seen,
-                // full, but another thread reclaimed free list before the check
-                if (available_slabs[i] == FULL_ALLOC_VEC) {
-                    break;
+                if(available_slabs[i] == FULL_ALLOC_VEC){ 
+                break;
                 }
             }
         }

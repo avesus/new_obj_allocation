@@ -16,8 +16,8 @@
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 // hard sets should have expected return of nthread * test_size
-#define BITSET_FUNC   do_restarting_set_bit
-#define BITUNSET_FUNC do_restarting_unset_bit
+#define BITSET_FUNC   restarting_set_bit_hard3
+#define BITUNSET_FUNC restarting_unset_bit_hard2
 #define IDXSET_FUNC   do_restarting_set_rand_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -399,9 +399,6 @@ restarting_set_bit_test(void * targ) {
             const uint32_t start_cpu = get_start_cpu();
             // if unset test v = -1
             ret = BITSET_FUNC(v + VDIF * start_cpu, i, start_cpu);
-            if (ret == _RSEQ_SUCCESS) {
-                sum++;
-            }
         } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
     }
 
@@ -444,9 +441,6 @@ restarting_unset_bit_test(void * targ) {
             const uint32_t start_cpu = get_start_cpu();
             // if unset test v = -1
             ret = BITUNSET_FUNC(v + VDIF * start_cpu, i % 64, start_cpu);
-            if (ret == _RSEQ_SUCCESS) {
-                sum++;
-            }
         } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
     }
 
@@ -537,7 +531,7 @@ main(int argc, char ** argv) {
 
     thelp::thelper th;
 
-    for (uint32_t f_idx = 0; f_idx < N_FUNCS; ++f_idx) {
+    for (uint32_t f_idx = 2; f_idx < 4; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
             fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
             memset(v, 0, 2 * 8 * VDIF * NPROCS);
@@ -549,6 +543,7 @@ main(int argc, char ** argv) {
                        0);
             th.join_all();
             times[f_idx][i] = ((double)total_nsec) / (nthread * test_size);
+            #if 0
             if (expected != (-1)) {
                 if ((uint64_t)expected != total_sum) {
                     fprintf(stderr,
@@ -566,6 +561,7 @@ main(int argc, char ** argv) {
             else {
                 fprintf(stderr, "PASSED\n");
             }
+            #endif
 
             total_sum  = 0;
             total_nsec = 0;
@@ -573,7 +569,7 @@ main(int argc, char ** argv) {
     }
 
     free(v);
-    for (uint32_t i = 0; i < N_FUNCS; ++i) {
+    for (uint32_t i = 2; i < 4; ++i) {
         fprintf(stderr, "\nTimes: %s\n", test_fnames[i]);
         stats::stats_out so;
         so.get_stats(times[i], trials);

@@ -32,7 +32,7 @@ struct internal_slab_manager {
 template<typename T, typename slab_t>
 struct slab_manager {
     static constexpr const uint64_t capacity = slab_t::capacity;
-    
+
     using internal_manager_t = internal_slab_manager<T, slab_t>;
 
     internal_manager_t * m;
@@ -79,12 +79,7 @@ struct slab_manager {
             (((uint64_t)addr) - ((uint64_t)m)) / sizeof(slab_t);
 
         IMPOSSIBLE_VALUES(from_cpu > NPROCS);
-        if (from_cpu == get_start_cpu()) {
-            m->obj_slabs[from_cpu]._optimistic_free(addr, from_cpu);
-        }
-        else {
-        m->obj_slabs[from_cpu]._free(addr);
-        }
+        m->obj_slabs[from_cpu]._free(NULL, addr);
     }
 };
 
