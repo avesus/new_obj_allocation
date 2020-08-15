@@ -1,7 +1,0 @@
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/rebuild_cache.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/edit_cache.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/slab_test.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/rseq_test.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/pthread_self_test.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/run_gen_sys_header.dir
-/home/noah/programs/new_obj_allocation/build/CMakeFiles/gen_sys_header.dir
