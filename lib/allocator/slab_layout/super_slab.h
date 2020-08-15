@@ -53,10 +53,15 @@ struct super_slab {
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
-        (inner_slabs + pos_idx)->_free(addr);
-        if (BRANCH_UNLIKELY(rseq_and(available_slabs + (pos_idx / 64),
-                                     ~((1UL) << (pos_idx % 64)),
-                                     start_cpu))) {
+        (inner_slabs + pos_idx)->_optimistic_free(addr, start_cpu);
+        if (BRANCH_UNLIKELY(restarting_unset_bit_hard(
+                available_slabs + (pos_idx / 64),
+                // do not need to mod pos_idx.
+                // btr instruction does automatically
+                // https://www.felixcloutier.com/x86/bts
+                pos_idx,
+                start_cpu))) {
+
             if (!(freed_slabs[(pos_idx / 64)] & ((1UL) << (pos_idx % 64)))) {
                 atomic_or(freed_slabs + (pos_idx / 64),
                           ((1UL) << (pos_idx % 64)));
@@ -88,44 +93,69 @@ struct super_slab {
     _allocate(const uint32_t start_cpu) {
         for (uint32_t i = 0; i < nvec; ++i) {
             while (1) {
-                while (BRANCH_LIKELY((available_slabs[i]) != FULL_ALLOC_VEC)) {
+                while (available_slabs[i] != FULL_ALLOC_VEC) {
+                    uint32_t idx;
+                    if constexpr (is_same_template<inner_slab_t, slab<T>>) {
+                        uint64_t lavailable_slabs = available_slabs[i];
+                        lavailable_slabs          = ~lavailable_slabs;
+                        lavailable_slabs =
+                            (lavailable_slabs >> _tlv_rand) |
+                            (lavailable_slabs << (64 - _tlv_rand));
 
-                    const uint32_t idx =
-                        bits::find_first_zero<uint64_t>(available_slabs[i]);
-                    if (BRANCH_UNLIKELY(idx == 64)) {
-                        break;
+                        idx = (bits::tzcnt<uint64_t>(lavailable_slabs) +
+                               _tlv_rand) &
+                              63;
                     }
-                    const uint64_t ret =
-                        (inner_slabs + 64 * i + idx)->_allocate(start_cpu);
-
-                    if (BRANCH_LIKELY(successful(
-                            ret))) {  // fast path of successful allocation
-                        return ret;
+                    else {
+                        idx = bits::tzcnt<uint64_t>(~available_slabs[i]);
                     }
-                    else if (ret) {  // full
-                        if (or_if_unset(available_slabs + i,
-                                        ((1UL) << idx),
-                                        start_cpu)) {
-                                return FAILED_RSEQ;
+                    // fast path of successful allocation
+                    if (BRANCH_LIKELY(idx < 64)) {
+                        const uint64_t ret =
+                            (inner_slabs + 64 * i + idx)->_allocate(start_cpu);
+                        // fast path complete
+                        if (BRANCH_LIKELY(successful(ret))) {
+                            return ret;
                         }
-                        continue;
+                        // branch full try to mark bit as full
+                        else if (ret == FAILED_VEC_FULL) {
+                            if (BRANCH_UNLIKELY(
+                                    restarting_set_bit_hard(available_slabs + i,
+                                                            idx,
+                                                            start_cpu) ==
+                                    _RSEQ_MIGRATED)) {
+                                return FAILED_RSEQ;
+                            }
+                        }
+                        // inner alloc ret == failed rseq
+                        else {
+                            return FAILED_RSEQ;
+                        }
                     }
-                        return FAILED_RSEQ;
                 }
+
+                // available_slabs[i] == full
                 if (freed_slabs[i] != EMPTY_FREE_VEC) {
                     const uint64_t reclaimed_slabs =
-                        try_reclaim_all_free_slabs(available_slabs + i,
-                                                   freed_slabs + i,
-                                                   start_cpu);
+                        restarting_reclaim_free_slabs(available_slabs + i,
+                                                      freed_slabs + i,
+                                                      start_cpu);
+                    // this failing can mean either migration or preemption. we
+                    // are continuing assuming likely case of preemption either
+                    // way. Worst case scenario is read on available slabs.
+                    // While it will be slow for migrated thread it should not
+                    // interfere with other allocators
                     if (BRANCH_LIKELY(reclaimed_slabs)) {
                         atomic_xor(freed_slabs + i, reclaimed_slabs);
-                        continue;
                     }
-                    return FAILED_RSEQ;
+                    // continue in while(1)
+                    continue;
                 }
-                // continues will reset, if we ever faill through to here we
-                // want to stop
-                break;
+                // this handles the case where available_slabs[i] was seen,
+                // full, but another thread reclaimed free list before the check
+                if (available_slabs[i] == FULL_ALLOC_VEC) {
+                    break;
+                }
             }
         }
         return FAILED_VEC_FULL;

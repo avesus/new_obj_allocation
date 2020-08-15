@@ -1,7 +1,6 @@
 #include <util/arg.h>
 #include <util/verbosity.h>
 
-#if 0
 uint32_t do_perf_tests = 0;
 uint32_t do_corr_tests = 0;
 uint32_t test_size     = (1 << 20);
@@ -33,6 +32,7 @@ corr_alloc_test(void * targ) {
     expected_allocs = cmath::min<uint32_t>(test_size * nthread, allocator_t::capacity * cmath::min<uint32_t>(NPROCS, nthread));
     total_allocs    = 0;
     uint64_t sum    = 0;
+    _tlv_rand = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -57,6 +57,7 @@ corr_alloc_then_free_test(void * targ) {
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
+    _tlv_rand = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -85,6 +86,7 @@ corr_batch_alloc_then_free_test(void * targ) {
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
+    _tlv_rand = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -320,6 +322,3 @@ main(int argc, char ** argv) {
         }
     }
 }
-#endif
-
-int main() {};

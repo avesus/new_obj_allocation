@@ -18,7 +18,7 @@ struct empty {};
 template<typename T, uint32_t nvec = 7, typename _T = empty>
 struct slab {
     static constexpr const uint64_t capacity = 64 * nvec;
-    
+
     uint64_t available_slots[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
     // the freed_slots_lock is necesary to prevent a race condition where thread
     // A see available_slots == vec::FULL, get preempted by thread B (on same
@@ -45,9 +45,13 @@ struct slab {
 
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
-        if (BRANCH_UNLIKELY(rseq_xor(available_slots + (pos_idx / 64),
-                                     ((1UL) << (pos_idx % 64)),
-                                     start_cpu))) {
+        if (BRANCH_UNLIKELY(
+                restarting_unset_bit_hard(available_slots + (pos_idx / 64),
+                                          pos_idx,
+                                          start_cpu))) {
+
+            // this is not SUPER high contention as with super slabs so not
+            // worth it to wrap with if statement
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
         }
     }
@@ -70,34 +74,42 @@ struct slab {
             // try allocate
             if (BRANCH_LIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
                 const uint32_t idx =
-                    bits::find_first_zero<uint64_t>(available_slots[i]);
-                if(BRANCH_UNLIKELY(idx == 64)) {
-                    continue;
+                    restarting_set_idx(available_slots + i, start_cpu);
+                if (BRANCH_LIKELY(idx < 64)) {
+                    return ((uint64_t)&obj_arr[64 * i + idx]);
                 }
-                if (BRANCH_UNLIKELY(or_if_unset(available_slots + i,
-                                                ((1UL) << idx),
-                                                start_cpu))) {
+                else if (idx == _RSEQ_SET_IDX_MIGRATED) {
                     return FAILED_RSEQ;
                 }
-                return ((uint64_t)&obj_arr[64 * i + idx]);
             }
         }
-        if (BRANCH_UNLIKELY(acquire_lock(&freed_slots_lock, start_cpu))) {
+
+        if (freed_slots_lock) {
+            // this will be corrected by first free
+            return FAILED_VEC_FULL;
+        }
+        const uint32_t acq_lock_ret =
+            restarting_acquire_lock(&freed_slots_lock, start_cpu);
+        if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_MIGRATED)) {
             return FAILED_RSEQ;
         }
+        else if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_OTHER_FAILURE)) {
+            return FAILED_VEC_FULL;
+        }
+
 
         for (uint32_t i = 0; i < nvec; ++i) {
             if (BRANCH_UNLIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
                 const uint32_t idx =
-                    bits::find_first_zero<uint64_t>(available_slots[i]);
-                if (BRANCH_UNLIKELY(or_if_unset(available_slots + i,
-                                                ((1UL) << idx),
-                                                start_cpu))) {
+                    restarting_set_idx(available_slots + i, start_cpu);
+                if (BRANCH_LIKELY(idx < 64)) {
+                    freed_slots_lock = 0;
+                    return ((uint64_t)&obj_arr[64 * i + idx]);
+                }
+                else if (idx == _RSEQ_SET_IDX_MIGRATED) {
                     freed_slots_lock = 0;
                     return FAILED_RSEQ;
                 }
-                freed_slots_lock = 0;
-                return ((uint64_t)&obj_arr[64 * i + idx]);
             }
             if (freed_slots[i] != EMPTY_FREE_VEC) {
                 const uint64_t reclaimed_slots = freed_slots[i];
@@ -113,5 +125,6 @@ struct slab {
         return FAILED_VEC_FULL;
     }
 };
+
 
 #endif

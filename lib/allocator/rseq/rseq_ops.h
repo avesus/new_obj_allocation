@@ -19,7 +19,7 @@
     https://lore.kernel.org/patchwork/patch/896892/
 */
 
-static __thread uint64_t _tlv_rand;
+__thread uint64_t _tlv_rand;
 
 
 #define _RSEQ_SET_IDX_MIGRATED      65
@@ -189,7 +189,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "movq %[temp_v], %[idx]\n\t"
 
         // we pin tlv_rand to rcx == cl above
-        "rorq %%cl, %[idx]\n\t"
+        "rolq %%cl, %[idx]\n\t"
         "notq %[idx]\n\t"
 
         // idx = tzcnt(idx) (find first one)
@@ -202,10 +202,10 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "and $63, %[idx]\n\t"
         
         // temp_v |= ((1UL) << idx)
-        "btsq %[idx], %[temp_v]\n\t"
+        //"btsq %[idx], %[temp_v]\n\t"
         
         // *v = temp_v
-        "movq %[temp_v], (%[v])\n\t"
+        //"movq %[temp_v], (%[v])\n\t"
 
         // end critical section
         "2:\n\t"
@@ -264,7 +264,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "movq %[temp_v], %[idx]\n\t"
 
         // we pin tlv_rand to rcx == cl above
-        "rorq %%cl, %[idx]\n\t"
+        "rolq %%cl, %[idx]\n\t"
         "notq %[idx]\n\t"
 
         // idx = tzcnt(idx) (find first one)
@@ -322,7 +322,6 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         
         // check if migrated        
         RSEQ_CMP_CUR_VS_START_CPUS()
-        // "cmpl %[start_cpu], %%fs:__rseq_abi@tpoff+4\n\t"
         // if migrated goto 2:
         "jnz 2f\n\t"
 
@@ -380,7 +379,6 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
 
         // check if migrated        
         RSEQ_CMP_CUR_VS_START_CPUS()
-        // "cmpl %[start_cpu], %%fs:__rseq_abi@tpoff+4\n\t"
         // if migrated goto 2:
         "jnz 2f\n\t"
 

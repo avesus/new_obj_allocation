@@ -16,8 +16,8 @@
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 // hard sets should have expected return of nthread * test_size
-#define BITSET_FUNC   do_restarting_set_bit_hard
-#define BITUNSET_FUNC do_restarting_unset_bit_hard
+#define BITSET_FUNC   do_restarting_set_bit
+#define BITUNSET_FUNC do_restarting_unset_bit
 #define IDXSET_FUNC   do_restarting_set_rand_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -398,7 +398,7 @@ restarting_set_bit_test(void * targ) {
         do {
             const uint32_t start_cpu = get_start_cpu();
             // if unset test v = -1
-            ret = BITSET_FUNC(v + VDIF * start_cpu, i % 64, start_cpu);
+            ret = BITSET_FUNC(v + VDIF * start_cpu, i, start_cpu);
             if (ret == _RSEQ_SUCCESS) {
                 sum++;
             }
