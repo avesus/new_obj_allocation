@@ -15,8 +15,9 @@
 
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
-#define BITSET_FUNC   do_restarting_goto_set_bit
-#define BITUNSET_FUNC do_restarting_goto_unset_bit
+// hard sets should have expected return of nthread * test_size
+#define BITSET_FUNC   do_restarting_set_bit_hard
+#define BITUNSET_FUNC do_restarting_unset_bit_hard
 #define IDXSET_FUNC   do_restarting_set_rand_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -163,6 +164,19 @@ do_restarting_set_bit(uint64_t * const v,
 }
 
 uint32_t inline __attribute__((always_inline))
+do_restarting_set_bit_hard(uint64_t * const v,
+                           const uint32_t   bit,
+                           const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i] != (~(0UL))) {
+            return restarting_set_bit_hard(v + _i, bit, start_cpu);
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+
+uint32_t inline __attribute__((always_inline))
 do_restarting_goto_set_bit(uint64_t * const v,
                            const uint32_t   bit,
                            const uint32_t   start_cpu) {
@@ -194,6 +208,18 @@ do_restarting_unset_bit(uint64_t * const v,
             else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
                 return _RSEQ_MIGRATED;
             }
+        }
+    }
+    return _RSEQ_OTHER_FAILURE;
+}
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_unset_bit_hard(uint64_t * const v,
+                             const uint32_t   bit,
+                             const uint32_t   start_cpu) {
+    for (uint32_t _i = 0; _i < liter; ++_i) {
+        if (v[_i]) {
+            return restarting_unset_bit_hard(v + _i, bit, start_cpu);
         }
     }
     return _RSEQ_OTHER_FAILURE;
@@ -357,7 +383,6 @@ void *
 restarting_set_bit_test(void * targ) {
 
 
-
     sum        = 0;
     total_sum  = 0;
     total_nsec = 0;
@@ -388,7 +413,7 @@ restarting_set_bit_test(void * targ) {
     __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
     pthread_barrier_wait(&b);
     uint64_t local_sum = 0;
-    for(uint32_t i = 0; i < NPROCS * VDIF; ++i) {
+    for (uint32_t i = 0; i < NPROCS * VDIF; ++i) {
         local_sum += bits::bitcount<uint64_t>(v[i]);
     }
     expected = local_sum;
@@ -405,7 +430,7 @@ restarting_unset_bit_test(void * targ) {
     total_nsec = 0;
     init_thread();
     uint64_t * v = (uint64_t *)targ;
-    for(uint32_t i = 0; i < 2 * VDIF * NPROCS; ++i) {
+    for (uint32_t i = 0; i < 2 * VDIF * NPROCS; ++i) {
         v[i] = (~(0UL));
     }
 
@@ -432,9 +457,9 @@ restarting_unset_bit_test(void * targ) {
 
     __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
 
-        pthread_barrier_wait(&b);
+    pthread_barrier_wait(&b);
     uint64_t local_sum = 0;
-    for(uint32_t i = 0; i < NPROCS * VDIF; ++i) {
+    for (uint32_t i = 0; i < NPROCS * VDIF; ++i) {
         local_sum += 64 - bits::bitcount<uint64_t>(v[i]);
     }
     expected = local_sum;
@@ -444,7 +469,7 @@ restarting_unset_bit_test(void * targ) {
 
 void *
 restarting_set_idx_test(void * targ) {
-    _tlv_rand = rand() % 64;
+    _tlv_rand                = rand() % 64;
     const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
     expected =
         cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);
@@ -515,7 +540,7 @@ main(int argc, char ** argv) {
     for (uint32_t f_idx = 0; f_idx < N_FUNCS; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
             fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
-            memset(v, 0, 2 * 8 * VDIF * NPROCS) ;
+            memset(v, 0, 2 * 8 * VDIF * NPROCS);
 
             th.spawn_n(nthread,
                        test_funcs[f_idx],
@@ -525,17 +550,23 @@ main(int argc, char ** argv) {
             th.join_all();
             times[f_idx][i] = ((double)total_nsec) / (nthread * test_size);
             if (expected != (-1)) {
-                if((uint64_t)expected != total_sum) {
-                    fprintf(stderr, "ERROR [%lu != %lu]\n", total_sum, expected);
+                if ((uint64_t)expected != total_sum) {
+                    fprintf(stderr,
+                            "ERROR [%lu != %lu]\n",
+                            total_sum,
+                            expected);
                 }
                 else {
-                    fprintf(stderr, "PASSED [%lu == %lu]\n", total_sum, expected);
+                    fprintf(stderr,
+                            "PASSED [%lu == %lu]\n",
+                            total_sum,
+                            expected);
                 }
             }
             else {
                 fprintf(stderr, "PASSED\n");
             }
-            
+
             total_sum  = 0;
             total_nsec = 0;
         }
