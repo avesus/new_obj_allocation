@@ -48,6 +48,7 @@ pthread_self_test(void * targ) {
     
     for (uint32_t i = 0; i < ltest_size; ++i) {
         volatile uint64_t sink = pthread_self();
+        (void)(sink);
     }
     timers::gettime(timers::ELAPSE, &end_ts);
     __atomic_fetch_add(&total_nsec,

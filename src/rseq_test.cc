@@ -15,9 +15,9 @@
 
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
-#define BITSET_FUNC   do_restarting_set_bit
-#define BITUNSET_FUNC do_restarting_unset_bit
-#define IDXSET_FUNC   do_restarting_const_set_rand_idx
+#define BITSET_FUNC   do_restarting_goto_set_bit
+#define BITUNSET_FUNC do_restarting_goto_unset_bit
+#define IDXSET_FUNC   do_restarting_set_rand_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
 // conditions / performance
@@ -92,22 +92,6 @@ do_restarting_fast_abort_set_rand_idx(uint64_t * const v,
         if (v[_i] != (~(0UL))) {
             const uint32_t ret =
                 restarting_fast_abort_set_rand_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_const_set_rand_idx(uint64_t * const v, const uint32_t start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret = restarting_const_set_rand_idx(v + _i, start_cpu);
             if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
                 return ret;
             }
@@ -545,7 +529,7 @@ main(int argc, char ** argv) {
                     fprintf(stderr, "ERROR [%lu != %lu]\n", total_sum, expected);
                 }
                 else {
-                    fprintf(stderr, "PASSED\n");
+                    fprintf(stderr, "PASSED [%lu == %lu]\n", total_sum, expected);
                 }
             }
             else {

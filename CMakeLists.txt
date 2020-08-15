@@ -13,15 +13,11 @@ set(GEN_SYS_HEADER_FILE ";${CMAKE_CURRENT_SOURCE_DIR}/src/gen_system_header.cc")
 string ( REPLACE "/" "\/" REMOVE_GEN_SOURCE ${GEN_SYS_HEADER_FILE})
 
 file(GLOB _EXE_SOURCES_TMP src/*.cc)
-message("OSOURCE: ${_EXE_SOURCES_TMP}")
 STRING( REGEX REPLACE "${REMOVE_GEN_SOURCE}" "" _EXE_SOURCES_ ${_EXE_SOURCES_TMP})
 STRING( REPLACE ".cc" ".cc;" EXE_SOURCES ${_EXE_SOURCES_})
-message("NSOURCE: ${EXE_SOURCES}")
 
 include_directories(lib)
-message("SRC: ${CMAKE_SOURCE_DIR}")
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/lib/*.cc")
-message("SOURCE: ${SOURCES}")
 
 
 
@@ -34,7 +30,6 @@ add_custom_target(run_gen_sys_header
   SOURCES ${GEN_SYS_HEADER_FILE}
   )
 
-message("EXE SOURCE: ${EXE_SOURCES}")
 foreach(EXE_SRC_CODE ${EXE_SOURCES})
   STRING( REPLACE "src/" "" _exe1 ${EXE_SRC_CODE})
   STRING( REPLACE ".cc" "" _exe2 ${_exe1})
