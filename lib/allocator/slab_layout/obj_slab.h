@@ -62,6 +62,12 @@ struct slab {
         return 0;
     }
 
+  // try and allocate one object of underlying type (T)
+  // if successful:
+  // - return pointer to object
+  // else if migrated, return FAILED_RSEQ
+  // else if no room, return FAILED_VEC_FULL
+  // currently also returns FAILED_VEC_FULL if someone else trying to reclaim memory
     uint64_t
     _allocate(const uint32_t start_cpu) {
         for (uint32_t i = 0; i < nvec; ++i) {
@@ -71,8 +77,7 @@ struct slab {
                     restarting_set_idx(available_slots + i, start_cpu);
                 if (BRANCH_LIKELY(idx < 64)) {
                     return ((uint64_t)&obj_arr[64 * i + idx]);
-                }
-                else if (idx == _RSEQ_SET_IDX_MIGRATED) {
+                } else if (idx == _RSEQ_SET_IDX_MIGRATED) {
                     return FAILED_RSEQ;
                 }
             }
@@ -83,6 +88,9 @@ struct slab {
             return FAILED_VEC_FULL;
         }
 
+	// not enough memory known about, but we can try and reclaim
+	// previously freed memory
+
         const uint32_t acq_lock_ret =
             restarting_acquire_lock(&freed_slots_lock, start_cpu);
         if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_MIGRATED)) {
@@ -92,27 +100,45 @@ struct slab {
             return FAILED_VEC_FULL;
         }
         // preemptively start invalidating other cores cache line
-        PREFETCH_W(freed_slots);
+         PREFETCH_W(freed_slots); // are you hurting yourself here? SCG
 
+
+	 // here we are trying to reclaim memory
 
         for (uint32_t i = 0; i < nvec; ++i) {
             if (BRANCH_UNLIKELY(available_slots[i] != FULL_ALLOC_VEC)) {
+	      // someone else already did reclaimation.  so, just allocate a 
+	      // free object, release lock, and return it
                 const uint32_t idx =
                     restarting_set_idx(available_slots + i, start_cpu);
                 if (BRANCH_LIKELY(idx < 64)) {
+		  // release lock and return object
                     freed_slots_lock = 0;
                     return ((uint64_t)&obj_arr[64 * i + idx]);
                 }
                 else if (idx == _RSEQ_SET_IDX_MIGRATED) {
+		  // release lock and indicate migrated
                     freed_slots_lock = 0;
                     return FAILED_RSEQ;
                 }
+		// we hold lock, someone else did reclaimation, but
+		// then all memory got allocated anyway, so continue
+		// to try and reclaim
+
+		// return FAILED_VEC_FULL? SCG
             }
+
+	    // FYI if nvec > 1, won't reclaim all possible memory
+	    // since return as soon as find something available?
+
             if (freed_slots[i] != EMPTY_FREE_VEC) {
                 const uint64_t reclaimed_slots = freed_slots[i];
                 atomic_xor(freed_slots + i, reclaimed_slots);
+		// for every object in reclaimed_slots, make it
+		// available except for the lsb more free one.  that
+		// will be returned to user for this allocation
                 available_slots[i] ^= (reclaimed_slots & (reclaimed_slots - 1));
-                freed_slots_lock = 0;
+                freed_slots_lock = 0; // release lock
                 return ((uint64_t)(
                     &obj_arr[64 * i +
                              bits::find_first_one<uint64_t>(reclaimed_slots)]));
@@ -125,3 +151,8 @@ struct slab {
 
 
 #endif
+
+
+/* Local Variables:  */
+/* mode: c++         */
+/* End:              */

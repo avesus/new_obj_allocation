@@ -31,6 +31,11 @@ constexpr bool is_same_template<T<generic_T1, generic_V1, generic_S1>,
 //////////////////////////////////////////////////////////////////////
 
 
+// defines super_slab for an underlying allocated type of `T` with
+// `nvec` bitvectors of 64*`inner_slab_t` managers.  The managers are
+// either super_slab's or slab's.
+//
+
 template<typename T, uint32_t nvec = 7, typename inner_slab_t = slab<T>>
 struct super_slab {
     static constexpr const uint64_t capacity =
@@ -83,6 +88,7 @@ struct super_slab {
     }
 
 
+  // allocate an underlying type while running on start_cpu
     uint64_t
     _allocate(const uint32_t start_cpu) {
         for (uint32_t i = 0; i < nvec; ++i) {
@@ -104,6 +110,8 @@ struct super_slab {
                     else {
                         idx = bits::tzcnt<uint64_t>(~available_slabs[i]);
                     }
+		    // idx first zero in available_slabs[i] (counting from lsb)
+		    // if no zero's idx == 64 (race condition might occur)
 
                     // fast path of successful allocation
                     if (BRANCH_LIKELY(idx < 64)) {
@@ -161,3 +169,7 @@ struct super_slab {
 
 
 #endif
+
+/* Local Variables:  */
+/* mode: c++         */
+/* End:              */

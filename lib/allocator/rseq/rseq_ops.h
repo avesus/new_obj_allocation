@@ -30,6 +30,12 @@ __thread uint64_t _tlv_rand;
 // The restarting_set_*idx(...) functions are on the SUPER hot path. Any line
 // that can be optimized should be
 
+// sets first zero bit to 1 and return index of that bit.  If success, was atomic.
+//
+// if it returns 65 -> failed because thread migrated
+// if it returns 64 -> it was full and no bit was set
+// otherwise, returns bit set
+
 uint64_t NEVER_INLINE
 ALIGN_ATTR(CACHE_LINE_SIZE)
     restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
@@ -1455,3 +1461,8 @@ ALIGN_ATTR(CACHE_LINE_SIZE) restarting_acquire_lock(uint64_t * const lock_ptr,
 
 
 #endif
+
+
+/* Local Variables:  */
+/* mode: c++         */
+/* End:              */

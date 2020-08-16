@@ -20,7 +20,7 @@
 // simple slab manager that simply allocates 1 super_slab/obj_slab per
 // processor. Region size must be set with template parameters
 
-template<typename T, typename slab_t>
+template<typename T, typename slab_t>		// need this? SCG
 struct slab_manager;
 
 template<typename T, typename slab_t>
@@ -28,6 +28,20 @@ struct internal_slab_manager {
     slab_t obj_slabs[NPROCS];
     internal_slab_manager() = default;
 };
+
+//
+// this is basic type for an allocator which can:
+//
+// 	T* _allocate() an object on the heap
+// 	_free(T*) an object
+//
+// The allocator either works on memory preallocated, see
+// slab_manager(void* const base), or will allocate maximum amount of
+// memory that can be used for allocation of objects of type T, see
+// slab_manager(void)
+//
+// if using pre-allocated version - no checking that it is aligned to
+// 64-byte boundary, all zeros, and large enough
 
 template<typename T, typename slab_t>
 struct slab_manager {
@@ -66,9 +80,14 @@ struct slab_manager {
         uint64_t ptr;
         do {
             const uint32_t start_cpu = get_start_cpu();
-            IMPOSSIBLE_VALUES(start_cpu > NPROCS);
+            IMPOSSIBLE_VALUES(start_cpu > NPROCS); // rename? SCG
             ptr = m->obj_slabs[start_cpu]._allocate(start_cpu);
-        } while (BRANCH_UNLIKELY(ptr == FAILED_RSEQ));
+        } while (BRANCH_UNLIKELY(ptr == FAILED_RSEQ)); // failure
+						       // means thread
+						       // migrated to
+						       // another CPU
+						       // during call.
+	// if ran out of memory ptr == 1, other ptr is a valid ptr to memory
         return (T *)(ptr & (~(0x1UL)));
     }
 
