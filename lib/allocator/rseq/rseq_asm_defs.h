@@ -104,11 +104,18 @@ foo(..., uint32_t start_cpu)
     RSEQ_INFO_DEF(32) 
     RSEQ_CS_ARR_DEF() 
     RSEQ_PREP_CS_DEF()
+
+    // maybe some setup stuff (or maybe abort)
+
+    "1:\n\t"    
+
     RSEQ_CMP_CUR_VS_START_CPUS()
+    // handle migrated somehow
 
     <actual critical section here>
     "2:\n\t" (this is end label of critical section)
 
+    // if abort is in another code section
     RSEQ_START_ABORT_DEF()
     <logical for abort here>
         // if this is goto generally jmp %l[abort]
@@ -119,7 +126,7 @@ foo(..., uint32_t start_cpu)
      [ start_cpu ] "r"(start_cpu), // required
      [ rseq_abi ] "g"(&__rseq_abi) // required
     : <clobber registers> +
-      "memory", "cc", "rax" // minimum clobbers
+      "memory", "cc" // minimum clobbers
     #ifdef IS_GOTO_ASM
     : <jump labels OUTSIDE of the inline asm>
     #endif

@@ -1,0 +1,335 @@
+Title:
+optimizing percpu 2 level bit vector using rseq on x86-64, skylake
+
+Hi,
+
+I am writing some code and the HOT HOT HOT path is basically finding a 0 bit in a bit vector and returning said bit.
+
+the bit vector is comprised of:
+struct 2l_bitvec {
+       // outer vector with bits indicating with inner vectors have available slots
+       uint64_t v1;
+
+       // inner vector with actual index bits
+       uint64_t v2[64];
+} 2l_bitvec;
+
+Each cpu has a bitvec (or multiple chained together in a much slower path data structure).
+
+To manage conherency within these bit vectors I am using [restarting sequences](https://lore.kernel.org/patchwork/patch/896892/) (scroll down a bit for the best manpage i've been able to find).
+
+Due to using ```rseq``` (and this being super hot code) the logic is all written in inline assembly.
+
+The C code for what I am trying to write is as follows:
+```
+#define LIKELY(X) __builtin_expect(!!(X), 1)
+#define UNLIKELY(X) __builtin_expect((X), 0)
+uint64_t __attribute__((noinline))
+cond_unset_bit(uint64_t * v1, const uint32_t start_cpu) {
+    // if ever preempted, migrated, or catch a signal return here
+    catch_something_label:
+    if(start_cpu != __rseq_abi.cpu_id_start) {
+        return 4097;
+    }
+    uint64_t temp_v1 = *v1;
+    while(LIKELY(temp_v1 != (~(0UL)))) {
+        const uint32_t idx_v1 = _tzcnt_u64((~temp_v1));
+        uint64_t temp_v2 = v1[idx_v1 + 1];
+        if(LIKELY(temp_v2 != (~(0UL)))) {
+            const uint32_t idx = _tzcnt_u64(~temp_v2);
+            temp_v2 |= ((1UL) << idx);
+            v1[idx + 1] = temp_v2;            
+            return 64 * idx_v1 + idx;            
+        }
+        else {
+            temp_v1 |= ((1UL) << idx_v1);
+            *v1 = temp_v1;
+        }
+    }
+    return -1;
+}
+```
+
+There is some ```rseq``` setup stuff which is basically:
+
+```
+#define RSEQ_INFO_DEF(alignment)                                               \
+    ".pushsection __rseq_cs, \"aw\"\n\t"                                       \
+    ".balign " #alignment                                                      \
+    "\n\t"                                                                     \
+    "3:\n\t"                                                                   \
+    ".long 0x0\n"                                                              \
+    ".long 0x0\n"                                                              \
+    ".quad 1f\n"                                                               \
+    ".quad 2f - 1f\n"                                                          \
+    ".quad 4f\n"                                                               \
+    ".popsection\n\t"
+
+/*
+    ".pushsection __rseq_cs, \"aw\"\n\t"    // creation section
+    ".balign " #alignment"\n\t"             // alignment at least 32
+    "3:\n\t"                                // struct info jump label
+                                            // struct is rseq_info
+    ".long 0x0\n"                           // version = 0
+    ".long 0x0\n"                           // flags = 0
+    ".quad 1f\n"                            // start_ip = 1f (label 1, forward)
+    ".quad 2f - 1f\n"                       // post_commit_offset = (start_cs
+                                               label - end_cs label)
+    ".quad 4f\n"                            // abort label = 4f (label 4)
+    ".popsection\n\t"                       // end section
+*/
+
+
+#define RSEQ_CS_ARR_DEF()                                                      \
+    ".pushsection __rseq_cs_ptr_array, \"aw\"\n\t"                             \
+    ".quad 3b\n\t"                                                             \
+    ".popsection\n\t"
+
+/*
+    ".pushsection __rseq_cs_ptr_array, \"aw\"\n\t"  // create ptr section
+    ".quad 3b\n\t"                                  // set ptr to addr of
+                                                       rseq_info
+    ".popsection\n\t"                               // end section
+*/
+
+#define RSEQ_PREP_CS_DEF(TEMP_REGISTER)                               \
+    "leaq 3b (%%rip), " V_TO_STR(TEMP_REGISTER) "\n\t"                         \
+    "movq " V_TO_STR(TEMP_REGISTER) ", %%fs:__rseq_abi@tpoff+8\n\t"          \
+
+
+
+/*
+    "leaq 3b (%%rip), REGISTER\n\t"     // get set for rseq_info struct
+    "movq REGISTER, 8(%[rseq_abi])\n\t" // store in ptr field in __rseq_abi
+*/
+
+#define RSEQ_CMP_CUR_VS_START_CPUS()                                           \
+    "cmpl %[start_cpu], %%fs:__rseq_abi@tpoff+4\n\t"
+
+/*
+    "cmpl %[start_cpu], 4(%[rseq_abi])\n\t" // get cpu in 4(%[rseq_abi]) and
+                                               compare to %[start_cpu] which is
+                                               passed as param to function
+*/
+
+
+// sometimes this is better to put in the
+// same code section as the critical section
+#define RSEQ_START_ABORT_DEF()                                                 \
+    ".pushsection __rseq_failure, \"ax\"\n\t"                                  \
+    ".byte 0x0f, 0xb9, 0x3d\n\t"                                               \
+    ".long 0x53053053\n\t"                                                     \
+    "4:\n\t"                                                                   \
+
+/*
+  ".pushsection __rseq_failure, \"ax\"\n\t" // create failure section
+    ".byte 0x0f, 0xb9, 0x3d\n\t"            // Disassembler-friendly signature:
+                                               ud1 <sig>(%rip),%edi
+    ".long 0x53053053\n\t"                  // invalid operation to avoid code
+                                               injection 
+    "4:\n\t"                                // abort label
+*/
+
+#define RSEQ_END_ABORT_DEF() ".popsection\n\t"
+
+/*
+    ".popsection\n\t"   // end failure section
+*/
+
+```
+
+In pseudo code what the assembly with all the ```rseq``` stuff looks like is:
+```
+/*
+Type assembly will look like as follow:
+foo(..., uint32_t start_cpu) 
+    RSEQ_INFO_DEF(32) 
+    RSEQ_CS_ARR_DEF() 
+    RSEQ_PREP_CS_DEF()
+
+    // maybe some setup stuff (or maybe abort)
+
+    "1:\n\t"    
+
+    RSEQ_CMP_CUR_VS_START_CPUS()
+    // handle migrated somehow
+
+    <actual critical section here>
+    "2:\n\t" (this is end label of critical section)
+
+    // if abort is in another code section
+    RSEQ_START_ABORT_DEF()
+    <logical for abort here>
+        // if this is goto generally jmp %l[abort]
+        // otherwise some actual logic (usually set return var)
+    RSEQ_END_ABORT_DEF()
+    : <output variables, only if NOT goto asm>
+    : <input variables> +
+     [ start_cpu ] "g"(start_cpu), // always
+    : <clobber registers> +
+      "memory", "cc" // minimum clobbers
+    #ifdef IS_GOTO_ASM
+    : <jump labels OUTSIDE of the asm>
+    #endif
+*/
+```
+
+The assembly is optimized around the fact that the VAST majority of aborts are due to preemption and not migration so generally abort just jumps back to checking current cpu and continuing (because the comparison succeeds)
+
+The assembly code I am using is as follows:
+
+```
+#define PRIMITIVE_V_TO_STR(X) #X
+#define V_TO_STR(X) PRIMITIVE_V_TO_STR(X)
+
+#define _FAILURE_MIGRATED 4097
+
+// inlining the function often breaks stuff, so while testing I am skipping that
+// aligning to cache line seems to actually affect performance significantly
+
+uint64_t __attribute__((noinline))
+__attribute__((aligned(64)))
+    restarting_2l_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
+    // return [0 - 4095] -> success (that is the index)
+    // return [4097] -> failure the thread migrated
+    // return [-1] -> failure the bit vector is full
+    
+#pragma GCC diagnostic ignored "-Wuninitialized"
+    // pin for return so compiler doesnt fuck up
+    register uint64_t idx asm("rax");
+
+    // some temps I trust the compiler to allocate smartly
+    uint64_t * v2;
+    uint64_t idx_v1, temp_v1, temp_v2;
+#pragma GCC diagnostic push
+
+    // clang-format off
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+
+        // any register will do
+        RSEQ_PREP_CS_DEF(%[temp_v1])
+
+        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+
+#ifdef FAST_ABORT
+        // skip abort first time
+        "jmp 1f\n\t"
+        
+        ".byte 0x0f, 0xb9, 0x3d\n\t"
+        ".long 0x53053053\n\t"
+        "4:\n\t"
+        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+#endif
+        
+        // start critical section
+        "1:\n\t"
+        
+        // check if migrated        
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // if not migrated temp_v = *v
+        "movq (%[v1]), %[temp_v1]\n\t"
+
+        // start loop: while(temp_v1 != -1)
+        "5:\n\t"
+                
+        // idx = ~temp_v
+        "movq %[temp_v1], %[idx]\n\t"
+
+                
+        // The reason we can't do this cmp after notq %[idx]
+        // (and use testq) is because
+        // 0 is a valid idx to return whereas -1 is not
+        // (also why setting idx before the comparison)
+
+        // if (%[v1]) is full leave. 
+        // This branch is VERY unexpected.
+        "cmpq $-1, %[idx]\n\t"
+        "jz 2f\n\t"
+        
+        "notq %[idx]\n\t"
+        
+        // idx_v1 = tzcnt(idx) (find first one)
+        "tzcntq %[idx], %[idx_v1]\n\t"
+
+        // if registers are tight v2 could be in
+        // memory and could use [idx] as a temporary
+        // temp_v2 = v[idx_v1 + 1]
+        "leaq 8(%[v1],%[idx_v1],8), %[v2]\n\t"
+        "movq (%[v2]), %[temp_v2]\n\t"
+
+        // test if temp_v2 is full
+        "cmpq $-1, %[temp_v2]\n\t"
+        "jz 7f\n\t" // 7f is btsq %[idx_outer], %[temp_v1], jmp 5b
+        
+        // idx = ~temp_v2
+        "movq %[temp_v2], %[idx]\n\t"
+        "notq %[idx]\n\t"
+        // could replace the cmpq $-1, %[temp_v2], jz above with
+        // testq %[idx], %[idx], jz here
+
+        // idx = tzcnt(idx)
+        "tzcntq %[idx], %[idx]\n\t"
+
+        // temp_v2 |= 1 << idx
+        "btsq %[idx], %[temp_v2]\n\t"
+        "jmp 9f\n\t"
+
+        "7:\n\t"
+        "btsq %[idx_v1], %[temp_v1]\n\t"
+        
+        // this is a completely valid state to be migrated out after
+        // (all we have really done is cleaned up v1 vector a bit)
+        // because we can be migrated out here we don't check/set if
+        // temp_v2 is full as that could lead to invalid state in v1
+        "movq %[temp_v1], (%[v1])\n\t"
+
+        // this is } in while loop starting at 5:
+        "jmp 5b\n\t"
+
+        // prepare for commit and commit
+        "9:\n\t"
+        
+        // temp_v2 |= 1UL << idx
+        "btsq %[idx], %[temp_v2]\n\t"
+               
+        // prepare success return
+        "salq $6, %[idx_v1]\n\t"
+        "addq %[idx_v1], %[idx]\n\t"
+        
+        // commit
+        "movq %[temp_v2], (%[v2])\n\t"
+
+        // end critical section
+        "2:\n\t"
+
+#ifndef FAST_ABORT
+          RSEQ_START_ABORT_DEF()
+        // given that the critical section is fairly involved
+        // it may be worth it to put this in the same code section
+        // as critical section for faster aborts
+        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+#endif
+
+        : [ idx] "+r" (idx)
+        : [ idx_v1 ] "r" (idx_v1),
+          [ temp_v2 ] "r" (temp_v2),
+          [ temp_v1 ] "r" (temp_v1),
+          [ v2 ] "r" (v2), 
+          [ v1 ] "g" (v1),
+          [ start_cpu] "g" (start_cpu)
+        : "memory", "cc");
+
+    return idx;
+}
+```
+
+After correctness my first, second, and third goal is for this to be fast. All optimizations have to be under the consideration that the code can jump to abort after any instruction (hence why the commit on from ```temp_v2``` to ```v2``` is the final instruction of the critical section). And if the abortion was due to thread migration the function cant write to any of the data (otherwise there will be serious race conditions).
+
+If you want to run / compile this in userspace you will need to include the ```linux/rseq.h``` header. A nice "hello world" for the setup is [here](https://www.efficios.com/blog/2019/02/08/linux-restartable-sequences/) and/or at [librseq](https://github.com/compudj/librseq).

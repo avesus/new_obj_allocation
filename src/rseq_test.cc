@@ -10,15 +10,15 @@
 
 #include <assert.h>
 
-#define VDIF  8
-#define liter 2
+#define VDIF  72
+#define liter 64
 
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 // hard sets should have expected return of nthread * test_size
 #define BITSET_FUNC   restarting_set_bit_hard3
 #define BITUNSET_FUNC restarting_unset_bit_hard2
-#define IDXSET_FUNC   do_restarting_set_rand_idx
+#define IDXSET_FUNC   do_restarting_2level_set_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
 // conditions / performance
@@ -35,6 +35,21 @@ __thread uint32_t sum = 0;
 
 
 pthread_barrier_t b;
+
+uint32_t inline __attribute__((always_inline))
+do_restarting_2level_set_idx(uint64_t * const v, const uint32_t start_cpu) {
+    if (v[0] != (~(0UL))) {
+        const uint32_t ret = restarting_2level_set_idx(v, start_cpu);
+        if (__builtin_expect(ret < 4096, 1)) {
+            return 0;
+        }
+        else if (__builtin_expect(ret == 4097, 0)) {
+            return _RSEQ_SET_IDX_MIGRATED;
+        }
+    }
+    return _RSEQ_SET_IDX_OTHER_FAILURE;
+}
+
 
 uint32_t inline __attribute__((always_inline))
 do_restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
@@ -494,6 +509,14 @@ restarting_set_idx_test(void * targ) {
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
 
+    pthread_barrier_wait(&b);
+    uint64_t local_sum = 0;
+    for (uint32_t i = 0; i < NPROCS * VDIF; ++i) {
+        if(i % VDIF) {
+        local_sum += bits::bitcount<uint64_t>(v[i]);
+        }
+    }
+    expected = local_sum;
     __atomic_fetch_add(&total_sum, sum, __ATOMIC_RELAXED);
     return NULL;
 }
@@ -531,7 +554,7 @@ main(int argc, char ** argv) {
 
     thelp::thelper th;
 
-    for (uint32_t f_idx = 2; f_idx < 4; ++f_idx) {
+    for (uint32_t f_idx = 4; f_idx < 5; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
             fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
             memset(v, 0, 2 * 8 * VDIF * NPROCS);
@@ -543,7 +566,6 @@ main(int argc, char ** argv) {
                        0);
             th.join_all();
             times[f_idx][i] = ((double)total_nsec) / (nthread * test_size);
-            #if 0
             if (expected != (-1)) {
                 if ((uint64_t)expected != total_sum) {
                     fprintf(stderr,
@@ -561,7 +583,6 @@ main(int argc, char ** argv) {
             else {
                 fprintf(stderr, "PASSED\n");
             }
-            #endif
 
             total_sum  = 0;
             total_nsec = 0;
@@ -569,7 +590,7 @@ main(int argc, char ** argv) {
     }
 
     free(v);
-    for (uint32_t i = 2; i < 4; ++i) {
+    for (uint32_t i = 4; i < 5; ++i) {
         fprintf(stderr, "\nTimes: %s\n", test_fnames[i]);
         stats::stats_out so;
         so.get_stats(times[i], trials);

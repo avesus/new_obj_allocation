@@ -91,7 +91,8 @@ struct super_slab {
                     uint32_t idx;
 
                     // really not sure if this is worth it
-                    if constexpr (0 && is_same_template<inner_slab_t, slab<T>>) {
+                    if constexpr (0 &&
+                                  is_same_template<inner_slab_t, slab<T>>) {
                         uint64_t lavailable_slabs = available_slabs[i];
                         lavailable_slabs =
                             (lavailable_slabs >> _tlv_rand) |
@@ -124,6 +125,18 @@ struct super_slab {
                             }
                             continue;
                         }
+                        // migration after a task this big isnt so unlikely.
+                        // Need a fail safe so the slab isnt lost
+                        else if (ret == SLAB_READY) {
+                            if (BRANCH_UNLIKELY(restarting_unset_bit_hard(
+                                                    available_slabs + i,
+                                                    idx,
+                                                    start_cpu) ==
+                                                _RSEQ_MIGRATED)) {
+                                return FAILED_RSEQ;
+                            }
+                            continue;
+                        }
                         // inner alloc ret == failed rseq
                         else {
                             return FAILED_RSEQ;
@@ -150,8 +163,8 @@ struct super_slab {
                     }
                     return FAILED_RSEQ;
                 }
-                if(available_slabs[i] == FULL_ALLOC_VEC){ 
-                break;
+                if (available_slabs[i] == FULL_ALLOC_VEC) {
+                    break;
                 }
             }
         }

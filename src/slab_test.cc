@@ -1,6 +1,7 @@
 #include <util/arg.h>
 #include <util/verbosity.h>
 
+
 uint32_t do_perf_tests = 0;
 uint32_t do_corr_tests = 0;
 uint32_t test_size     = (1 << 20);
@@ -25,7 +26,8 @@ pthread_barrier_t b;
 
 //using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
-using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
+//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
+using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>;
 //using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
 corr_alloc_test(void * targ) {
@@ -322,3 +324,4 @@ main(int argc, char ** argv) {
         }
     }
 }
+
