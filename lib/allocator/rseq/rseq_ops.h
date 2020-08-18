@@ -184,7 +184,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
 
 
 #define _FAILURE_MIGRATED 4097
-uint64_t NEVER_INLINE
+uint64_t ALWAYS_INLINE
 ALIGN_ATTR(CACHE_LINE_SIZE)
     restarting_2level_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
     // return [0 - 4095] -> success (that is the index)
@@ -197,7 +197,6 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
     register uint64_t idx asm("rax");
 
     // some temps I trust the compiler to allocate smartly
-    uint64_t * v2;
     uint64_t idx_v1, temp_v1, temp_v2;
 #pragma GCC diagnostic push
 
@@ -253,10 +252,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "tzcntq %[idx], %[idx_v1]\n\t"
 
         // temp_v2 = v[idx_v1 + 1]
-        "movq %[v1], %[v2]\n\t"     
-        "salq $3, %[idx_v1]\n\t"
-        "addq %[idx_v1], %[v2]\n\t"
-        "movq 8(%[v2]), %[temp_v2]\n\t"
+        "movq 8(%[v1], %[idx_v1], 8), %[temp_v2]\n\t"
 
         // test if temp_v2 is full
         "cmpq $-1, %[temp_v2]\n\t"
@@ -276,7 +272,6 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "jmp 9f\n\t"
 
         "7:\n\t"
-        "sarq $3, %[idx_v1]\n\t"
         "btsq %[idx_v1], %[temp_v1]\n\t"
         
         // this is a completely valid state to be migrated out after
@@ -292,11 +287,11 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "btsq %[idx], %[temp_v2]\n\t"
                
         // prepare success return
-        "salq $3, %[idx_v1]\n\t"
+        "salq $6, %[idx_v1]\n\t"
         "addq %[idx_v1], %[idx]\n\t"
         
         // commit
-        "movq %[temp_v2], 8(%[v2])\n\t"
+        "movq %[temp_v2], 8(%[v1], %[idx_v1], 8)\n\t"
 
         // end critical section
         "2:\n\t"
@@ -311,12 +306,11 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         RSEQ_END_ABORT_DEF()
 #endif
 
-        : [ idx] "+r" (idx)
-        : [ idx_v1 ] "r" (idx_v1),
-          [ temp_v2 ] "r" (temp_v2),
-          [ temp_v1 ] "r" (temp_v1),
-          [ v2 ] "r" (v2),
-          [ v1 ] "g" (v1),
+        : [ idx] "=&r" (idx),
+          [ idx_v1 ] "=&r" (idx_v1),
+          [ temp_v2 ] "=&r" (temp_v2),
+          [ temp_v1 ] "=&r" (temp_v1)
+        : [ v1 ] "g" (v1),
           [ start_cpu] "g" (start_cpu)
         : "memory", "cc");
 
