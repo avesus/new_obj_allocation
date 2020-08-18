@@ -50,7 +50,7 @@ namespace ERR {
     _UNREACHABLE_;
 
 
-static void COLD_ATTR NEVER_INLINE
+    static void COLD_ATTR NEVER_INLINE __attribute__((noreturn))
 errdie(const char * file_name,
        uint32_t     line_number,
        int32_t      error_number,
@@ -71,7 +71,7 @@ errdie(const char * file_name,
     exit(-1);
 }
 
-static void COLD_ATTR NEVER_INLINE
+static void COLD_ATTR NEVER_INLINE __attribute__((noreturn))
 die(const char * file_name, uint32_t line_number, const char * msg, ...) {
     va_list ap;
     if (msg) {

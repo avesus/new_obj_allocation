@@ -12,27 +12,35 @@ uint64_t          total_nsec      = 0;
 pthread_barrier_t b;
 
 
-    #include <timing/thread_helper.h>
-    #include <timing/timers.h>
+#include <timing/thread_helper.h>
+#include <timing/timers.h>
 
 
-    #include <allocator/slab_layout/create_slab_type.h>
-    #include <allocator/slab_layout/slab_manager.h>
+#include <allocator/slab_layout/create_slab_type.h>
+#include <allocator/slab_layout/slab_manager.h>
 
-    #include <allocator/rseq/rseq_base.h>
+#include <allocator/rseq/rseq_base.h>
 
-    #include <optimized/const_math.h>
+#include <optimized/const_math.h>
 
-//using allocator_t =
+// using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
-using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
-//using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
+using allocator_t = slab_manager<
+    uint64_t,
+    super_slab<
+        uint64_t,
+        1,
+        super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
+// using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1,
+// super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
 corr_alloc_test(void * targ) {
-    expected_allocs = cmath::min<uint32_t>(test_size * nthread, allocator_t::capacity * cmath::min<uint32_t>(NPROCS, nthread));
-    total_allocs    = 0;
-    uint64_t sum    = 0;
-    _tlv_rand = rand() % 64;
+    expected_allocs = cmath::min<uint32_t>(
+        test_size * nthread,
+        allocator_t::capacity * cmath::min<uint32_t>(NPROCS, nthread));
+    total_allocs = 0;
+    uint64_t sum = 0;
+    _tlv_rand    = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -57,7 +65,7 @@ corr_alloc_then_free_test(void * targ) {
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
-    _tlv_rand = rand() % 64;
+    _tlv_rand       = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -86,7 +94,7 @@ corr_batch_alloc_then_free_test(void * targ) {
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
-    _tlv_rand = rand() % 64;
+    _tlv_rand       = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;

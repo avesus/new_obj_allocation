@@ -30,7 +30,7 @@ __thread uint64_t _tlv_rand;
 // The restarting_set_*idx(...) functions are on the SUPER hot path. Any line
 // that can be optimized should be
 
-uint64_t NEVER_INLINE
+uint64_t ALWAYS_INLINE
 ALIGN_ATTR(CACHE_LINE_SIZE)
     restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
 
@@ -84,9 +84,9 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "mov $" V_TO_STR(_RSEQ_SET_IDX_MIGRATED) ", %[idx]\n\t"
         "jmp 1b\n\t"
         RSEQ_END_ABORT_DEF()
-        : [ idx] "+r" (idx)
-        : [ temp_v ] "r" (temp_v),
-          [ v] "g" (v),
+        : [ idx] "=&r" (idx),
+          [ temp_v ] "=&r" (temp_v)
+        : [ v] "g" (v),
           [ start_cpu] "g" (start_cpu)
         : "memory", "cc");
     // clang-format on
