@@ -116,11 +116,11 @@ struct super_slab {
                         }
                         // branch full try to mark bit as full
                         else if (ret == FAILED_VEC_FULL) {
-                            if (BRANCH_UNLIKELY(
-                                    restarting_set_bit_hard(available_slabs + i,
-                                                            idx,
-                                                            start_cpu) ==
-                                    _RSEQ_MIGRATED)) {
+                            if (BRANCH_UNLIKELY(restarting_set_bit_hard_or(
+                                                    available_slabs + i,
+                                                    idx,
+                                                    start_cpu) ==
+                                                _RSEQ_MIGRATED)) {
                                 return FAILED_RSEQ;
                             }
                             continue;
@@ -128,11 +128,11 @@ struct super_slab {
                         // migration after a task this big isnt so unlikely.
                         // Need a fail safe so the slab isnt lost
                         else if (ret == SLAB_READY) {
-                            if (BRANCH_UNLIKELY(restarting_unset_bit_hard(
-                                                    available_slabs + i,
-                                                    idx,
-                                                    start_cpu) ==
-                                                _RSEQ_MIGRATED)) {
+                            if (BRANCH_UNLIKELY(
+                                    restarting_unset_bit_hard_btr_jnc(
+                                        available_slabs + i,
+                                        idx,
+                                        start_cpu) == _RSEQ_MIGRATED)) {
                                 return FAILED_RSEQ;
                             }
                             continue;

@@ -16,8 +16,8 @@
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 // hard sets should have expected return of nthread * test_size
-#define BITSET_FUNC   restarting_set_bit_hard3
-#define BITUNSET_FUNC restarting_unset_bit_hard2
+#define BITSET_FUNC   restarting_set_bit_hard_bts_jc
+#define BITUNSET_FUNC restarting_unset_bit_hard_btr_jnc
 #define IDXSET_FUNC   do_restarting_2level_set_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -184,7 +184,7 @@ do_restarting_set_bit_hard(uint64_t * const v,
                            const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
-            return restarting_set_bit_hard(v + _i, bit, start_cpu);
+            return restarting_set_bit_hard_or(v + _i, bit, start_cpu);
         }
     }
     return _RSEQ_OTHER_FAILURE;
@@ -198,7 +198,7 @@ do_restarting_goto_set_bit(uint64_t * const v,
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
             const uint32_t ret =
-                restarting_goto_set_bit(v + _i, bit, start_cpu);
+                restarting_goto_set_bit_bts(v + _i, bit, start_cpu);
             if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
                 return ret;
             }
@@ -216,7 +216,7 @@ do_restarting_unset_bit(uint64_t * const v,
                         const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i]) {
-            const uint32_t ret = restarting_unset_bit(v + _i, bit, start_cpu);
+            const uint32_t ret = restarting_unset_bit_btr(v + _i, bit, start_cpu);
             if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
                 return ret;
             }
@@ -234,7 +234,7 @@ do_restarting_unset_bit_hard(uint64_t * const v,
                              const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i]) {
-            return restarting_unset_bit_hard(v + _i, bit, start_cpu);
+            return restarting_unset_bit_hard_btr_jnc(v + _i, bit, start_cpu);
         }
     }
     return _RSEQ_OTHER_FAILURE;
@@ -248,7 +248,7 @@ do_restarting_goto_unset_bit(uint64_t * const v,
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i]) {
             const uint32_t ret =
-                restarting_goto_unset_bit(v + _i, bit, start_cpu);
+                restarting_goto_unset_bit_btr(v + _i, bit, start_cpu);
             if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
                 return ret;
             }
@@ -554,7 +554,7 @@ main(int argc, char ** argv) {
 
     thelp::thelper th;
 
-    for (uint32_t f_idx = 4; f_idx < 5; ++f_idx) {
+    for (uint32_t f_idx = 2; f_idx < 4; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
             fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
             memset(v, 0, 2 * 8 * VDIF * NPROCS);
@@ -590,7 +590,7 @@ main(int argc, char ** argv) {
     }
 
     free(v);
-    for (uint32_t i = 4; i < 5; ++i) {
+    for (uint32_t i = 2; i < 4; ++i) {
         fprintf(stderr, "\nTimes: %s\n", test_fnames[i]);
         stats::stats_out so;
         so.get_stats(times[i], trials);
