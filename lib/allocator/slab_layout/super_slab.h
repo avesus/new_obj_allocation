@@ -116,7 +116,7 @@ struct super_slab {
                         }
                         // branch full try to mark bit as full
                         else if (ret == FAILED_VEC_FULL) {
-                            if (BRANCH_UNLIKELY(restarting_set_bit_hard_or(
+                            if (BRANCH_UNLIKELY(restarting_set_bit_or(
                                                     available_slabs + i,
                                                     idx,
                                                     start_cpu) ==
@@ -129,7 +129,7 @@ struct super_slab {
                         // Need a fail safe so the slab isnt lost
                         else if (ret == SLAB_READY) {
                             if (BRANCH_UNLIKELY(
-                                    restarting_unset_bit_hard_btr_jnc(
+                                    restarting_unset_bit(
                                         available_slabs + i,
                                         idx,
                                         start_cpu) == _RSEQ_MIGRATED)) {

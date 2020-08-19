@@ -15,9 +15,9 @@
 
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
-// hard sets should have expected return of nthread * test_size
-#define BITSET_FUNC   restarting_set_bit_hard_bts_jc
-#define BITUNSET_FUNC restarting_unset_bit_hard_btr_jnc
+
+#define BITSET_FUNC   restarting_set_bit_or
+#define BITUNSET_FUNC restarting_unset_bit
 #define IDXSET_FUNC   do_restarting_2level_set_idx
 //////////////////////////////////////////////////////////////////////
 // Just for testing whatever rseq function I'm currently working on for race
@@ -26,6 +26,9 @@ uint32_t iter      = 0;
 uint32_t test_size = (1 << 20);
 uint32_t nthread   = (32);
 uint32_t trials    = 1;
+
+uint32_t MIN_IDX = 0;
+uint32_t MAX_IDX = 5;
 
 int64_t  expected   = 0;
 uint64_t total_nsec = 0;
@@ -44,79 +47,10 @@ do_restarting_2level_set_idx(uint64_t * const v, const uint32_t start_cpu) {
             return 0;
         }
         else if (__builtin_expect(ret == 4097, 0)) {
-            return _RSEQ_SET_IDX_MIGRATED;
+            return _RSEQ_MIGRATED;
         }
     }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
-}
-
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_set_idx(uint64_t * const v, const uint32_t start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret = restarting_set_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_fast_abort_set_idx(uint64_t * const v, const uint32_t start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret =
-                restarting_fast_abort_set_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_set_rand_idx(uint64_t * const v, const uint32_t start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret = restarting_set_rand_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
-}
-
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_fast_abort_set_rand_idx(uint64_t * const v,
-                                      const uint32_t   start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret =
-                restarting_fast_abort_set_rand_idx(v + _i, start_cpu);
-            if (__builtin_expect(ret < _RSEQ_SET_IDX_OTHER_FAILURE, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_SET_IDX_OTHER_FAILURE;
+    return _RSEQ_OTHER_FAILURE;
 }
 
 
@@ -133,32 +67,13 @@ do_restarting_reclaim_free_slabs(uint64_t * const v,
                 return _RSEQ_SUCCESS;
             }
             else {
-                return _RSEQ_SET_IDX_MIGRATED;
+                return _RSEQ_MIGRATED;
             }
         }
     }
     return _RSEQ_OTHER_FAILURE;
 }
 
-uint32_t inline __attribute__((always_inline))
-do_restarting_fast_abort_reclaim_free_slabs(uint64_t * const v,
-                                            uint64_t * const f,
-                                            const uint32_t   start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] == 0 && f[_i]) {
-            const uint64_t ret =
-                restarting_reclaim_free_slabs(v + _i, f, start_cpu);
-            if (__builtin_expect(ret != 0, 1)) {
-                __atomic_fetch_xor(f + _i, ret, __ATOMIC_RELAXED);
-                return _RSEQ_SUCCESS;
-            }
-            else {
-                return _RSEQ_SET_IDX_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_OTHER_FAILURE;
-}
 
 uint32_t inline __attribute__((always_inline))
 do_restarting_set_bit(uint64_t * const v,
@@ -179,36 +94,18 @@ do_restarting_set_bit(uint64_t * const v,
 }
 
 uint32_t inline __attribute__((always_inline))
-do_restarting_set_bit_hard(uint64_t * const v,
+do_restarting_set_bit_or(uint64_t * const v,
                            const uint32_t   bit,
                            const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i] != (~(0UL))) {
-            return restarting_set_bit_hard_or(v + _i, bit, start_cpu);
+            return restarting_set_bit_or(v + _i, bit, start_cpu);
         }
     }
     return _RSEQ_OTHER_FAILURE;
 }
 
 
-uint32_t inline __attribute__((always_inline))
-do_restarting_goto_set_bit(uint64_t * const v,
-                           const uint32_t   bit,
-                           const uint32_t   start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i] != (~(0UL))) {
-            const uint32_t ret =
-                restarting_goto_set_bit_bts(v + _i, bit, start_cpu);
-            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
-                return _RSEQ_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_OTHER_FAILURE;
-}
 
 uint32_t inline __attribute__((always_inline))
 do_restarting_unset_bit(uint64_t * const v,
@@ -216,39 +113,7 @@ do_restarting_unset_bit(uint64_t * const v,
                         const uint32_t   start_cpu) {
     for (uint32_t _i = 0; _i < liter; ++_i) {
         if (v[_i]) {
-            const uint32_t ret = restarting_unset_bit_btr(v + _i, bit, start_cpu);
-            if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
-                return ret;
-            }
-            else if (__builtin_expect(ret == _RSEQ_MIGRATED, 0)) {
-                return _RSEQ_MIGRATED;
-            }
-        }
-    }
-    return _RSEQ_OTHER_FAILURE;
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_unset_bit_hard(uint64_t * const v,
-                             const uint32_t   bit,
-                             const uint32_t   start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i]) {
-            return restarting_unset_bit_hard_btr_jnc(v + _i, bit, start_cpu);
-        }
-    }
-    return _RSEQ_OTHER_FAILURE;
-}
-
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_goto_unset_bit(uint64_t * const v,
-                             const uint32_t   bit,
-                             const uint32_t   start_cpu) {
-    for (uint32_t _i = 0; _i < liter; ++_i) {
-        if (v[_i]) {
-            const uint32_t ret =
-                restarting_goto_unset_bit_btr(v + _i, bit, start_cpu);
+            const uint32_t ret = restarting_unset_bit(v + _i, bit, start_cpu);
             if (__builtin_expect(ret == _RSEQ_SUCCESS, 1)) {
                 return ret;
             }
@@ -261,25 +126,13 @@ do_restarting_goto_unset_bit(uint64_t * const v,
 }
 
 
-uint32_t inline __attribute__((always_inline))
-do_restarting_goto_xor(uint64_t * const v,
-                       const uint64_t   mask,
-                       const uint32_t   start_cpu) {
-    return restarting_goto_xor(v, mask, start_cpu);
-}
+
 
 uint32_t inline __attribute__((always_inline))
 do_restarting_xor(uint64_t * const v,
                   const uint64_t   mask,
                   const uint32_t   start_cpu) {
     return restarting_xor(v, mask, start_cpu);
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_goto_or(uint64_t * const v,
-                      const uint64_t   mask,
-                      const uint32_t   start_cpu) {
-    return restarting_goto_or(v, mask, start_cpu);
 }
 
 uint32_t inline __attribute__((always_inline))
@@ -290,25 +143,10 @@ do_restarting_or(uint64_t * const v,
 }
 
 uint32_t inline __attribute__((always_inline))
-do_restarting_goto_and(uint64_t * const v,
-                       const uint64_t   mask,
-                       const uint32_t   start_cpu) {
-    return restarting_goto_and(v, mask, start_cpu);
-}
-
-uint32_t inline __attribute__((always_inline))
 do_restarting_and(uint64_t * const v,
                   const uint64_t   mask,
                   const uint32_t   start_cpu) {
     return restarting_and(v, mask, start_cpu);
-}
-
-uint32_t inline __attribute__((always_inline))
-do_restarting_goto_acquire_lock(uint64_t * const v, const uint32_t start_cpu) {
-    if (*v == 0) {
-        return restarting_goto_acquire_lock(v, start_cpu);
-    }
-    return _RSEQ_OTHER_FAILURE;
 }
 
 uint32_t inline __attribute__((always_inline))
@@ -498,10 +336,10 @@ restarting_set_idx_test(void * targ) {
             const uint32_t start_cpu = get_start_cpu();
             // if unset test v = -1
             ret = IDXSET_FUNC(v + VDIF * start_cpu, start_cpu);
-            if (ret < _RSEQ_SET_IDX_OTHER_FAILURE) {
+            if (ret < _RSEQ_OTHER_FAILURE) {
                 sum++;
             }
-        } while (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0));
+        } while (__builtin_expect(ret == _RSEQ_MIGRATED, 0));
     }
 
     timers::gettime(timers::ELAPSE, &end_ts);
@@ -542,6 +380,8 @@ main(int argc, char ** argv) {
     ADD_ARG("-n", false, Int, test_size, "Set n calls per thread");
     ADD_ARG("-s", false, Int, trials, "Set n calls per thread");
     ADD_ARG("-i", false, Int, iter, "Set number of iterations");
+    ADD_ARG("-m", "--min", false, Int, MIN_IDX, "Set number of iterations");
+    ADD_ARG("-x", "--max", false, Int, MAX_IDX, "Set number of iterations");
     PARSE_ARGUMENTS;
 
     ERROR_ASSERT(!pthread_barrier_init(&b, NULL, nthread));
@@ -554,7 +394,7 @@ main(int argc, char ** argv) {
 
     thelp::thelper th;
 
-    for (uint32_t f_idx = 2; f_idx < 4; ++f_idx) {
+    for (uint32_t f_idx = MIN_IDX; f_idx < MAX_IDX; ++f_idx) {
         for (uint32_t i = 0; i < trials; ++i) {
             fprintf(stderr, "Running: %s - ", test_fnames[f_idx]);
             memset(v, 0, 2 * 8 * VDIF * NPROCS);
@@ -590,7 +430,7 @@ main(int argc, char ** argv) {
     }
 
     free(v);
-    for (uint32_t i = 2; i < 4; ++i) {
+    for (uint32_t i = MIN_IDX; i < MAX_IDX; ++i) {
         fprintf(stderr, "\nTimes: %s\n", test_fnames[i]);
         stats::stats_out so;
         so.get_stats(times[i], trials);
