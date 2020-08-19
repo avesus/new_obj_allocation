@@ -16,7 +16,7 @@
 #define BITWISE_FUNC  do_restarting_xor
 #define ACQ_LOCK_FUNC do_restarting_acquire_lock
 
-#define BITSET_FUNC   restarting_set_bit_or
+#define BITSET_FUNC   restarting_set_bit
 #define BITUNSET_FUNC restarting_unset_bit
 #define IDXSET_FUNC   do_restarting_2level_set_idx
 //////////////////////////////////////////////////////////////////////
@@ -42,12 +42,12 @@ pthread_barrier_t b;
 uint32_t inline __attribute__((always_inline))
 do_restarting_2level_set_idx(uint64_t * const v, const uint32_t start_cpu) {
     if (v[0] != (~(0UL))) {
-        const uint32_t ret = restarting_2level_set_idx(v, start_cpu);
-        if (__builtin_expect(ret < 4096, 1)) {
+        const uint32_t ret = restarting_set_idx(v, start_cpu);
+        if (__builtin_expect(ret < _RSEQ_SET_IDX_MIGRATED, 1)) {
             return 0;
         }
-        else if (__builtin_expect(ret == 4097, 0)) {
-            return _RSEQ_MIGRATED;
+        else if (__builtin_expect(ret == _RSEQ_SET_IDX_MIGRATED, 0)) {
+            return _RSEQ_SET_IDX_MIGRATED;
         }
     }
     return _RSEQ_OTHER_FAILURE;

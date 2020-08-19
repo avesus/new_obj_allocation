@@ -20,8 +20,8 @@
 // simple slab manager that simply allocates 1 super_slab/obj_slab per
 // processor. Region size must be set with template parameters
 
-template<typename T, typename slab_t>
-struct slab_manager;
+
+
 
 template<typename T, typename slab_t>
 struct internal_slab_manager {
@@ -69,7 +69,7 @@ struct slab_manager {
             IMPOSSIBLE_VALUES(start_cpu > NPROCS);
             ptr = m->obj_slabs[start_cpu]._allocate(start_cpu);
         } while (BRANCH_UNLIKELY(ptr == FAILED_RSEQ));
-        return (T *)(ptr & (~(0x1UL)));
+        return (T *)to_valid_ptr(ptr);
     }
 
     void
@@ -83,5 +83,9 @@ struct slab_manager {
     }
 };
 
+
+    
+
+    
 
 #endif

@@ -14,13 +14,12 @@
 
 #include <stdint.h>
 
-struct empty {};
-template<typename T, uint32_t nvec = 7, typename _T = empty>
+template<typename T>
 struct slab {
     static constexpr const uint64_t capacity = 64 * 64;
 
     uint64_t outer_avail_vec ALIGN_ATTR(CACHE_LINE_SIZE);
-    uint64_t                   available_slots[64];
+    uint64_t                 available_slots[64];
 
     // the freed_slots_lock is necesary to prevent a race condition where
     // thread A see available_slots == vec::FULL, get preempted by thread B
@@ -35,7 +34,7 @@ struct slab {
 
 
     uint64_t outer_freed_vec ALIGN_ATTR(CACHE_LINE_SIZE);
-    uint64_t                   freed_slots[64];
+    uint64_t                 freed_slots[64];
 
     T obj_arr[64 * 64] ALIGN_ATTR(CACHE_LINE_SIZE);
 
@@ -54,11 +53,16 @@ struct slab {
 
         if (freed_slots[pos_idx / 64] == 0) {
             PREFETCH_W(&outer_freed_vec);
-            atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
+            atomic_or(freed_slots + (pos_idx / 64),
+                      ((1UL) << ((pos_idx / 64) % 64)));
             if (outer_freed_vec == 0) {
                 PREFETCH_W(parent_addr);
-                atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
+                atomic_or(&outer_freed_vec, ((1UL) << (pos_idx % 64)));
                 return 1;
+            }
+            else {
+                atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
+                return 0;
             }
         }
         else {
@@ -75,28 +79,103 @@ struct slab {
         if (BRANCH_LIKELY(outer_avail_vec != FULL_ALLOC_VEC)) {
 
             const uint32_t idx =
-                restarting_2level_set_idx(&outer_avail_vec, start_cpu);
-            if (BRANCH_LIKELY(idx < 64 * 64)) {
+                restarting_set_idx(&outer_avail_vec, start_cpu);
+            if (BRANCH_LIKELY(idx < _RSEQ_SET_IDX_MIGRATED)) {
                 return ((uint64_t)&obj_arr[idx]);
             }
-            else if (idx == 4097) {
+            else if (idx == _RSEQ_SET_IDX_MIGRATED) {
                 return FAILED_RSEQ;
             }
         }
+
+
         if (freed_slots_lock) {
             // this will be corrected by first free
-            return FAILED_VEC_FULL;
+            return FAILED_FULL;
         }
-        PREFETCH_W(freed_slots);
+
         const uint32_t acq_lock_ret =
             restarting_acquire_lock(&freed_slots_lock, start_cpu);
         if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_MIGRATED)) {
             return FAILED_RSEQ;
         }
         else if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_OTHER_FAILURE)) {
-            return FAILED_VEC_FULL;
+            return FAILED_FULL;
         }
 
+        const uint64_t _to_reclaim_indexes = outer_freed_vec;
+
+        // i know this is a race condition. It doesn't affect correctness.
+        atomic_unset(&outer_freed_vec, _to_reclaim_indexes);
+        uint64_t to_reclaim_indexes = _to_reclaim_indexes;
+        if (to_reclaim_indexes) {
+            uint64_t ret = SLAB_READY;
+
+            uint32_t idx;
+            uint64_t to_reclaim;
+
+            // this needs to be in a loop and we need case for find
+            // none because there is a race condition in that unset
+            // outer_free_vec -> free (set outer free vec by
+            // definition) -> reclaim the inner freed_vec. Outer free
+            // vec will incorrectly state there is a valid free
+            // vector. This won't break anything as long as we check
+            // for that
+            do {
+                idx = _tzcnt_u64(to_reclaim_indexes);
+                to_reclaim_indexes ^= ((1UL) << idx);
+
+                to_reclaim = freed_slots[idx];
+            } while (to_reclaim_indexes && (!to_reclaim));
+
+            if (!to_reclaim) {
+                freed_slots_lock = 0;
+                return FAILED_FULL;
+            }
+
+            atomic_unset(freed_slots + idx, to_reclaim);
+
+            // take first bit from first reclaimed slot for return
+            // value
+            available_slots[idx] = ~(to_reclaim & (to_reclaim - 1));
+
+            // create return value (grab it now because we need to
+            // fully unwind the _allocate call stacks to indicate that
+            // this vector is available again (otherwise you can have
+            // a memory leak in that super_slab<super_slab<slab>>,
+            // slab fills up causing inner super_slab to fill
+            // up. While SLAB_READY will indicate to inner super that
+            // that there is free position outer super slab needs to
+            // be informed.
+            ret |= (uint64_t)(
+                &obj_arr[64 * idx + bits::tzcnt<uint64_t>(to_reclaim)]);
+
+// simply reclaim of the rest.
+
+// depending on how full to_reclaim_indexes is tzcnt
+// iteration vs ++ iteration is better
+#ifdef STD_ITER
+            for (++idx; idx < 64; ++idx) {
+                if (BRANCH_UNLIKELY(!(to_reclaim_indexes & ((1UL) << idx)))) {
+                    continue;
+                }
+#else
+            while (to_reclaim_indexes) {
+                idx = _tzcnt_u64(to_reclaim_indexes);
+                to_reclaim_indexes ^= ((1UL) << idx);
+#endif
+
+                to_reclaim = freed_slots[idx];
+                atomic_unset(freed_slots + idx, to_reclaim);
+
+                available_slots[idx] = ~to_reclaim;
+            }
+
+            outer_avail_vec  = ~_to_reclaim_indexes;
+            freed_slots_lock = 0;
+            return ret;
+        }
+        /*
 
         const uint64_t _to_reclaim_indexes = outer_freed_vec;
 
@@ -112,13 +191,13 @@ struct slab {
                 available_slots[idx] = ~to_reclaim;
             } while (to_reclaim_indexes);
 
-            outer_avail_vec = ~_to_reclaim_indexes;
+            outer_avail_vec  = ~_to_reclaim_indexes;
             freed_slots_lock = 0;
             return SLAB_READY;
-        }
+        }*/
 
         freed_slots_lock = 0;
-        return FAILED_VEC_FULL;
+        return FAILED_FULL;
     }
 };
 

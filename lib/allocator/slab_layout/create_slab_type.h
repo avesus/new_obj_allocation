@@ -28,7 +28,7 @@ struct type_helper;
 
 template<typename T, uint32_t nlevel, uint32_t... per_level_nvec>
 struct type_helper<T, nlevel, nlevel, per_level_nvec...> {
-    typedef slab<T, get_N<per_level_nvec...>(nlevel)> type;
+    typedef slab<T> type;
 };
 
 template<typename T,

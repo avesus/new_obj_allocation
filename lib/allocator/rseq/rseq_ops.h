@@ -29,10 +29,12 @@ __thread uint64_t _tlv_rand;
 // that can be optimized should be
 
 
-#define _FAILURE_MIGRATED 4097
+#define _RSEQ_SET_IDX_MIGRATED 4096
+#define _RSEQ_SET_IDX_FAILURE  (~(0UL))
+
 uint64_t ALWAYS_INLINE
 ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_2level_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
+    restarting_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
     // return [0 - 4095] -> success (that is the index)
     // return [4097] -> failure the thread migrated
     // return [-1] -> failure the bit vector is full
@@ -47,7 +49,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
     uint64_t idx_v1, temp_v1, temp_v2;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic push
-    
+
     // clang-format off
     asm volatile(
         RSEQ_INFO_DEF(32)
@@ -56,7 +58,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         // any register will do
         RSEQ_PREP_CS_DEF(%[temp_v1])
 
-        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+        "mov $" V_TO_STR(_RSEQ_SET_IDX_MIGRATED) ", %[idx]\n\t"
 
 #ifdef FAST_ABORT
         // skip abort first time
@@ -65,7 +67,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         ".byte 0x0f, 0xb9, 0x3d\n\t"
         ".long 0x53053053\n\t"
         "4:\n\t"
-        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+        "mov $" V_TO_STR(_RSEQ_SET_IDX_MIGRATED) ", %[idx]\n\t"
 #endif
         
         // start critical section
@@ -82,7 +84,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         // start loop: while(temp_v1 != -1)
         "5:\n\t"
                 
-        // idx = ~temp_v
+        // idx = temp_v
         "movq %[temp_v1], %[idx]\n\t"
 
         // if (%[v1]) is full leave.
@@ -149,7 +151,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         // given that the critical section is fairly involved
         // it may be worth it to put this in the same code section
         // as critical section for faster aborts
-        "mov $" V_TO_STR(_FAILURE_MIGRATED) ", %[idx]\n\t"
+        "mov $" V_TO_STR(_RSEQ_SET_IDX_MIGRATED) ", %[idx]\n\t"
         "jmp 1b\n\t"
         RSEQ_END_ABORT_DEF()
 #endif

@@ -14,24 +14,9 @@
 
 
 //////////////////////////////////////////////////////////////////////
-// returns whether a an inner_slab_t of base class super_slab or regular slab
-template<typename, typename>
-constexpr bool is_same_template{ false };
-
-template<template<typename, uint32_t, typename>
-         typename T,  // typename T in C++17
-         typename generic_T1,
-         uint32_t generic_V1,
-         typename generic_S1,
-         typename generic_T2,
-         uint32_t generic_V2,
-         typename generic_S2>
-constexpr bool is_same_template<T<generic_T1, generic_V1, generic_S1>,
-                                T<generic_T2, generic_V2, generic_S2>>{ true };
-//////////////////////////////////////////////////////////////////////
 
 
-template<typename T, uint32_t nvec = 7, typename inner_slab_t = slab<T>>
+template<typename T, uint32_t nvec = 1, typename inner_slab_t = slab<T>>
 struct super_slab {
     static constexpr const uint64_t capacity =
         64 * nvec * inner_slab_t::capacity;
@@ -58,7 +43,7 @@ struct super_slab {
         IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
 
         // final layer prefetch for child (child will prefetch for parent)
-        if constexpr (is_same_template<inner_slab_t, slab<T>>) {
+        if constexpr (std::is_same<inner_slab_t, slab<T>>::value) {
             PREFETCH_W(&(inner_slabs[pos_idx].freed_slots));
         }
 
@@ -92,7 +77,7 @@ struct super_slab {
 
                     // really not sure if this is worth it
                     if constexpr (0 &&
-                                  is_same_template<inner_slab_t, slab<T>>) {
+                                  std::is_same<inner_slab_t, slab<T>>::value) {
                         uint64_t lavailable_slabs = available_slabs[i];
                         lavailable_slabs =
                             (lavailable_slabs >> _tlv_rand) |
@@ -115,28 +100,45 @@ struct super_slab {
                             return ret;
                         }
                         // branch full try to mark bit as full
-                        else if (ret == FAILED_VEC_FULL) {
-                            if (BRANCH_UNLIKELY(restarting_set_bit_or(
-                                                    available_slabs + i,
-                                                    idx,
-                                                    start_cpu) ==
-                                                _RSEQ_MIGRATED)) {
+                        else if (ret == FAILED_FULL) {
+                            if (BRANCH_UNLIKELY(
+                                    restarting_set_bit(available_slabs + i,
+                                                       idx,
+                                                       start_cpu) ==
+                                    _RSEQ_MIGRATED)) {
                                 return FAILED_RSEQ;
                             }
                             continue;
                         }
-                        // migration after a task this big isnt so unlikely.
-                        // Need a fail safe so the slab isnt lost
+
+
+                        else if (ret & SLAB_READY) {
+                            if (BRANCH_UNLIKELY(
+                                    restarting_unset_bit(available_slabs + i,
+                                                         idx,
+                                                         start_cpu) ==
+                                    _RSEQ_MIGRATED)) {
+                                // this avoid a memory leak if we migrated (but
+                                // is pretty unlikely)
+                                atomic_xor(freed_slabs + i, ((1UL) << idx));
+                            }
+                            return ret;
+                        }
+                        /*
                         else if (ret == SLAB_READY) {
                             if (BRANCH_UNLIKELY(
-                                    restarting_unset_bit(
-                                        available_slabs + i,
-                                        idx,
-                                        start_cpu) == _RSEQ_MIGRATED)) {
+                                    restarting_unset_bit(available_slabs + i,
+                                                         idx,
+                                                         start_cpu) ==
+                                    _RSEQ_MIGRATED)) {
+                                // this avoid a memory leak if we migrated (but
+                                // is pretty unlikely)
+                                atomic_xor(freed_slabs + i, ((1UL) << idx));
                                 return FAILED_RSEQ;
                             }
                             continue;
                         }
+                        */
                         // inner alloc ret == failed rseq
                         else {
                             return FAILED_RSEQ;
@@ -168,7 +170,7 @@ struct super_slab {
                 }
             }
         }
-        return FAILED_VEC_FULL;
+        return FAILED_FULL;
     }
 };
 
