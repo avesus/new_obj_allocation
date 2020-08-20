@@ -44,28 +44,35 @@ struct slab {
 
     uint32_t
     _free(void * const parent_addr, T * const addr) {
-        IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&obj_arr[0])));
+        IMPOSSIBLE_COND(((uint64_t)addr) < ((uint64_t)(&obj_arr[0])));
 
         const uint64_t pos_idx =
             (((uint64_t)addr) - ((uint64_t)(&obj_arr[0]))) / sizeof(T);
 
-        IMPOSSIBLE_VALUES(pos_idx >= 64 * 64);
+        IMPOSSIBLE_COND(pos_idx >= 64 * 64);
 
         if (freed_slots[pos_idx / 64] == 0) {
             PREFETCH_W(&outer_freed_vec);
-            atomic_or(freed_slots + (pos_idx / 64),
-                      ((1UL) << ((pos_idx / 64) % 64)));
+            atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
             if (outer_freed_vec == 0) {
                 PREFETCH_W(parent_addr);
-                atomic_or(&outer_freed_vec, ((1UL) << (pos_idx % 64)));
+                atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
                 return 1;
             }
-            else {
+            else
+#ifdef CHECK_BEFORE_FREE
+                if (!(outer_freed_vec & ((1UL) << ((pos_idx / 64) % 64))))
+#endif
+            {
                 atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
                 return 0;
             }
         }
-        else {
+        else
+#ifdef CHECK_BEFORE_FREE
+            if (!(freed_slots[pos_idx / 64] & ((1UL) << (pos_idx % 64))))
+#endif
+        {
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
         }
 
@@ -94,6 +101,9 @@ struct slab {
             return FAILED_FULL;
         }
 
+        // at this point chances are high we are using outer_free_vec
+        PREFETCH_W(&outer_freed_vec);
+
         const uint32_t acq_lock_ret =
             restarting_acquire_lock(&freed_slots_lock, start_cpu);
         if (BRANCH_UNLIKELY(acq_lock_ret == _RSEQ_MIGRATED)) {
@@ -108,6 +118,8 @@ struct slab {
         // i know this is a race condition. It doesn't affect correctness.
         atomic_unset(&outer_freed_vec, _to_reclaim_indexes);
         uint64_t to_reclaim_indexes = _to_reclaim_indexes;
+
+#ifdef RETURN_WITH_SLAB_READY
         if (to_reclaim_indexes) {
             uint64_t ret = SLAB_READY;
 
@@ -175,13 +187,9 @@ struct slab {
             freed_slots_lock = 0;
             return ret;
         }
-        /*
+#endif
+#ifndef RETURN_WITH_SLAB_READY
 
-        const uint64_t _to_reclaim_indexes = outer_freed_vec;
-
-        // i know this is a race condition. It doesn't affect correctness.
-        atomic_unset(&outer_freed_vec, _to_reclaim_indexes);
-        uint64_t to_reclaim_indexes = _to_reclaim_indexes;
         if (to_reclaim_indexes) {
             do {
                 const uint32_t idx = _tzcnt_u64(to_reclaim_indexes);
@@ -194,7 +202,8 @@ struct slab {
             outer_avail_vec  = ~_to_reclaim_indexes;
             freed_slots_lock = 0;
             return SLAB_READY;
-        }*/
+        }
+#endif
 
         freed_slots_lock = 0;
         return FAILED_FULL;

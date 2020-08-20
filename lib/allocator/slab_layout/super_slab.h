@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-template<typename T, uint32_t nvec = 1, typename inner_slab_t = slab<T>>
+template<typename T, typename inner_slab_t, uint32_t nvec = 1>
 struct super_slab {
     static constexpr const uint64_t capacity =
         64 * nvec * inner_slab_t::capacity;
@@ -34,13 +34,13 @@ struct super_slab {
 
     uint32_t
     _free(void * const parent_addr, T * const addr) {
-        IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)(&inner_slabs[0])));
+        IMPOSSIBLE_COND(((uint64_t)addr) < ((uint64_t)(&inner_slabs[0])));
 
         const uint64_t pos_idx =
             (((uint64_t)addr) - ((uint64_t)(&inner_slabs[0]))) /
             sizeof(inner_slab_t);
 
-        IMPOSSIBLE_VALUES(pos_idx >= nvec * 64);
+        IMPOSSIBLE_COND(pos_idx >= nvec * 64);
 
         // final layer prefetch for child (child will prefetch for parent)
         if constexpr (std::is_same<inner_slab_t, slab<T>>::value) {
@@ -111,7 +111,7 @@ struct super_slab {
                             continue;
                         }
 
-
+#ifdef RETURN_WITH_SLAB_READY
                         else if (ret & SLAB_READY) {
                             if (BRANCH_UNLIKELY(
                                     restarting_unset_bit(available_slabs + i,
@@ -124,7 +124,7 @@ struct super_slab {
                             }
                             return ret;
                         }
-                        /*
+#else
                         else if (ret == SLAB_READY) {
                             if (BRANCH_UNLIKELY(
                                     restarting_unset_bit(available_slabs + i,
@@ -134,11 +134,11 @@ struct super_slab {
                                 // this avoid a memory leak if we migrated (but
                                 // is pretty unlikely)
                                 atomic_xor(freed_slabs + i, ((1UL) << idx));
-                                return FAILED_RSEQ;
                             }
-                            continue;
+                            return SLAB_READY;
                         }
-                        */
+#endif
+
                         // inner alloc ret == failed rseq
                         else {
                             return FAILED_RSEQ;

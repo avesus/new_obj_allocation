@@ -7,6 +7,7 @@
 
 #include <misc/cpp_attributes.h>
 #include <optimized/bits.h>
+
 #include <system/mmap_helpers.h>
 #include <system/sys_info.h>
 
@@ -21,13 +22,14 @@
 // processor. Region size must be set with template parameters
 
 
-
+#define SLAB_T(T, max_capacity) typename slab_type<T, max_capacity>::type
 
 template<typename T, typename slab_t>
 struct internal_slab_manager {
     slab_t obj_slabs[NPROCS];
     internal_slab_manager() = default;
 };
+
 
 template<typename T, typename slab_t>
 struct slab_manager {
@@ -66,26 +68,22 @@ struct slab_manager {
         uint64_t ptr;
         do {
             const uint32_t start_cpu = get_start_cpu();
-            IMPOSSIBLE_VALUES(start_cpu > NPROCS);
+            IMPOSSIBLE_COND(start_cpu > NPROCS);
             ptr = m->obj_slabs[start_cpu]._allocate(start_cpu);
-        } while (BRANCH_UNLIKELY(ptr == FAILED_RSEQ));
+        } while (BRANCH_UNLIKELY(retry_alloc(ptr)));
         return (T *)to_valid_ptr(ptr);
     }
 
     void
     _free(T * addr) {
-        IMPOSSIBLE_VALUES(((uint64_t)addr) < ((uint64_t)m));
+        IMPOSSIBLE_COND(((uint64_t)addr) < ((uint64_t)m));
         const uint32_t from_cpu =
             (((uint64_t)addr) - ((uint64_t)m)) / sizeof(slab_t);
 
-        IMPOSSIBLE_VALUES(from_cpu > NPROCS);
+        IMPOSSIBLE_COND(from_cpu > NPROCS);
         m->obj_slabs[from_cpu]._free(NULL, addr);
     }
 };
 
-
-    
-
-    
 
 #endif

@@ -30,7 +30,7 @@ pthread_barrier_t b;
 // super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
 using allocator_t = slab_manager<
     uint64_t,
-    super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t>>>>;
+    super_slab<uint64_t, super_slab<uint64_t, slab<uint64_t>, 1>, 1>>;
 // using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1,
 // super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *

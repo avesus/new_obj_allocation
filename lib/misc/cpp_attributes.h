@@ -2,7 +2,7 @@
 #define _CPP_ATTRIBUTES_H_
 
 #define _UNREACHABLE_ __builtin_unreachable()
-#define IMPOSSIBLE_VALUES(cond)                                                \
+#define IMPOSSIBLE_COND(cond)                                                \
     {                                                                          \
         if (cond) {                                                            \
             _UNREACHABLE_;                                                     \

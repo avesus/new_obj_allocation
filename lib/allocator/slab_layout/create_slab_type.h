@@ -4,49 +4,31 @@
 #include <allocator/slab_layout/obj_slab.h>
 #include <allocator/slab_layout/super_slab.h>
 
-template<uint32_t... per_level_nvec>
-constexpr uint32_t
-nlevel_specified(uint32_t n) {
-    uint32_t temp[] = { static_cast<uint32_t>(per_level_nvec)... };
-    return sizeof(temp) / sizeof(uint32_t);
-}
+#include <optimized/const_math.h>
 
-
-template<uint32_t... per_level_nvec>
-constexpr uint32_t
-get_N(uint32_t n) {
-    uint32_t temp[] = { static_cast<uint32_t>(per_level_nvec)... };
-    return temp[n];
-}
-
-template<typename T,
-         uint32_t nlevels,
-         uint32_t level,
-         uint32_t... per_level_nvec>
+template<typename T, uint64_t max_capacity>
 struct type_helper;
 
 
-template<typename T, uint32_t nlevel, uint32_t... per_level_nvec>
-struct type_helper<T, nlevel, nlevel, per_level_nvec...> {
+template<typename T>
+struct type_helper<T, 4096> {
     typedef slab<T> type;
 };
 
-template<typename T,
-         uint32_t nlevels,
-         uint32_t level,
-         uint32_t... per_level_nvec>
+
+template<typename T, uint64_t max_capacity>
 struct type_helper {
-    typedef super_slab<
-        T,
-        get_N<per_level_nvec...>(level),
-        typename type_helper<T, nlevels, level + 1, per_level_nvec...>::type>
+    typedef super_slab<T, typename type_helper<T, max_capacity / 64>::type>
         type;
 };
 
 
-template<typename T, uint32_t levels, uint32_t... per_level_nvec>
+template<typename T, uint64_t max_capacity>
 struct slab_type {
-    using type = typename type_helper<T, levels, 0, per_level_nvec...>::type;
+    static constexpr uint64_t _max_capacity =
+        cmath::min<uint64_t>(cmath::roundup<uint64_t>(max_capacity, 64), 4096);
+    
+    using type = typename type_helper<T, _max_capacity>::type;
 };
 
 #endif
