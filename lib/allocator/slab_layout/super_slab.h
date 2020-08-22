@@ -27,7 +27,6 @@ struct super_slab {
     uint64_t freed_slabs[nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
 
     inner_slab_t inner_slabs[64 * nvec] ALIGN_ATTR(CACHE_LINE_SIZE);
-    ;
 
     super_slab() = default;
 

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #-fno-inline -fno-omit-frame-pointer -fno-rtti -fno-exceptions
-add_compile_options(-O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native)
+add_compile_options(-O3  -Wall -Wextra -Wno-unused-function -march=native -mtune=native)
 link_libraries("-lpthread")
 
 string ( REPLACE "/" "\/" remove_path_regex ${CMAKE_CURRENT_SOURCE_DIR} + "/")

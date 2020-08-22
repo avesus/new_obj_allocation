@@ -665,6 +665,53 @@ abort:
 }
 
 
+uint32_t ALWAYS_INLINE
+ALIGN_ATTR(CACHE_LINE_SIZE)
+    restarting_incr(uint64_t * const v, const uint32_t start_cpu) {
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    uint64_t temp_r;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic push
+
+    // clang-format off
+    asm volatile goto(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_r])
+
+        // start critical section
+        "1:\n\t"
+        
+        RSEQ_CMP_CUR_VS_START_CPUS()
+            // if migrated goto 2:
+        "jnz %l[abort]\n\t"
+
+        "addq $1, (%[v])\n\t"
+
+        // end critical section
+        "2:\n\t" 
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        :
+        : [ start_cpu ] "g"(start_cpu),
+          [ temp_r] "r" (temp_r),
+          [ v ] "g"(v),
+          [ v_clobber ] "m"(*v)
+        : "cc"
+        : abort);
+
+    // clang-format on
+    return _RSEQ_SUCCESS;
+abort:
+    __attribute__((cold));
+    return _RSEQ_MIGRATED;
+}
+
+
 uint32_t NEVER_INLINE
                        ALIGN_ATTR(CACHE_LINE_SIZE) restarting_acquire_lock(uint64_t * const lock_ptr,
                                                     const uint32_t start_cpu) {

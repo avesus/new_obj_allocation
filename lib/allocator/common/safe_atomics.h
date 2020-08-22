@@ -22,5 +22,10 @@ atomic_unset(uint64_t * const v_loc, const uint64_t unset_bits) {
     __atomic_fetch_and(v_loc, ~unset_bits, __ATOMIC_RELAXED);
 }
 
+static constexpr uint64_t ALWAYS_INLINE
+atomic_incr(uint64_t * const v_loc) {
+    return __atomic_fetch_add(v_loc, 1, __ATOMIC_RELAXED);
+}
+
 
 #endif

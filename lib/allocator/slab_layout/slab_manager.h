@@ -81,6 +81,7 @@ struct slab_manager {
             (((uint64_t)addr) - ((uint64_t)m)) / sizeof(slab_t);
 
         IMPOSSIBLE_COND(from_cpu > NPROCS);
+
         m->obj_slabs[from_cpu]._free(NULL, addr);
     }
 };
