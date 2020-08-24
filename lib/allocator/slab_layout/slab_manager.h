@@ -68,7 +68,7 @@ struct slab_manager {
         uint64_t ptr;
         do {
             const uint32_t start_cpu = get_start_cpu();
-            IMPOSSIBLE_COND(start_cpu > NPROCS);
+            IMPOSSIBLE_COND(start_cpu >= NPROCS);
             ptr = m->obj_slabs[start_cpu]._allocate(start_cpu);
         } while (BRANCH_UNLIKELY(retry_alloc(ptr)));
         return (T *)to_valid_ptr(ptr);
@@ -80,9 +80,9 @@ struct slab_manager {
         const uint32_t from_cpu =
             (((uint64_t)addr) - ((uint64_t)m)) / sizeof(slab_t);
 
-        IMPOSSIBLE_COND(from_cpu > NPROCS);
+        IMPOSSIBLE_COND(from_cpu >= NPROCS);
 
-        m->obj_slabs[from_cpu]._free(NULL, addr);
+        m->obj_slabs[from_cpu]._first_free(addr);
     }
 };
 

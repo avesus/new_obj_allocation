@@ -31,7 +31,7 @@
         }                                                                      \
     }
 
-
+#define CACHE_ALIGN ALIGN_ATTR(CACHE_LINE_SIZE)
 #define ALIGN_ATTR(alignment) __attribute__((aligned(alignment)))
 #define PTR_ALIGNED_TO(addr, alignment)                                        \
     __builtin_assume_aligned(addr, alignment)

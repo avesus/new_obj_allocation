@@ -18,27 +18,28 @@ template<typename T>
 struct slab {
     static constexpr const uint64_t capacity = 64 * 64;
 
-    uint64_t outer_avail_vec ALIGN_ATTR(CACHE_LINE_SIZE);
+    uint64_t outer_avail_vec CACHE_ALIGN;
     uint64_t                 available_slots[64];
 
-    // the freed_slots_lock is necesary to prevent a race condition where
-    // thread A see available_slots == vec::FULL, get preempted by thread B
-    // (on same core), thread B sees the same. Thread A is brough back into
-    // context (on the same core) and successfully store freed_slots ->
-    // available_slots, gets preempted by thread C who allocates the newly
-    // freed slot. then thread B is brought back into context (on the same
-    // core) and successfully stores freed_slots -> available_slots, then
-    // thread A/B in any order unset freed_slots. The next allocation would
+    // the freed_slots_lock is necesary to prevent a race condition
+    // where thread A see available_slots == FULL_ALLOC_VEC, get
+    // preempted by thread B (on same core), thread B sees the
+    // same. Thread A is brough back into context (on the same core)
+    // and successfully store freed_slots -> available_slots, gets
+    // preempted by thread C who allocates the newly freed slot. then
+    // thread B is brought back into context (on the same core) and
+    // successfully stores freed_slots -> available_slots, then thread
+    // A/B in any order unset freed_slots. The next allocation would
     // return the same ptr as was returned by thread C's allocation.
     uint64_t freed_slots_lock;
 
 
-    uint64_t outer_freed_vec ALIGN_ATTR(CACHE_LINE_SIZE);
+    uint64_t outer_freed_vec CACHE_ALIGN;
     uint64_t                 freed_slots[64];
 
-    T obj_arr[64 * 64] ALIGN_ATTR(CACHE_LINE_SIZE);
+    T obj_arr[64 * 64] CACHE_ALIGN;
 
-
+    ~slab() = default;
     slab() = default;
 
 
@@ -52,27 +53,18 @@ struct slab {
         IMPOSSIBLE_COND(pos_idx >= 64 * 64);
 
         if (freed_slots[pos_idx / 64] == 0) {
-            PREFETCH_W(&outer_freed_vec);
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
             if (outer_freed_vec == 0) {
                 PREFETCH_W(parent_addr);
                 atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
                 return 1;
             }
-            else
-#ifdef CHECK_BEFORE_FREE
-                if (!(outer_freed_vec & ((1UL) << ((pos_idx / 64) % 64))))
-#endif
-            {
+            else {
                 atomic_or(&outer_freed_vec, ((1UL) << ((pos_idx / 64) % 64)));
                 return 0;
             }
         }
-        else
-#ifdef CHECK_BEFORE_FREE
-            if (!(freed_slots[pos_idx / 64] & ((1UL) << (pos_idx % 64))))
-#endif
-        {
+        else {
             atomic_or(freed_slots + (pos_idx / 64), ((1UL) << (pos_idx % 64)));
         }
 
@@ -208,7 +200,7 @@ struct slab {
         freed_slots_lock = 0;
         return FAILED_FULL;
     }
-};
+} CACHE_ALIGN;
 
 
 #endif

@@ -19,8 +19,8 @@ __thread uint64_t _tlv_rand;
 #define _RSEQ_SUCCESS       0
 
 /* Man pages
-    https://elixir.bootlin.com/linux/latest/source/kernel/rseq.c
-    https://lore.kernel.org/patchwork/patch/896892/
+   https://elixir.bootlin.com/linux/latest/source/kernel/rseq.c
+   https://lore.kernel.org/patchwork/patch/896892/
 */
 
 
@@ -32,9 +32,8 @@ __thread uint64_t _tlv_rand;
 #define _RSEQ_SET_IDX_MIGRATED 4096
 #define _RSEQ_SET_IDX_FAILURE  (~(0UL))
 
-uint64_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
+uint64_t ALWAYS_INLINE CACHE_ALIGN
+restarting_set_idx(uint64_t * const v1, const uint32_t start_cpu) {
     // return [0 - 4095] -> success (that is the index)
     // return [4097] -> failure the thread migrated
     // return [-1] -> failure the bit vector is full
@@ -147,7 +146,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "2:\n\t"
 
 #ifndef FAST_ABORT
-          RSEQ_START_ABORT_DEF()
+        RSEQ_START_ABORT_DEF()
         // given that the critical section is fairly involved
         // it may be worth it to put this in the same code section
         // as critical section for faster aborts
@@ -172,10 +171,10 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
 
 
 uint64_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_reclaim_free_slabs(uint64_t * const v,
-                                  uint64_t * const free_v,
-                                  const uint32_t   start_cpu) {
+CACHE_ALIGN
+restarting_reclaim_free_slabs(uint64_t * const v,
+                              uint64_t * const free_v,
+                              const uint32_t   start_cpu) {
     uint64_t ret_reclaimed_slots;
     // clang-format off
     asm volatile(
@@ -232,10 +231,10 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
 }
 
 
-uint32_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit(uint64_t * const v,
-                                               const uint64_t   bit,
-                                               const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+restarting_set_bit(uint64_t * const v,
+                   const uint64_t   bit,
+                   const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -290,10 +289,10 @@ abort:
     return _RSEQ_MIGRATED;
 }
 
-uint32_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_or(uint64_t * const v,
-                                                  const uint64_t   bit,
-                                                  const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+restarting_set_bit_or(uint64_t * const v,
+                      const uint64_t   bit,
+                      const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -346,10 +345,10 @@ abort:
 }
 
 
-uint64_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_fetch(uint64_t * const v,
-                                                     const uint64_t   bit,
-                                                     const uint32_t start_cpu) {
+uint64_t ALWAYS_INLINE CACHE_ALIGN
+restarting_set_bit_fetch(uint64_t * const v,
+                         const uint64_t   bit,
+                         const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -400,10 +399,10 @@ ALIGN_ATTR(CACHE_LINE_SIZE) restarting_set_bit_fetch(uint64_t * const v,
 }
 
 
-uint32_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_unset_bit(uint64_t * const v,
-                                                 const uint64_t   bit,
-                                                 const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+restarting_unset_bit(uint64_t * const v,
+                     const uint64_t   bit,
+                     const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -460,11 +459,10 @@ abort:
 }
 
 
-uint64_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_unset_bit_fetch(uint64_t * const v,
-                               const uint64_t   bit,
-                               const uint32_t   start_cpu) {
+uint64_t ALWAYS_INLINE CACHE_ALIGN
+restarting_unset_bit_fetch(uint64_t * const v,
+                           const uint64_t   bit,
+                           const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -518,10 +516,10 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
 }
 
 
-uint32_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE) restarting_xor(uint64_t * const v,
-                                           const uint64_t   new_bit_mask,
-                                           const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+restarting_xor(uint64_t * const v,
+               const uint64_t   new_bit_mask,
+               const uint32_t   start_cpu) {
 
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -567,10 +565,10 @@ abort:
 }
 
 
-uint32_t ALWAYS_INLINE
-                       ALIGN_ATTR(CACHE_LINE_SIZE) restarting_or(uint64_t * const v,
-                                          const uint64_t   new_bit_mask,
-                                          const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+                       restarting_or(uint64_t * const v,
+                                     const uint64_t   new_bit_mask,
+                                     const uint32_t   start_cpu) {
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     uint64_t temp_r;
@@ -616,10 +614,10 @@ abort:
 }
 
 
-uint32_t ALWAYS_INLINE
-                       ALIGN_ATTR(CACHE_LINE_SIZE) restarting_and(uint64_t * const v,
-                                           const uint64_t   new_bit_mask,
-                                           const uint32_t   start_cpu) {
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+                       restarting_and(uint64_t * const v,
+                                      const uint64_t   new_bit_mask,
+                                      const uint32_t   start_cpu) {
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     uint64_t temp_r;
@@ -636,7 +634,7 @@ uint32_t ALWAYS_INLINE
         "1:\n\t"
         
         RSEQ_CMP_CUR_VS_START_CPUS()
-            // if migrated goto 2:
+        // if migrated goto 2:
         "jnz %l[abort]\n\t"
 
         "andq %[new_bit_mask], (%[v])\n\t"
@@ -664,10 +662,78 @@ abort:
     return _RSEQ_MIGRATED;
 }
 
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+                       restarting_percpu_free(uint64_t * const v,
+                                              uint64_t * const shared_v,
+                                              const uint64_t   bit,
+                                              const uint32_t   start_cpu) {
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    uint64_t temp_v, ret;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic push
 
-uint32_t ALWAYS_INLINE
-ALIGN_ATTR(CACHE_LINE_SIZE)
-    restarting_incr(uint64_t * const v, const uint32_t start_cpu) {
+    // clang-format off
+    asm volatile(
+        RSEQ_INFO_DEF(32)
+        RSEQ_CS_ARR_DEF()
+        RSEQ_PREP_CS_DEF(%[temp_v])
+
+        // start critical section
+        "1:\n\t"
+
+        "xorq %[ret], %[ret]\n\t"
+        
+        // check if migrated
+        RSEQ_CMP_CUR_VS_START_CPUS()
+        // if migrated goto 2:
+        "jnz 2f\n\t"
+
+        // temp_v = *v;
+        "movq (%[v]), %[temp_v]\n\t"
+
+        // any value != 0 and != 1 and < 16 will work here
+        "movq $1, %[ret]\n\t"
+        
+        // temp_v |= 1 << bit
+        "btsq %[bit], %[temp_v]\n\t"
+        "jc 2f\n\t"
+
+        "popcnt %[temp_v], %[ret]\n\t"
+        "testq $16, %[ret]\n\t"
+        "jz 6f\n\t"
+
+        // this is questionable
+        // "prefetcht0 (%[shared_v])\n\t"
+        "movq %[temp_v], %[ret]\n\t"
+        "xorq %[temp_v], %[temp_v]\n\t"
+        
+        // commit
+        "6:"
+        "movq %[temp_v], (%[v])\n\t"
+        
+        "2:\n\t"
+        // end critical section
+
+        RSEQ_START_ABORT_DEF()
+        "jmp 1b\n\t"
+        RSEQ_END_ABORT_DEF()
+
+        : [ ret ] "=&r" (ret),
+          [ temp_v ] "=&r" (temp_v)
+        : [ start_cpu ] "g"(start_cpu),
+          [ bit ] "r" (bit),
+          [ shared_v ] "g" (shared_v),
+          [ v ] "g"(v),
+          [ v_clobber ] "m"(*v)
+        : "cc");
+    // clang-format on
+
+    return ret;
+}
+
+uint32_t ALWAYS_INLINE CACHE_ALIGN
+                       restarting_incr(uint64_t * const v, const uint32_t start_cpu) {
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     uint64_t temp_r;
@@ -684,7 +750,7 @@ ALIGN_ATTR(CACHE_LINE_SIZE)
         "1:\n\t"
         
         RSEQ_CMP_CUR_VS_START_CPUS()
-            // if migrated goto 2:
+        // if migrated goto 2:
         "jnz %l[abort]\n\t"
 
         "addq $1, (%[v])\n\t"
@@ -712,9 +778,8 @@ abort:
 }
 
 
-uint32_t NEVER_INLINE
-                       ALIGN_ATTR(CACHE_LINE_SIZE) restarting_acquire_lock(uint64_t * const lock_ptr,
-                                                    const uint32_t start_cpu) {
+uint32_t NEVER_INLINE CACHE_ALIGN
+                       restarting_acquire_lock(uint64_t * const lock_ptr, const uint32_t start_cpu) {
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     uint64_t temp_r;

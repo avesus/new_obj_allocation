@@ -109,6 +109,47 @@ corr_alloc_then_free_test(void * targ) {
 
 
 void *
+corr_alloc_all_free_all_alloc_all_test(void * targ) {
+    expected_allocs =
+        cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity;
+    total_allocs = 0;
+    uint64_t sum = 0;
+    init_thread();
+
+    allocator_t * allocator = (allocator_t *)targ;
+
+    uint64_t ** ptrs = (uint64_t **)calloc(expected_allocs, sizeof(uint64_t *));
+    uint32_t    p_idx = 0;
+
+    pthread_barrier_wait(&b);
+    uint64_t * ptr;
+    while (1) {
+        ptr = (uint64_t *)ALLOCATE;
+        if (ptr == NULL) {
+            break;
+        }
+        ptrs[p_idx++] = ptr;
+    }
+    for (uint32_t i = 0; i < p_idx; ++i) {
+        FREE(ptrs[i]);
+    }
+    pthread_barrier_wait(&b);
+    while (1) {
+        ptr = (uint64_t *)ALLOCATE;
+        if (ptr == NULL) {
+            break;
+        }
+        sum++;
+    }
+
+    free(ptrs);
+    __atomic_fetch_add(&total_allocs, sum, __ATOMIC_RELAXED);
+    (void)(allocator);
+    return NULL;
+}
+
+
+void *
 corr_batch_alloc_then_free_test(void * targ) {
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
@@ -250,6 +291,51 @@ perf_batch_alloc_then_free_test(void * targ) {
 }
 
 void *
+perf_alloc_all_free_all_alloc_all_test(void * targ) {
+    init_thread();
+
+    allocator_t * allocator = (allocator_t *)targ;
+
+    total_nsec = 0;
+
+    uint64_t ** ptrs = (uint64_t **)calloc(cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity, sizeof(uint64_t *));
+    uint32_t    p_idx = 0;
+
+    struct timespec start_ts, end_ts;
+
+    pthread_barrier_wait(&b);
+    uint64_t * ptr;
+    while (1) {
+        ptr = (uint64_t *)ALLOCATE;
+        if (ptr == NULL) {
+            break;
+        }
+        ptrs[p_idx++] = ptr;
+    }
+    for (uint32_t i = 0; i < p_idx; ++i) {
+        FREE(ptrs[i]);
+    }
+    pthread_barrier_wait(&b);
+
+    timers::gettime(timers::ELAPSE, &start_ts);
+    volatile uint64_t sink;
+    do {
+        sink = (uint64_t)ALLOCATE;
+    } while (sink);
+    timers::gettime(timers::ELAPSE, &end_ts);
+
+    free(ptrs);
+    __atomic_fetch_add(&total_nsec,
+                       timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
+                       __ATOMIC_RELAXED);
+
+    test_size = (cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity) / nthread;
+    (void)(allocator);
+    return NULL;
+}
+
+
+void *
 baseline_tlv_incr(void * targ) {
     init_thread();
 
@@ -334,26 +420,35 @@ baseline_per_core_incr(void * targ) {
 
 typedef void * (*tfunc_t)(void *);
 
-const uint32_t      nperf_functions                 = 3;
-tfunc_t             perf_functions[nperf_functions] = { &perf_alloc_test,
-                                            &perf_alloc_then_free_test,
-                                            &perf_batch_alloc_then_free_test };
+const uint32_t nperf_functions                 = 4;
+tfunc_t        perf_functions[nperf_functions] = {
+    &perf_alloc_test,
+    &perf_alloc_then_free_test,
+    &perf_batch_alloc_then_free_test,
+    &perf_alloc_all_free_all_alloc_all_test
+};
 static const char * perf_fnames[nperf_functions]{
     "perf_alloc_test",
     "perf_alloc_then_free_test",
-    "perf_batch_alloc_then_free_test"
+    "perf_batch_alloc_then_free_test",
+    "perf_alloc_all_free_all_alloc_all_test"
 };
 
 
-const uint32_t ncorr_functions                 = 3;
-tfunc_t        corr_functions[ncorr_functions] = { &corr_alloc_test,
-                                            &corr_alloc_then_free_test,
-                                            &corr_batch_alloc_then_free_test };
+const uint32_t ncorr_functions                 = 4;
+tfunc_t        corr_functions[ncorr_functions] = {
+    &corr_alloc_test,
+    &corr_alloc_then_free_test,
+    &corr_batch_alloc_then_free_test,
+    &corr_alloc_all_free_all_alloc_all_test
+};
 
 static const char * corr_fnames[ncorr_functions]{
     "corr_alloc_test",
     "corr_alloc_then_free_test",
-    "corr_batch_alloc_then_free_test"
+    "corr_batch_alloc_then_free_test",
+    "corr_alloc_all_free_all_alloc_all_test"
+
 };
 
 const uint32_t nbaseline_functions                     = 3;
@@ -438,7 +533,7 @@ main(int argc, char ** argv) {
     if (do_corr_tests) {
 
         upper_bound = cmath::min<uint32_t>(ncorr_functions, upper_bound);
-        
+
         for (uint32_t i = lower_bound; i < upper_bound; ++i) {
             allocator.reset();
 
