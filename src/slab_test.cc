@@ -35,7 +35,6 @@ __thread uint64_t tlv_incr = 0;
 
 #include <allocator/slab_layout/create_slab_type.h>
 #include <allocator/slab_layout/slab_manager.h>
-
 #include <allocator/rseq/rseq_base.h>
 
 #include <optimized/const_math.h>

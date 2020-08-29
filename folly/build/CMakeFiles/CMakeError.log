@@ -1,0 +1,118 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_baf83/fast && /usr/bin/make -f CMakeFiles/cmTC_baf83.dir/build.make CMakeFiles/cmTC_baf83.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_baf83.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_baf83.dir/src.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_baf83
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_baf83.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_baf83.dir/src.c.o  -o cmTC_baf83 
+CMakeFiles/cmTC_baf83.dir/src.c.o: In function `main':
+src.c:(.text+0x3e): undefined reference to `pthread_create'
+src.c:(.text+0x4a): undefined reference to `pthread_detach'
+src.c:(.text+0x5b): undefined reference to `pthread_join'
+src.c:(.text+0x6f): undefined reference to `pthread_atfork'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_baf83.dir/build.make:86: recipe for target 'cmTC_baf83' failed
+make[1]: *** [cmTC_baf83] Error 1
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_baf83/fast' failed
+make: *** [cmTC_baf83/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Performing C++ SOURCE FILE Test COMPILER_HAS_UNKNOWN_WARNING_OPTION failed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_f52c4/fast && /usr/bin/make -f CMakeFiles/cmTC_f52c4.dir/build.make CMakeFiles/cmTC_f52c4.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f52c4.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_UNKNOWN_WARNING_OPTION  -std=gnu++1z   -Werror=unknown-warning-option -pthread -o CMakeFiles/cmTC_f52c4.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+cc1plus: error: -Werror=unknown-warning-option: no option -Wunknown-warning-option
+CMakeFiles/cmTC_f52c4.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_f52c4.dir/src.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_f52c4.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_f52c4/fast' failed
+make: *** [cmTC_f52c4/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_W_NULLABILITY_COMPLETENESS failed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_03248/fast && /usr/bin/make -f CMakeFiles/cmTC_03248.dir/build.make CMakeFiles/cmTC_03248.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_03248.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_W_NULLABILITY_COMPLETENESS  -std=gnu++1z   -Wnullability-completeness -pthread -o CMakeFiles/cmTC_03248.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+c++: error: unrecognized command line option '-Wnullability-completeness'
+CMakeFiles/cmTC_03248.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_03248.dir/src.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_03248.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_03248/fast' failed
+make: *** [cmTC_03248/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_W_INCONSISTENT_MISSING_OVERRIDE failed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_c3567/fast && /usr/bin/make -f CMakeFiles/cmTC_c3567.dir/build.make CMakeFiles/cmTC_c3567.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c3567.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_W_INCONSISTENT_MISSING_OVERRIDE  -std=gnu++1z   -Winconsistent-missing-override -pthread -o CMakeFiles/cmTC_c3567.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+c++: error: unrecognized command line option '-Winconsistent-missing-override'; did you mean '-Wno-suggest-override'?
+CMakeFiles/cmTC_c3567.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_c3567.dir/src.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_c3567.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_c3567/fast' failed
+make: *** [cmTC_c3567/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test FOLLY_USE_LIBCPP failed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_71289/fast && /usr/bin/make -f CMakeFiles/cmTC_71289.dir/build.make CMakeFiles/cmTC_71289.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_71289.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_USE_LIBCPP  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_71289.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx:4:4: error: #error No libc++
+   #error No libc++
+    ^~~~~
+CMakeFiles/cmTC_71289.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_71289.dir/src.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_71289.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_71289/fast' failed
+make: *** [cmTC_71289/fast] Error 2
+
+
+Source file was:
+
+  #include <type_traits>
+  #if !_LIBCPP_VERSION
+  #error No libc++
+  #endif
+  int main() { return 0; }

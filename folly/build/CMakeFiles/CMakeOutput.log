@@ -1,0 +1,1347 @@
+The system is: Linux - 5.4.0-42-generic - x86_64
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /usr/bin/c++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/3.15.2/CompilerIdCXX/a.out"
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/bin/cc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/3.15.2/CompilerIdC/a.out"
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_bf1ff/fast && /usr/bin/make -f CMakeFiles/cmTC_bf1ff.dir/build.make CMakeFiles/cmTC_bf1ff.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_bf1ff.dir/testCXXCompiler.cxx.o
+/usr/bin/c++     -o CMakeFiles/cmTC_bf1ff.dir/testCXXCompiler.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_bf1ff
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bf1ff.dir/link.txt --verbose=1
+/usr/bin/c++       -rdynamic CMakeFiles/cmTC_bf1ff.dir/testCXXCompiler.cxx.o  -o cmTC_bf1ff 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_60735/fast && /usr/bin/make -f CMakeFiles/cmTC_60735.dir/build.make CMakeFiles/cmTC_60735.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/c++    -v -o CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -c /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/usr/bin/c++
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cckr3CE0.s
+GNU C++14 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)
+	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/local/include"
+ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/7"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring duplicate directory "/usr/local/include"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ .
+ /usr/local/include
+ /usr/include/c++/7
+ /usr/include/x86_64-linux-gnu/c++/7
+ /usr/include/c++/7/backward
+ /usr/lib/gcc/x86_64-linux-gnu/7/include
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C++14 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)
+	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 3eb3dc290cd5714c3e1c3ae751116f07
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o /tmp/cckr3CE0.s
+GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30
+COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_60735
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60735.dir/link.txt --verbose=1
+/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_60735 
+Using built-in specs.
+COLLECT_GCC=/usr/bin/c++
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) 
+COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_60735' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8DWGwZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_60735 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/local/lib/../lib -L/usr/local/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L. -L/usr/local/lib -L/usr/local/lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_60735' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [.]
+    add: [/usr/local/include]
+    add: [/usr/include/c++/7]
+    add: [/usr/include/x86_64-linux-gnu/c++/7]
+    add: [/usr/include/c++/7/backward]
+    add: [/usr/lib/gcc/x86_64-linux-gnu/7/include]
+    add: [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+    add: [/usr/include/x86_64-linux-gnu]
+    add: [/usr/include]
+  end of search list found
+  skipping relative include dir [.]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include/c++/7] ==> [/usr/include/c++/7]
+  collapse include dir [/usr/include/x86_64-linux-gnu/c++/7] ==> [/usr/include/x86_64-linux-gnu/c++/7]
+  collapse include dir [/usr/include/c++/7/backward] ==> [/usr/include/c++/7/backward]
+  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/7/include] ==> [/usr/lib/gcc/x86_64-linux-gnu/7/include]
+  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed] ==> [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+  collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/usr/local/include;/usr/include/c++/7;/usr/include/x86_64-linux-gnu/c++/7;/usr/include/c++/7/backward;/usr/lib/gcc/x86_64-linux-gnu/7/include;/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed;/usr/include/x86_64-linux-gnu;/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_60735/fast && /usr/bin/make -f CMakeFiles/cmTC_60735.dir/build.make CMakeFiles/cmTC_60735.dir/build]
+  ignore line: [make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/c++    -v -o CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -c /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/c++]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cckr3CE0.s]
+  ignore line: [GNU C++14 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)]
+  ignore line: [	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/usr/local/include"]
+  ignore line: [ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/7"]
+  ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
+  ignore line: [ignoring duplicate directory "/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ .]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include/c++/7]
+  ignore line: [ /usr/include/x86_64-linux-gnu/c++/7]
+  ignore line: [ /usr/include/c++/7/backward]
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/include]
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+  ignore line: [ /usr/include/x86_64-linux-gnu]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++14 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)]
+  ignore line: [	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 3eb3dc290cd5714c3e1c3ae751116f07]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o /tmp/cckr3CE0.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30]
+  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_60735]
+  ignore line: [/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60735.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/c++      -v -rdynamic CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_60735 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/c++]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) ]
+  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_60735' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8DWGwZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_60735 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/local/lib/../lib -L/usr/local/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L. -L/usr/local/lib -L/usr/local/lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc8DWGwZ.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-pie] ==> ignore
+    arg [-znow] ==> ignore
+    arg [-zrelro] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_60735] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o] ==> ignore
+    arg [-L/usr/local/lib/../lib] ==> dir [/usr/local/lib/../lib]
+    arg [-L/usr/local/lib/../lib] ==> dir [/usr/local/lib/../lib]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib]
+    arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+    arg [-L/lib/../lib] ==> dir [/lib/../lib]
+    arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+    arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
+    arg [-L.] ==> ignore
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..]
+    arg [CMakeFiles/cmTC_60735.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o] ==> ignore
+  collapse library dir [/usr/local/lib/../lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib/../lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7] ==> [/usr/lib/gcc/x86_64-linux-gnu/7]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib] ==> [/usr/lib]
+  collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+  collapse library dir [/lib/../lib] ==> [/lib]
+  collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+  collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> [/usr/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit dirs: [/usr/local/lib;/usr/lib/gcc/x86_64-linux-gnu/7;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+  implicit fwks: []
+
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_b453e/fast && /usr/bin/make -f CMakeFiles/cmTC_b453e.dir/build.make CMakeFiles/cmTC_b453e.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b453e.dir/testCCompiler.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_b453e.dir/testCCompiler.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_b453e
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b453e.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_b453e.dir/testCCompiler.c.o  -o cmTC_b453e 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_b86fa/fast && /usr/bin/make -f CMakeFiles/cmTC_b86fa.dir/build.make CMakeFiles/cmTC_b86fa.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o
+/usr/bin/cc   -v -o CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/usr/bin/cc
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/ccivSavf.s
+GNU C11 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)
+	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/usr/local/include"
+ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+ignoring duplicate directory "/usr/local/include"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ .
+ /usr/local/include
+ /usr/lib/gcc/x86_64-linux-gnu/7/include
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed
+ /usr/include/x86_64-linux-gnu
+ /usr/include
+End of search list.
+GNU C11 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)
+	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: b62ed4a2880cd4159476ea8293b72fa8
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o /tmp/ccivSavf.s
+GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30
+COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_b86fa
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b86fa.dir/link.txt --verbose=1
+/usr/bin/cc     -v -rdynamic CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o  -o cmTC_b86fa 
+Using built-in specs.
+COLLECT_GCC=/usr/bin/cc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) 
+COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_b86fa' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccm2Xrqe.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_b86fa /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/local/lib/../lib -L/usr/local/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L. -L/usr/local/lib -L/usr/local/lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_b86fa' '-mtune=generic' '-march=x86-64'
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [.]
+    add: [/usr/local/include]
+    add: [/usr/lib/gcc/x86_64-linux-gnu/7/include]
+    add: [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+    add: [/usr/include/x86_64-linux-gnu]
+    add: [/usr/include]
+  end of search list found
+  skipping relative include dir [.]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/7/include] ==> [/usr/lib/gcc/x86_64-linux-gnu/7/include]
+  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed] ==> [/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+  collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/usr/local/include;/usr/lib/gcc/x86_64-linux-gnu/7/include;/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed;/usr/include/x86_64-linux-gnu;/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_b86fa/fast && /usr/bin/make -f CMakeFiles/cmTC_b86fa.dir/build.make CMakeFiles/cmTC_b86fa.dir/build]
+  ignore line: [make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/cc]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/noah/local_cmake/cmake-3.15.2/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/ccivSavf.s]
+  ignore line: [GNU C11 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)]
+  ignore line: [	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
+  ignore line: [ignoring duplicate directory "/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/7/../../../../x86_64-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ .]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/include]
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed]
+  ignore line: [ /usr/include/x86_64-linux-gnu]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C11 (Ubuntu 7.5.0-3ubuntu1~18.04) version 7.5.0 (x86_64-linux-gnu)]
+  ignore line: [	compiled by GNU C version 7.5.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: b62ed4a2880cd4159476ea8293b72fa8]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o /tmp/ccivSavf.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30]
+  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_b86fa]
+  ignore line: [/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b86fa.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/cc     -v -rdynamic CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o  -o cmTC_b86fa ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/cc]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.5.0-3ubuntu1~18.04' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04) ]
+  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/lib/../lib/:/usr/local/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:./:/usr/local/lib/:/usr/local/lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_b86fa' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccm2Xrqe.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_b86fa /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/local/lib/../lib -L/usr/local/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L. -L/usr/local/lib -L/usr/local/lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccm2Xrqe.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-pie] ==> ignore
+    arg [-znow] ==> ignore
+    arg [-zrelro] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_b86fa] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o] ==> ignore
+    arg [-L/usr/local/lib/../lib] ==> dir [/usr/local/lib/../lib]
+    arg [-L/usr/local/lib/../lib] ==> dir [/usr/local/lib/../lib]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib]
+    arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
+    arg [-L/lib/../lib] ==> dir [/lib/../lib]
+    arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
+    arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
+    arg [-L.] ==> ignore
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..]
+    arg [CMakeFiles/cmTC_b86fa.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--push-state] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--pop-state] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--push-state] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--pop-state] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o] ==> ignore
+    arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o] ==> ignore
+  collapse library dir [/usr/local/lib/../lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib/../lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7] ==> [/usr/lib/gcc/x86_64-linux-gnu/7]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib] ==> [/usr/lib]
+  collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
+  collapse library dir [/lib/../lib] ==> [/lib]
+  collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
+  collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> [/usr/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit dirs: [/usr/local/lib;/usr/lib/gcc/x86_64-linux-gnu/7;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+  implicit fwks: []
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_1dc51/fast && /usr/bin/make -f CMakeFiles/cmTC_1dc51.dir/build.make CMakeFiles/cmTC_1dc51.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1dc51.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_1dc51.dir/CheckIncludeFile.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_1dc51
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1dc51.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_1dc51.dir/CheckIncludeFile.c.o  -o cmTC_1dc51 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function ASN1_TIME_diff exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_87fa5/fast && /usr/bin/make -f CMakeFiles/cmTC_87fa5.dir/build.make CMakeFiles/cmTC_87fa5.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_87fa5.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=ASN1_TIME_diff  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_87fa5.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+cc1: warning: command line option ‘-std=gnu++1z’ is valid for C++/ObjC++ but not for C
+Linking C executable cmTC_87fa5
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_87fa5.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=ASN1_TIME_diff  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_87fa5.dir/CheckFunctionExists.c.o  -o cmTC_87fa5 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function lzma_auto_decoder exists in the /usr/lib/x86_64-linux-gnu/liblzma.so passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_279c0/fast && /usr/bin/make -f CMakeFiles/cmTC_279c0.dir/build.make CMakeFiles/cmTC_279c0.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_279c0.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=lzma_auto_decoder  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_279c0.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+cc1: warning: command line option ‘-std=gnu++1z’ is valid for C++/ObjC++ but not for C
+Linking C executable cmTC_279c0
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_279c0.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=lzma_auto_decoder  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_279c0.dir/CheckFunctionExists.c.o  -o cmTC_279c0 /usr/lib/x86_64-linux-gnu/liblzma.so /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function lzma_easy_encoder exists in the /usr/lib/x86_64-linux-gnu/liblzma.so passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_1bc87/fast && /usr/bin/make -f CMakeFiles/cmTC_1bc87.dir/build.make CMakeFiles/cmTC_1bc87.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1bc87.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=lzma_easy_encoder  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_1bc87.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+cc1: warning: command line option ‘-std=gnu++1z’ is valid for C++/ObjC++ but not for C
+Linking C executable cmTC_1bc87
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1bc87.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=lzma_easy_encoder  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_1bc87.dir/CheckFunctionExists.c.o  -o cmTC_1bc87 /usr/lib/x86_64-linux-gnu/liblzma.so /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function lzma_lzma_preset exists in the /usr/lib/x86_64-linux-gnu/liblzma.so passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_4b49e/fast && /usr/bin/make -f CMakeFiles/cmTC_4b49e.dir/build.make CMakeFiles/cmTC_4b49e.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4b49e.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=lzma_lzma_preset  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_4b49e.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+cc1: warning: command line option ‘-std=gnu++1z’ is valid for C++/ObjC++ but not for C
+Linking C executable cmTC_4b49e
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4b49e.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=lzma_lzma_preset  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_4b49e.dir/CheckFunctionExists.c.o  -o cmTC_4b49e /usr/lib/x86_64-linux-gnu/liblzma.so /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file elf.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_54192/fast && /usr/bin/make -f CMakeFiles/cmTC_54192.dir/build.make CMakeFiles/cmTC_54192.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_54192.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_54192.dir/CheckIncludeFile.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_54192
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_54192.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_54192.dir/CheckIncludeFile.cxx.o  -o cmTC_54192 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the backtrace exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_4eed9/fast && /usr/bin/make -f CMakeFiles/cmTC_4eed9.dir/build.make CMakeFiles/cmTC_4eed9.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4eed9.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_4eed9.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_4eed9
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4eed9.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_4eed9.dir/CheckSymbolExists.c.o  -o cmTC_4eed9 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <execinfo.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef backtrace
+  return ((int*)(&backtrace))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Performing C++ SOURCE FILE Test FOLLY_CPP_ATOMIC_BUILTIN succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_cb73f/fast && /usr/bin/make -f CMakeFiles/cmTC_cb73f.dir/build.make CMakeFiles/cmTC_cb73f.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_cb73f.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_CPP_ATOMIC_BUILTIN  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_cb73f.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_cb73f
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cb73f.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_CPP_ATOMIC_BUILTIN  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_cb73f.dir/src.cxx.o  -o cmTC_cb73f /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  #include <atomic>
+  int main(int argc, char** argv) {
+    struct Test { int val; };
+    std::atomic<Test> s;
+    return static_cast<int>(s.is_lock_free());
+  }
+Determining if the include file jemalloc/jemalloc.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_79edb/fast && /usr/bin/make -f CMakeFiles/cmTC_79edb.dir/build.make CMakeFiles/cmTC_79edb.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_79edb.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_79edb.dir/CheckIncludeFile.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_79edb
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_79edb.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_79edb.dir/CheckIncludeFile.cxx.o  -o cmTC_79edb /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test COMPILER_HAS_W_SHADOW_LOCAL succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_b3eb2/fast && /usr/bin/make -f CMakeFiles/cmTC_b3eb2.dir/build.make CMakeFiles/cmTC_b3eb2.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b3eb2.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_W_SHADOW_LOCAL  -std=gnu++1z   -Wshadow-local -pthread -o CMakeFiles/cmTC_b3eb2.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b3eb2
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b3eb2.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_W_SHADOW_LOCAL  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_b3eb2.dir/src.cxx.o  -o cmTC_b3eb2 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_W_SHADOW_COMPATIBLE_LOCAL succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_f2b4e/fast && /usr/bin/make -f CMakeFiles/cmTC_f2b4e.dir/build.make CMakeFiles/cmTC_f2b4e.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f2b4e.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_W_SHADOW_COMPATIBLE_LOCAL  -std=gnu++1z   -Wshadow-compatible-local -pthread -o CMakeFiles/cmTC_f2b4e.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f2b4e
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f2b4e.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_W_SHADOW_COMPATIBLE_LOCAL  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_f2b4e.dir/src.cxx.o  -o cmTC_f2b4e /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_W_NOEXCEPT_TYPE succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_9e50b/fast && /usr/bin/make -f CMakeFiles/cmTC_9e50b.dir/build.make CMakeFiles/cmTC_9e50b.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9e50b.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_W_NOEXCEPT_TYPE  -std=gnu++1z   -Wnoexcept-type -pthread -o CMakeFiles/cmTC_9e50b.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9e50b
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9e50b.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_W_NOEXCEPT_TYPE  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_9e50b.dir/src.cxx.o  -o cmTC_9e50b /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_F_ALIGNED_NEW succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_f2f2a/fast && /usr/bin/make -f CMakeFiles/cmTC_f2f2a.dir/build.make CMakeFiles/cmTC_f2f2a.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f2f2a.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_F_ALIGNED_NEW  -std=gnu++1z   -faligned-new -pthread -o CMakeFiles/cmTC_f2f2a.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f2f2a
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f2f2a.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_F_ALIGNED_NEW  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_f2f2a.dir/src.cxx.o  -o cmTC_f2f2a /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_HAS_F_OPENMP succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_6eca9/fast && /usr/bin/make -f CMakeFiles/cmTC_6eca9.dir/build.make CMakeFiles/cmTC_6eca9.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_6eca9.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_F_OPENMP  -std=gnu++1z   -fopenmp -pthread -o CMakeFiles/cmTC_6eca9.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_6eca9
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6eca9.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_F_OPENMP  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_6eca9.dir/src.cxx.o  -o cmTC_6eca9 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Determining if the pthread_atfork exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_7d25f/fast && /usr/bin/make -f CMakeFiles/cmTC_7d25f.dir/build.make CMakeFiles/cmTC_7d25f.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7d25f.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_7d25f.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_7d25f
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7d25f.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_7d25f.dir/CheckSymbolExists.c.o  -o cmTC_7d25f /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_atfork
+  return ((int*)(&pthread_atfork))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function memrchr exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_98334/fast && /usr/bin/make -f CMakeFiles/cmTC_98334.dir/build.make CMakeFiles/cmTC_98334.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_98334.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=memrchr   -pthread -o CMakeFiles/cmTC_98334.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+Linking C executable cmTC_98334
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_98334.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=memrchr    -rdynamic CMakeFiles/cmTC_98334.dir/CheckFunctionExists.c.o  -o cmTC_98334 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the accept4 exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_c3b52/fast && /usr/bin/make -f CMakeFiles/cmTC_c3b52.dir/build.make CMakeFiles/cmTC_c3b52.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_c3b52.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_c3b52.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_c3b52
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c3b52.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_c3b52.dir/CheckSymbolExists.c.o  -o cmTC_c3b52 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/socket.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef accept4
+  return ((int*)(&accept4))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the getrandom exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_ac6a6/fast && /usr/bin/make -f CMakeFiles/cmTC_ac6a6.dir/build.make CMakeFiles/cmTC_ac6a6.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ac6a6.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_ac6a6.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_ac6a6
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ac6a6.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_ac6a6.dir/CheckSymbolExists.c.o  -o cmTC_ac6a6 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/random.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef getrandom
+  return ((int*)(&getrandom))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the preadv exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_da189/fast && /usr/bin/make -f CMakeFiles/cmTC_da189.dir/build.make CMakeFiles/cmTC_da189.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_da189.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_da189.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_da189
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da189.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_da189.dir/CheckSymbolExists.c.o  -o cmTC_da189 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/uio.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef preadv
+  return ((int*)(&preadv))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the pwritev exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_226be/fast && /usr/bin/make -f CMakeFiles/cmTC_226be.dir/build.make CMakeFiles/cmTC_226be.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_226be.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_226be.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_226be
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_226be.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_226be.dir/CheckSymbolExists.c.o  -o cmTC_226be /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/uio.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pwritev
+  return ((int*)(&pwritev))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the clock_gettime exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_ffd45/fast && /usr/bin/make -f CMakeFiles/cmTC_ffd45.dir/build.make CMakeFiles/cmTC_ffd45.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ffd45.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_ffd45.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_ffd45
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ffd45.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_ffd45.dir/CheckSymbolExists.c.o  -o cmTC_ffd45 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <time.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef clock_gettime
+  return ((int*)(&clock_gettime))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the pipe2 exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_4e103/fast && /usr/bin/make -f CMakeFiles/cmTC_4e103.dir/build.make CMakeFiles/cmTC_4e103.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4e103.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_4e103.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_4e103
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4e103.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_4e103.dir/CheckSymbolExists.c.o  -o cmTC_4e103 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <unistd.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pipe2
+  return ((int*)(&pipe2))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the sendmmsg exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_cb5ed/fast && /usr/bin/make -f CMakeFiles/cmTC_cb5ed.dir/build.make CMakeFiles/cmTC_cb5ed.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_cb5ed.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_cb5ed.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_cb5ed
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cb5ed.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_cb5ed.dir/CheckSymbolExists.c.o  -o cmTC_cb5ed /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/socket.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef sendmmsg
+  return ((int*)(&sendmmsg))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the recvmmsg exist passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_773b4/fast && /usr/bin/make -f CMakeFiles/cmTC_773b4.dir/build.make CMakeFiles/cmTC_773b4.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_773b4.dir/CheckSymbolExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -pthread -o CMakeFiles/cmTC_773b4.dir/CheckSymbolExists.c.o   -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_773b4
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_773b4.dir/link.txt --verbose=1
+/usr/bin/cc       -rdynamic CMakeFiles/cmTC_773b4.dir/CheckSymbolExists.c.o  -o cmTC_773b4 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+File /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/socket.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef recvmmsg
+  return ((int*)(&recvmmsg))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function malloc_usable_size exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_b926c/fast && /usr/bin/make -f CMakeFiles/cmTC_b926c.dir/build.make CMakeFiles/cmTC_b926c.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b926c.dir/CheckFunctionExists.c.o
+/usr/bin/cc -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DCHECK_FUNCTION_EXISTS=malloc_usable_size   -pthread -o CMakeFiles/cmTC_b926c.dir/CheckFunctionExists.c.o   -c /home/noah/local_cmake/cmake-3.15.2/Modules/CheckFunctionExists.c
+Linking C executable cmTC_b926c
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b926c.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=malloc_usable_size    -rdynamic CMakeFiles/cmTC_b926c.dir/CheckFunctionExists.c.o  -o cmTC_b926c /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test FOLLY_HAVE_IFUNC succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_5eec7/fast && /usr/bin/make -f CMakeFiles/cmTC_5eec7.dir/build.make CMakeFiles/cmTC_5eec7.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5eec7.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_IFUNC  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_5eec7.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_5eec7
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5eec7.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_IFUNC  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_5eec7.dir/src.cxx.o  -o cmTC_5eec7 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  #pragma GCC diagnostic error "-Wattributes"
+  extern "C" void (*test_ifunc(void))() { return 0; }
+  void func() __attribute__((ifunc("test_ifunc")));
+  int main() { return 0; }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_STD__IS_TRIVIALLY_COPYABLE succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_768ca/fast && /usr/bin/make -f CMakeFiles/cmTC_768ca.dir/build.make CMakeFiles/cmTC_768ca.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_768ca.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_STD__IS_TRIVIALLY_COPYABLE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_768ca.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_768ca
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_768ca.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_STD__IS_TRIVIALLY_COPYABLE  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_768ca.dir/src.cxx.o  -o cmTC_768ca /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  #include <type_traits>
+  const bool val = std::is_trivially_copyable<bool>::value;
+  int main() { return 0; }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_UNALIGNED_ACCESS succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_41a8c/fast && /usr/bin/make -f CMakeFiles/cmTC_41a8c.dir/build.make CMakeFiles/cmTC_41a8c.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_41a8c.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_UNALIGNED_ACCESS  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_41a8c.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_41a8c
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_41a8c.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_UNALIGNED_ACCESS  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_41a8c.dir/src.cxx.o  -o cmTC_41a8c /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+...and run output:
+
+Return value: 1
+Source file was:
+
+  int main(int, char**) {
+    char buf[64] = {0};
+    unsigned long *ptr = (unsigned long *)(buf + 1);
+    *ptr = 0xdeadbeef;
+    return (*ptr & 0xff) == 0xef ? 0 : 1;
+  }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_VLA succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_ae693/fast && /usr/bin/make -f CMakeFiles/cmTC_ae693.dir/build.make CMakeFiles/cmTC_ae693.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_ae693.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_VLA  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_ae693.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_ae693
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ae693.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_VLA  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_ae693.dir/src.cxx.o  -o cmTC_ae693 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  int main(int argc, char** argv) {
+    unsigned size = argc;
+    char data[size];
+    return 0;
+  }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_WEAK_SYMBOLS succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_da2d3/fast && /usr/bin/make -f CMakeFiles/cmTC_da2d3.dir/build.make CMakeFiles/cmTC_da2d3.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_da2d3.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_WEAK_SYMBOLS  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_da2d3.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_da2d3
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da2d3.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_WEAK_SYMBOLS  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_da2d3.dir/src.cxx.o  -o cmTC_da2d3 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  extern "C" void configure_link_extern_weak_test() __attribute__((weak));
+  int main(int argc, char** argv) {
+    return configure_link_extern_weak_test == nullptr;
+  }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_LINUX_VDSO succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_0ec49/fast && /usr/bin/make -f CMakeFiles/cmTC_0ec49.dir/build.make CMakeFiles/cmTC_0ec49.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_0ec49.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_LINUX_VDSO  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_0ec49.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_0ec49
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0ec49.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_LINUX_VDSO  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_0ec49.dir/src.cxx.o  -o cmTC_0ec49 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+...and run output:
+
+Return value: 1
+Source file was:
+
+  #include <dlfcn.h>
+  int main() {
+    void *h = dlopen("linux-vdso.so.1", RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
+    if (h == nullptr) {
+      return -1;
+    }
+    dlclose(h);
+    return 0;
+  }
+Determining if the include file sys/types.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_51d97/fast && /usr/bin/make -f CMakeFiles/cmTC_51d97.dir/build.make CMakeFiles/cmTC_51d97.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_51d97.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_51d97.dir/CheckIncludeFile.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_51d97
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_51d97.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_51d97.dir/CheckIncludeFile.cxx.o  -o cmTC_51d97 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file stdint.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_7fa37/fast && /usr/bin/make -f CMakeFiles/cmTC_7fa37.dir/build.make CMakeFiles/cmTC_7fa37.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_7fa37.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_7fa37.dir/CheckIncludeFile.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_7fa37
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7fa37.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_7fa37.dir/CheckIncludeFile.cxx.o  -o cmTC_7fa37 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_469c2/fast && /usr/bin/make -f CMakeFiles/cmTC_469c2.dir/build.make CMakeFiles/cmTC_469c2.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_469c2.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_469c2.dir/CheckIncludeFile.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_469c2
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_469c2.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_469c2.dir/CheckIncludeFile.cxx.o  -o cmTC_469c2 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining size of __int128 passed with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_a2638/fast && /usr/bin/make -f CMakeFiles/cmTC_a2638.dir/build.make CMakeFiles/cmTC_a2638.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_a2638.dir/INT128_SIZE.cpp.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_a2638.dir/INT128_SIZE.cpp.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CheckTypeSize/INT128_SIZE.cpp
+Linking CXX executable cmTC_a2638
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a2638.dir/link.txt --verbose=1
+/usr/bin/c++    -std=gnu++1z    -rdynamic CMakeFiles/cmTC_a2638.dir/INT128_SIZE.cpp.o  -o cmTC_a2638 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test HAVE_INT128_TRAITS succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_1426b/fast && /usr/bin/make -f CMakeFiles/cmTC_1426b.dir/build.make CMakeFiles/cmTC_1426b.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_1426b.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DHAVE_INT128_TRAITS  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_1426b.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_1426b
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1426b.dir/link.txt --verbose=1
+/usr/bin/c++   -DHAVE_INT128_TRAITS  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_1426b.dir/src.cxx.o  -o cmTC_1426b /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+    #include <functional>
+    #include <type_traits>
+    #include <utility>
+    static_assert(
+      ::std::is_same<::std::make_signed<unsigned __int128>::type,
+                     __int128>::value,
+      "signed form of 'unsigned __uint128' must be '__int128'.");
+    static_assert(
+        sizeof(::std::hash<__int128>{}(0)) > 0,         "std::hash<__int128> is disabled.");
+    int main() { return 0; }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_WCHAR_SUPPORT succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_d3adb/fast && /usr/bin/make -f CMakeFiles/cmTC_d3adb.dir/build.make CMakeFiles/cmTC_d3adb.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_d3adb.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_WCHAR_SUPPORT  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_d3adb.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_d3adb
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d3adb.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_WCHAR_SUPPORT  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_d3adb.dir/src.cxx.o  -o cmTC_d3adb /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+...and run output:
+
+Return value: 1
+Source file was:
+
+  #include <cstddef>
+  #include <cwchar>
+  int main(int argc, char** argv) {
+    return wcstol(L"01", nullptr, 10) == 1 ? 0 : 1;
+  }
+Performing C++ SOURCE FILE Test FOLLY_HAVE_EXTRANDOM_SFMT19937 succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_9ec70/fast && /usr/bin/make -f CMakeFiles/cmTC_9ec70.dir/build.make CMakeFiles/cmTC_9ec70.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9ec70.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_HAVE_EXTRANDOM_SFMT19937  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_9ec70.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9ec70
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9ec70.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_HAVE_EXTRANDOM_SFMT19937  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_9ec70.dir/src.cxx.o  -o cmTC_9ec70 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  #include <ext/random>
+  int main(int argc, char** argv) {
+    __gnu_cxx::sfmt19937 rng;
+    return 0;
+  }
+Performing C++ SOURCE FILE Test FOLLY_USE_LIBSTDCPP succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_115a6/fast && /usr/bin/make -f CMakeFiles/cmTC_115a6.dir/build.make CMakeFiles/cmTC_115a6.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_115a6.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DFOLLY_USE_LIBSTDCPP  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_115a6.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_115a6
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_115a6.dir/link.txt --verbose=1
+/usr/bin/c++   -DFOLLY_USE_LIBSTDCPP  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_115a6.dir/src.cxx.o  -o cmTC_115a6 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+  #include <type_traits>
+  #if !__GLIBCXX__
+  #error No libstdc++
+  #endif
+  int main() { return 0; }
+Performing C++ SOURCE FILE Test HAVE_VSNPRINTF_ERRORS succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_778f7/fast && /usr/bin/make -f CMakeFiles/cmTC_778f7.dir/build.make CMakeFiles/cmTC_778f7.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_778f7.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DHAVE_VSNPRINTF_ERRORS  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_778f7.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_778f7
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_778f7.dir/link.txt --verbose=1
+/usr/bin/c++   -DHAVE_VSNPRINTF_ERRORS  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_778f7.dir/src.cxx.o  -o cmTC_778f7 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+...and run output:
+
+Return value: 1
+Source file was:
+
+  #include <stdarg.h>
+  #include <stdio.h>
+
+  int call_vsnprintf(const char* fmt, ...) {
+    char buf[256];
+    va_list ap;
+    va_start(ap, fmt);
+    int result = vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    return result;
+  }
+
+  int main(int argc, char** argv) {
+    return call_vsnprintf("%", 1) < 0 ? 0 : 1;
+  }
+Performing C++ SOURCE FILE Test GFLAGS_NAMESPACE_IS_GFLAGS succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_563cf/fast && /usr/bin/make -f CMakeFiles/cmTC_563cf.dir/build.make CMakeFiles/cmTC_563cf.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_563cf.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0 -D_GNU_SOURCE  -DGFLAGS_NAMESPACE_IS_GFLAGS  -std=gnu++1z   -pthread -o CMakeFiles/cmTC_563cf.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_563cf
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_563cf.dir/link.txt --verbose=1
+/usr/bin/c++   -DGFLAGS_NAMESPACE_IS_GFLAGS  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_563cf.dir/src.cxx.o  -o cmTC_563cf /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+    #include <gflags/gflags.h>
+    int main() {
+      gflags::GetArgv();
+      return 0;
+    }
+    
+Performing C++ SOURCE FILE Test COMPILER_HAS_M_PCLMUL succeeded with the following output:
+Change Dir: /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_c4375/fast && /usr/bin/make -f CMakeFiles/cmTC_c4375.dir/build.make CMakeFiles/cmTC_c4375.dir/build
+make[1]: Entering directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c4375.dir/src.cxx.o
+/usr/bin/c++  -DGFLAGS_IS_A_DLL=0  -DCOMPILER_HAS_M_PCLMUL  -std=gnu++1z   -mpclmul -pthread -o CMakeFiles/cmTC_c4375.dir/src.cxx.o -c /home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c4375
+/home/noah/local_cmake/cmake-3.15.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c4375.dir/link.txt --verbose=1
+/usr/bin/c++   -DCOMPILER_HAS_M_PCLMUL  -std=gnu++1z    -rdynamic CMakeFiles/cmTC_c4375.dir/src.cxx.o  -o cmTC_c4375 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.1 /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so -ldl -pthread -lpthread 
+make[1]: Leaving directory '/home/noah/programs/branch_2/new_obj_allocation/folly-master/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }

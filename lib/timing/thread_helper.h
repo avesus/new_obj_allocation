@@ -15,6 +15,9 @@ typedef void * (*tfunc)(void *);
 enum pin_policy { NONE = 0, FIRST_N = 1, RR = 2 };
 
 struct thelper {
+    static constexpr uint64_t tstack_size = (1 << 18);
+
+    
     uint32_t    cur_nthreads;
     uint32_t    cap_nthreads;
     pthread_t * tids;
