@@ -8,8 +8,14 @@
 #include <allocator/slab_layout/create_slab_type.h>
 #include <allocator/slab_layout/slab_manager.h>
 
+#include <unordered_map>
 
-#include "/home/noah/programs/branch_2/new_obj_allocation/folly/folly/concurrency/ConcurrentHashMap.h"
+#define MALLOC
+#ifdef MALLOC
+#define ALLOCATOR malloc_allocator
+#else
+#define ALLOCATOR slab_allocator
+#endif
 
 
 uint32_t test_size = (1 << 20);
@@ -28,26 +34,36 @@ uint32_t nthread = 1;
 const uint32_t msize              = 256;
 uint32_t       bucket_list[msize] = { 0 };
 
+template<typename T = uint64_t>
 struct metrics_allocator {
+    using value_type = T;
 
-    void *
+    template<typename U>
+    metrics_allocator(const metrics_allocator<U> &) {}
+
+    metrics_allocator() = default;
+
+    T *
     allocate(size_t n) {
         if (n < msize) {
             ++bucket_list[n];
         }
-        return malloc(n);
+        T * tmp = (T *)malloc(n * sizeof(uint64_t));
+        return tmp;
     }
 
     void
-    deallocate(void * p, size_t n) {
+    deallocate(T * p, size_t n) {
         (void)(n);
-        free(p);
+        free((void *)p);
     }
 };
 
 
+// typedef uint64_t nbytes_56;
+
 typedef struct nbytes {
-    uint64_t padding[8];
+    uint64_t padding[1];
 } nbytes_56;
 
 using allocator_t = slab_manager<
@@ -56,34 +72,64 @@ using allocator_t = slab_manager<
 
 allocator_t * my_allocator = NULL;
 
+__thread uint64_t alloc_time = 0;
+__thread uint64_t free_time  = 0;
+
+template<typename T = uint64_t>
 struct malloc_allocator {
-    void *
+    using value_type = T;
+
+    template<typename U>
+    malloc_allocator(const malloc_allocator<U> &) {}
+
+    malloc_allocator() = default;
+
+    T *
     allocate(size_t n) {
-        return malloc(n);
+        uint64_t start = timers::get_cycles();
+        T *      p     = (T *)malloc(n * sizeof(uint64_t));
+        alloc_time += (timers::get_cycles() - start);
+        return p;
     }
 
     void
-    deallocate(void * p, size_t n) {
+    deallocate(T * p, size_t n) {
+        uint64_t start = timers::get_cycles();
         (void)(n);
         free(p);
+        free_time += (timers::get_cycles() - start);
     }
 };
 
-
+template<typename T = uint64_t>
 struct slab_allocator {
-    void *
+    using value_type = T;
+
+    template<typename U>
+    slab_allocator(const slab_allocator<U> &) {}
+
+    slab_allocator() = default;
+
+    T *
     allocate(size_t n) {
-        if (BRANCH_LIKELY(n == 56)) {
+        uint64_t start = timers::get_cycles();
+        if (BRANCH_LIKELY(n == 1)) {
             void * p = (void *)my_allocator->_allocate();
-            if (p) {
-                return p;
+            if (BRANCH_LIKELY(p != NULL)) {
+                alloc_time += (timers::get_cycles() - start);
+                return (T *)p;
             }
         }
-        return malloc(n);
+
+
+        T * p = (T *)malloc(n * sizeof(uint64_t));
+        alloc_time += (timers::get_cycles() - start);
+        return p;
     }
 
     void
-    deallocate(void * p, size_t n) {
+    deallocate(T * p, size_t n) {
+        uint64_t start = timers::get_cycles();
         (void)(n);
         const uint64_t _p = (uint64_t)p;
         if (_p > (uint64_t)(my_allocator->m) &&
@@ -91,17 +137,17 @@ struct slab_allocator {
             my_allocator->_free((nbytes_56 *)p);
         }
         else {
-            free(p);
+            free((void *)p);
         }
+        free_time += (timers::get_cycles() - start);
     }
 };
 
-using pmap = folly::ConcurrentHashMap<uint64_t,
-                                      uint64_t,
-                                      std::hash<uint64_t>,
-                                      std::equal_to<uint64_t>,
-                                      slab_allocator>;
-
+using pmap = std::unordered_map<uint64_t,
+                                uint64_t,
+                                std::hash<uint64_t>,
+                                std::equal_to<uint64_t>,
+                                ALLOCATOR<uint64_t>>;
 typedef struct thread_args {
     uint64_t * ikeys;
     uint64_t * qkeys;
@@ -110,11 +156,17 @@ typedef struct thread_args {
     pmap * hset;
 } targs_t;
 
-uint64_t          total_nsec;
+uint64_t          total_nsec       = 0;
+uint64_t          total_alloc_time = 0;
+uint64_t          total_free_time  = 0;
 pthread_barrier_t b;
 
 void *
 test_hset(void * args) {
+    total_alloc_time = 0;
+    total_free_time  = 0;
+    total_nsec       = 0;
+
     init_thread();
     targs_t * targs = (targs_t *)args;
 
@@ -126,7 +178,7 @@ test_hset(void * args) {
 
     const uint32_t _test_size        = test_size;
     const uint32_t _query_per_insert = query_per_insert;
-    const uint32_t _delete_every_iter =
+    const uint32_t _delete_every_niter =
         delete_rate == 0.0 ? 0 : 1 / delete_rate;
 
     uint32_t q_idx = 0, d_idx      = 0;
@@ -136,29 +188,31 @@ test_hset(void * args) {
 
     pthread_barrier_wait(&b);
 
+
     timers::gettime(timers::ELAPSE, &start_ts);
     for (uint32_t i = 0; i < _test_size; ++i) {
-        volatile auto isink = hset->insert(ikeys[i], 0);
-        (void)(isink);
-
+        (*hset)[ikeys[i]] = i;
         q_temp = q_idx + _query_per_insert;
         for (; q_idx < q_temp; ++q_idx) {
             volatile auto qsink = hset->find(qkeys[q_idx]);
             (void)(qsink);
         }
 
-        if (should_delete == _delete_every_iter) {
-            volatile auto dsink = hset->find(dkeys[d_idx++]);
+        if (should_delete == _delete_every_niter) {
+            volatile auto dsink = hset->erase(dkeys[d_idx++]);
             (void)(dsink);
             should_delete = 0;
         }
         ++should_delete;
     }
-    timers::gettime(timers::ELAPSE, &end_ts);
 
+    timers::gettime(timers::ELAPSE, &end_ts);
+    __atomic_fetch_add(&total_alloc_time, alloc_time, __ATOMIC_RELAXED);
+    __atomic_fetch_add(&total_free_time, free_time, __ATOMIC_RELAXED);
     __atomic_fetch_add(&total_nsec,
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
+    
 
     return NULL;
 }
@@ -217,9 +271,9 @@ main(int argc, char ** argv) {
                                  CACHE_LINE_SIZE * nthread);
 
 
-    int32_t insert_success_int_bound = insert_success * RAND_MAX;
-    int32_t query_success_int_bound  = query_success * RAND_MAX;
-    int32_t delete_success_int_bound = delete_success * RAND_MAX;
+    uint32_t insert_success_int_bound = insert_success * RAND_MAX;
+    uint32_t query_success_int_bound  = query_success * RAND_MAX;
+    uint32_t delete_success_int_bound = delete_success * RAND_MAX;
 
 
     uint64_t * insert_keys =
@@ -254,7 +308,7 @@ main(int argc, char ** argv) {
         // initialize insert keys
         per_thread_ikeys[0] = rand() * rand() * rand();
         for (uint32_t j = 1; j < per_thread_tsize; j++) {
-            if (insert_success_int_bound > rand()) {
+            if (insert_success_int_bound > (uint32_t)rand()) {
                 per_thread_ikeys[j] = rand() * rand() * rand();
             }
             else {
@@ -264,14 +318,14 @@ main(int argc, char ** argv) {
 
         if (query_keys) {
             // initialize query keys
-            if (query_success_int_bound > rand()) {
+            if (query_success_int_bound > (uint32_t)rand()) {
                 per_thread_qkeys[0] = per_thread_ikeys[0];
             }
             else {
                 per_thread_qkeys[0] = rand() * rand() * rand();
             }
             for (uint32_t j = 1; j < per_thread_qsize; j++) {
-                if (insert_success_int_bound > rand()) {
+                if (insert_success_int_bound > (uint32_t)rand()) {
 
                     per_thread_qkeys[j] =
                         per_thread_ikeys[rand() % (j % per_thread_tsize)];
@@ -284,14 +338,14 @@ main(int argc, char ** argv) {
 
         if (delete_keys) {
             // initialize delete keys (same as query keys)
-            if (delete_success_int_bound > rand()) {
+            if (delete_success_int_bound > (uint32_t)rand()) {
                 per_thread_dkeys[0] = per_thread_ikeys[0];
             }
             else {
                 per_thread_dkeys[0] = rand() * rand() * rand();
             }
             for (uint32_t j = 1; j < per_thread_dsize; j++) {
-                if (insert_success_int_bound > rand()) {
+                if (insert_success_int_bound > (uint32_t)rand()) {
                     per_thread_dkeys[j] =
                         per_thread_ikeys[rand() % (j % per_thread_tsize)];
                 }
@@ -302,15 +356,13 @@ main(int argc, char ** argv) {
         }
     }
 
-    pmap * hset = new pmap();
 
     targs_t * targs = (targs_t *)calloc(nthread, sizeof(targs_t));
     for (uint32_t i = 0; i < nthread; i++) {
         targs[i].ikeys = insert_keys + i * per_thread_tsize;
         targs[i].qkeys = query_keys + i * per_thread_qsize;
         targs[i].dkeys = delete_keys + i * per_thread_dsize;
-
-        targs[i].hset = hset;
+        targs[i].hset  = new pmap();
     }
 
     thelp::thelper th;
@@ -325,13 +377,16 @@ main(int argc, char ** argv) {
         (test_size + delete_rate * test_size + query_per_insert * test_size);
     fprintf(stderr,
             "[nthread = %d, calls per thread = %d]\n"
-            "nanoseconds per operation  : %.2lf\n",
+            "nanoseconds per operation  : %.2lf\n"
+            "cycles per allocation      : %.2lf\n"
+            "cycles per free            : %.2lf\n",
             nthread,
             total_ops,
-            ((double)total_nsec) / (total_ops * nthread));
+            ((double)total_nsec) / (total_ops * nthread),
+            ((double)total_alloc_time) / (total_ops * nthread),
+            ((double)total_free_time) / (total_ops * nthread));
 
 
-    delete (hset);
     free(targs);
     free(insert_keys);
     if (query_keys) {

@@ -31,6 +31,7 @@
         }                                                                      \
     }
 
+#define L2_LOAD_ALIGN ALIGN_ATTR(L2_CACHE_LOAD_SIZE)
 #define CACHE_ALIGN ALIGN_ATTR(CACHE_LINE_SIZE)
 #define ALIGN_ATTR(alignment) __attribute__((aligned(alignment)))
 #define PTR_ALIGNED_TO(addr, alignment)                                        \

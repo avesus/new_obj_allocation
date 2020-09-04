@@ -1,0 +1,18 @@
+#ifndef _THREAD_CACHE_H_
+#define _THREAD_CACHE_H_
+
+#include <misc/cpp_attributes.h>
+#include <optimized/bits.h>
+#include <system/sys_info.h>
+
+template<uint32_t n>
+struct thread_cache {
+    uint64_t freed_ptrs[n];
+    
+    
+
+
+};
+
+
+#endif

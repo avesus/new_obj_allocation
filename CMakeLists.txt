@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #-fno-inline -fno-omit-frame-pointer -fno-rtti -fno-exceptions
 
-add_compile_options(-O3  -Wall -Wextra -Wno-unused-function -march=native -mtune=native)
+add_compile_options(-O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2)
 link_libraries("-lpthread")
 
 string ( REPLACE "/" "\/" remove_path_regex ${CMAKE_CURRENT_SOURCE_DIR} + "/")
@@ -14,7 +14,6 @@ string ( REPLACE "/" "\/" remove_path_regex ${CMAKE_CURRENT_SOURCE_DIR} + "/")
 set(GEN_SYS_HEADER_FILE ";${CMAKE_CURRENT_SOURCE_DIR}/src/gen_system_header.cc")
 string ( REPLACE "/" "\/" REMOVE_GEN_SOURCE ${GEN_SYS_HEADER_FILE})
 
-add_subdirectory("folly")
 file(GLOB _EXE_SOURCES_TMP src/*.cc)
 STRING( REGEX REPLACE "${REMOVE_GEN_SOURCE}" "" _EXE_SOURCES_ ${_EXE_SOURCES_TMP})
 STRING( REPLACE ".cc" ".cc;" EXE_SOURCES ${_EXE_SOURCES_})
@@ -38,6 +37,5 @@ foreach(EXE_SRC_CODE ${EXE_SOURCES})
   STRING( REPLACE ".cc" "" _exe2 ${_exe1})
   string( REGEX REPLACE ${remove_path_regex} "" EXE ${_exe2} )
   add_executable(${EXE} ${EXE_SRC_CODE} ${SOURCES})
-  target_link_libraries(${EXE} folly)
   add_dependencies(${EXE} run_gen_sys_header)
 endforeach(EXE_SRC_CODE ${EXE_SOURCES})

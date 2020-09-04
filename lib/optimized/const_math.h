@@ -102,6 +102,13 @@ prev_p2(T v) {
 }
 
 
+template<typename T>
+constexpr uint32_t
+is_pow2(T v) {
+    return !(v & (v - 1));
+}
+
+
 }  // namespace cmath
 
 #endif

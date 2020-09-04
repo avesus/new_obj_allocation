@@ -27,7 +27,37 @@ get_phys_core(const uint32_t logical_core_num) {
 // Physical memory address space bits
 #define PHYS_M_NBITS 39
 
+// Physical memory page offset (for vm -> pm) for kmalloc
+#define PAGE_OFFSET (0xffff888000000000UL)
+
+// Where physical memory of kernel (mostly for debugging kmalloc stuff)
+#define KERNEL_MEM_START (0xffffffff80000000UL)
+
 // cache line size (should be same for L1, L2, and L3)
 #define CACHE_LINE_SIZE 64
+
+// l2 cache loads double cache lines at a time
+#define L2_CACHE_LOAD_SIZE 128
+
+
+//////////////////////////////////////////////////////////////////////
+// More specific cache info starts here
+//////////////////////////////////////////////////////////////////////
+
+#define L1_DCACHE_SIZE 32768
+#define L1_DCACHE_SETS 64
+#define L1_DCACHE_ASSOS 8
+
+#define L1_ICACHE_SIZE 32768
+#define L1_ICACHE_SETS 64
+#define L1_ICACHE_ASSOS 8
+
+#define L2_UCACHE_SIZE 262144
+#define L2_UCACHE_SETS 1024
+#define L2_UCACHE_ASSOS 4
+
+#define L3_UCACHE_SIZE 8388608
+#define L3_UCACHE_SETS 8192
+#define L3_UCACHE_ASSOS 16
 
 #endif

@@ -19,9 +19,10 @@ pthread_barrier_t b;
 
 __thread uint64_t tlv_incr = 0;
 
+#define NBYTES 8
 //#define GLIBC_ALLOC
 #ifdef GLIBC_ALLOC
-    #define ALLOCATE malloc(8)
+    #define ALLOCATE malloc(NBYTES)
     #define FREE     free
 #else
     #define ALLOCATE allocator->_allocate()
@@ -33,19 +34,23 @@ __thread uint64_t tlv_incr = 0;
 #include <timing/timers.h>
 
 
+#include <allocator/rseq/rseq_base.h>
 #include <allocator/slab_layout/create_slab_type.h>
 #include <allocator/slab_layout/slab_manager.h>
-#include <allocator/rseq/rseq_base.h>
 
 #include <optimized/const_math.h>
+
+typedef struct nbytes {
+    uint8_t filler[NBYTES];
+} nbytes_t;
 
 // using allocator_t =
 //    slab_manager<uint64_t, typename slab_type<uint64_t, 2, 1, 1, 2>::type>;
 // using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1,
 // super_slab<uint64_t, 1, super_slab<uint64_t, 1, slab<uint64_t, 1>>>>>;
 using allocator_t = slab_manager<
-    uint64_t,
-    super_slab<uint64_t, super_slab<uint64_t, slab<uint64_t>, 1>, 1>>;
+    nbytes_t,
+    super_slab<nbytes_t, super_slab<nbytes_t, slab<nbytes_t>, 1>, 1>>;
 // using allocator_t = slab_manager<uint64_t, super_slab<uint64_t, 1,
 // super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
@@ -96,7 +101,7 @@ corr_alloc_then_free_test(void * targ) {
         uint64_t ret = (uint64_t)ALLOCATE;
         if (ret) {
             sum++;
-            FREE((uint64_t *)ret);
+            FREE((nbytes_t *)ret);
         }
         // do something
     }
@@ -130,7 +135,7 @@ corr_alloc_all_free_all_alloc_all_test(void * targ) {
         ptrs[p_idx++] = ptr;
     }
     for (uint32_t i = 0; i < p_idx; ++i) {
-        FREE(ptrs[i]);
+        FREE((nbytes_t *)ptrs[i]);
     }
     pthread_barrier_wait(&b);
     while (1) {
@@ -176,7 +181,7 @@ corr_batch_alloc_then_free_test(void * targ) {
             if (batch_idx == batch_size) {
                 batch_idx = 0;
                 for (uint32_t _i = 0; _i < batch_size; ++_i) {
-                    FREE((uint64_t *)ptrs[_i]);
+                    FREE((nbytes_t *)ptrs[_i]);
                 }
             }
         }
@@ -205,6 +210,7 @@ perf_alloc_test(void * targ) {
 
     timers::gettime(timers::ELAPSE, &start_ts);
     for (uint32_t i = 0; i < ltest_size; ++i) {
+
         volatile uint64_t sink = (uint64_t)ALLOCATE;
         (void)(sink);
     }
@@ -234,7 +240,7 @@ perf_alloc_then_free_test(void * targ) {
     for (uint32_t i = 0; i < ltest_size; ++i) {
         uint64_t ret = (uint64_t)ALLOCATE;
         if (ret) {
-            FREE((uint64_t *)ret);
+            FREE((nbytes_t *)ret);
         }
         // do something
     }
@@ -272,7 +278,7 @@ perf_batch_alloc_then_free_test(void * targ) {
             if (batch_idx == batch_size) {
                 batch_idx = 0;
                 for (uint32_t _i = 0; _i < batch_size; _i++) {
-                    FREE((uint64_t *)ptrs[_i]);
+                    FREE((nbytes_t *)ptrs[_i]);
                 }
             }
         }
@@ -297,8 +303,10 @@ perf_alloc_all_free_all_alloc_all_test(void * targ) {
 
     total_nsec = 0;
 
-    uint64_t ** ptrs = (uint64_t **)calloc(cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity, sizeof(uint64_t *));
-    uint32_t    p_idx = 0;
+    uint64_t ** ptrs = (uint64_t **)calloc(
+        cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity,
+        sizeof(uint64_t *));
+    uint32_t p_idx = 0;
 
     struct timespec start_ts, end_ts;
 
@@ -312,7 +320,7 @@ perf_alloc_all_free_all_alloc_all_test(void * targ) {
         ptrs[p_idx++] = ptr;
     }
     for (uint32_t i = 0; i < p_idx; ++i) {
-        FREE(ptrs[i]);
+        FREE((nbytes_t *)ptrs[i]);
     }
     pthread_barrier_wait(&b);
 
@@ -328,7 +336,9 @@ perf_alloc_all_free_all_alloc_all_test(void * targ) {
                        timers::ts_to_ns(&end_ts) - timers::ts_to_ns(&start_ts),
                        __ATOMIC_RELAXED);
 
-    test_size = (cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity) / nthread;
+    test_size =
+        (cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity) /
+        nthread;
     (void)(allocator);
     return NULL;
 }

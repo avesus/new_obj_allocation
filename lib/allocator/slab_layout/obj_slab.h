@@ -80,6 +80,7 @@ struct slab {
             const uint32_t idx =
                 restarting_set_idx(&outer_avail_vec, start_cpu);
             if (BRANCH_LIKELY(idx < _RSEQ_SET_IDX_MIGRATED)) {
+                __builtin_prefetch(&obj_arr[idx]);
                 return ((uint64_t)&obj_arr[idx]);
             }
             else if (idx == _RSEQ_SET_IDX_MIGRATED) {
