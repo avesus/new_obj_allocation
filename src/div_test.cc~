@@ -1,8 +1,0 @@
-#include <stdio.h>
-
-#include <optimized/division.h>
-
-int main() {
-
-
-}

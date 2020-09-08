@@ -1,0 +1,6 @@
+#include <allocator/slab_layout/thread_cache.h>
+
+
+int main() {
+
+}

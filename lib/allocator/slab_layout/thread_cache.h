@@ -2,39 +2,75 @@
 #define _THREAD_CACHE_H_
 
 #include <misc/cpp_attributes.h>
-#include <optimized/bits.h>
 #include <system/sys_info.h>
+
+#include <optimized/bits.h>
 
 //////////////////////////////////////////////////////////////////////
 // for now taking advantage of the fact that im never using > 2^32 bytes...
-template<uint32_t n>
+
+
 struct thread_cache {
+    using ptr_t = uint32_t;
+
+    static const constexpr uint32_t n      = 32;
+    static const constexpr uint32_t sratio = sizeof(__m256i) / sizeof(ptr_t);
+
+    ptr_t    ptrs[n];
     uint32_t idx;
-    uint32_t ptr_difs[n];
+
 
     uint32_t
-    push(uint32_t ptr_dif) {
-        ptr_difs[idx] = ptr_dif;
-        ++idx;
+    push(ptr_t ptr) {
+        ptrs[idx] = ptr;
 
-        return idx == n;
+        if(idx == (n - 1)) {
+            idx = 0;
+            return 1;
+        }
+        ++idx;
+        return 0;
     }
 
-    uint64_t
+    ptr_t
     pop() {
         if (idx) {
-            const uint32_t ret = ptr_difs[idx];
+            const ptr_t ret = ptrs[idx];
             --idx;
             return ret;
         }
         return 0;
     }
 
-    void
-    prep_free() {
-        
+    uint64_t ALWAYS_INLINE CONST_ATTR
+    restore(ptr_t ptr, const uint64_t base) {
+        if constexpr (sizeof(ptr_t) == sizeof(uint64_t)) {
+            return ptr;
+        }
+        else {
+            return ptr + base;
+        }
     }
-};
 
+    ptr_t ALWAYS_INLINE CONST_ATTR
+    prepare(uint64_t ptr, const uint64_t base) {
+        if constexpr (sizeof(ptr_t) == sizeof(uint64_t)) {
+            return ptr;
+        }
+        else {
+            IMPOSSIBLE_COND(ptr < base);
+            IMPOSSIBLE_COND(ptr - base >= ((1UL) << 32));
+            return ptr - base;
+        }
+    }
+} ALIGN_ATTR(64);
+__thread thread_cache tc;
 
 #endif
+
+// Local Variables:
+// rmsbolt-command: "/usr/bin/c++
+// -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra
+// -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z"
+// rmsbolt-disassemble: t
+// End:

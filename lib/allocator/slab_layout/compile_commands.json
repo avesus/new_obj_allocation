@@ -1,0 +1,142 @@
+[
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/slab_test.dir/src/slab_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/slab_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/slab_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/slab_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/slab_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/slab_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/rseq_test.dir/src/rseq_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/rseq_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/rseq_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/rseq_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/rseq_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/rseq_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/pthread_self_test.dir/src/pthread_self_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/pthread_self_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/pthread_self_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/pthread_self_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/pthread_self_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/pthread_self_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/mult_test.dir/src/mult_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/mult_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/mult_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/mult_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/mult_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/mult_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/hset_test.dir/src/hset_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/hset_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/hset_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/hset_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/hset_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/hset_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/div_test.dir/src/div_test.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/div_test.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/div_test.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/div_test.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/div_test.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/div_test.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/gen_sys_header.dir/src/gen_system_header.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/src/gen_system_header.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/src/gen_system_header.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/gen_sys_header.dir/lib/timing/stats.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/stats.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/gen_sys_header.dir/lib/timing/thread_helper.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/timing/thread_helper.cc"
+},
+{
+  "directory": "/home/noah/programs/branch_2/new_obj_allocation/build",
+  "command": "/usr/bin/c++   -I/home/noah/programs/branch_2/new_obj_allocation/lib    -O3 -Wall -Wextra -Wno-unused-function -march=native -mtune=native -mavx2 -std=gnu++1z -o CMakeFiles/gen_sys_header.dir/lib/util/arg.cc.o -c /home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc",
+  "file": "/home/noah/programs/branch_2/new_obj_allocation/lib/util/arg.cc"
+}
+]

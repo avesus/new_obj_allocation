@@ -3,6 +3,7 @@
 
 #include <misc/cpp_attributes.h>
 #include <optimized/bits.h>
+
 namespace cmath {
 
 template<typename T>

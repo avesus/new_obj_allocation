@@ -2,7 +2,6 @@
 #define _DIVISION_H_
 
 #include <stdint.h>
-#include <type_traits>
 
 #include <optimized/const_math.h>
 #include <util/const_utils.h>
@@ -94,7 +93,10 @@ struct cvals {
 
 }  // namespace consts
 
-// consts::cvals<T, denum>::
+
+//////////////////////////////////////////////////////////////////////
+// Division stuff starts here
+
 template<typename T, T denum>
 constexpr T
 do_div(T n) {
@@ -119,8 +121,10 @@ do_div(T n) {
     }
 }
 
+
+
 template<typename T, T denum>
-constexpr __m256i
+constexpr __m256i ALWAYS_INLINE
 do_div_vector(__m256i n) {
 
     // need to entirely seperate 32 and 64 because of avx prefixes

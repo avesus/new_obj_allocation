@@ -1,8 +1,11 @@
 #ifndef _CPP_ATTRIBUTES_H_
 #define _CPP_ATTRIBUTES_H_
 
+#include <type_traits>
+#include <assert.h>
+
 #define _UNREACHABLE_ __builtin_unreachable()
-#define IMPOSSIBLE_COND(cond)                                                \
+#define IMPOSSIBLE_COND(cond)                                                  \
     {                                                                          \
         if (cond) {                                                            \
             _UNREACHABLE_;                                                     \
@@ -17,7 +20,7 @@
 // Note PREFETCHT2 == PREFETCHT1
 // pg 280
 // https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-optimization-manual.pdf
-#define PREFETCH_L(addr, i)  _mm_prefetch((void * const)(addr), i);
+#define PREFETCH_L(addr, i) _mm_prefetch((void * const)(addr), i);
 
 #define PREFETCH_W(addr) _m_prefetchw((void * const)(addr))
 
@@ -31,8 +34,8 @@
         }                                                                      \
     }
 
-#define L2_LOAD_ALIGN ALIGN_ATTR(L2_CACHE_LOAD_SIZE)
-#define CACHE_ALIGN ALIGN_ATTR(CACHE_LINE_SIZE)
+#define L2_LOAD_ALIGN         ALIGN_ATTR(L2_CACHE_LOAD_SIZE)
+#define CACHE_ALIGN           ALIGN_ATTR(CACHE_LINE_SIZE)
 #define ALIGN_ATTR(alignment) __attribute__((aligned(alignment)))
 #define PTR_ALIGNED_TO(addr, alignment)                                        \
     __builtin_assume_aligned(addr, alignment)
