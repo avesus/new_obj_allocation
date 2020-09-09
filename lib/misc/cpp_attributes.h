@@ -5,6 +5,7 @@
 #define IMPOSSIBLE_COND(cond)                                                \
     {                                                                          \
         if (cond) {                                                            \
+            assert(0);                                                  \
             _UNREACHABLE_;                                                     \
         }                                                                      \
     }

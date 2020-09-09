@@ -55,12 +55,12 @@ using allocator_t = slab_manager<
 // super_slab<uint64_t, 1, slab<uint64_t, 2>>>>;
 void *
 corr_alloc_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     expected_allocs = cmath::min<uint32_t>(
         test_size * nthread,
         allocator_t::capacity * cmath::min<uint32_t>(NPROCS, nthread));
     total_allocs = 0;
     uint64_t sum = 0;
-    _tlv_rand    = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -84,10 +84,10 @@ corr_alloc_test(void * targ) {
 
 void *
 corr_alloc_then_free_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
-    _tlv_rand       = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -114,6 +114,7 @@ corr_alloc_then_free_test(void * targ) {
 
 void *
 corr_alloc_all_free_all_alloc_all_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     expected_allocs =
         cmath::min<uint32_t>(NPROCS, nthread) * allocator_t::capacity;
     total_allocs = 0;
@@ -155,10 +156,10 @@ corr_alloc_all_free_all_alloc_all_test(void * targ) {
 
 void *
 corr_batch_alloc_then_free_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     expected_allocs = test_size * nthread;
     total_allocs    = 0;
     uint64_t sum    = 0;
-    _tlv_rand       = rand() % 64;
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -196,6 +197,7 @@ corr_batch_alloc_then_free_test(void * targ) {
 
 void *
 perf_alloc_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -226,6 +228,7 @@ perf_alloc_test(void * targ) {
 
 void *
 perf_alloc_then_free_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -256,6 +259,7 @@ perf_alloc_then_free_test(void * targ) {
 
 void *
 perf_batch_alloc_then_free_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -297,6 +301,7 @@ perf_batch_alloc_then_free_test(void * targ) {
 
 void *
 perf_alloc_all_free_all_alloc_all_test(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     allocator_t * allocator = (allocator_t *)targ;
@@ -346,6 +351,7 @@ perf_alloc_all_free_all_alloc_all_test(void * targ) {
 
 void *
 baseline_tlv_incr(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     total_nsec = 0;
@@ -371,6 +377,7 @@ baseline_tlv_incr(void * targ) {
 
 void *
 baseline_atomic_incr(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     uint64_t * counter = (uint64_t *)targ;
@@ -397,6 +404,7 @@ baseline_atomic_incr(void * targ) {
 
 void *
 baseline_per_core_incr(void * targ) {
+    memset(&tc, 0, sizeof(tc));
     init_thread();
 
     uint64_t * per_core_counters = (uint64_t *)targ;

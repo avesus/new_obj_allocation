@@ -3,20 +3,17 @@
 
 #include <misc/cpp_attributes.h>
 #include <misc/macro_helper.h>
+
 #include <stdint.h>
 #include <system/sys_info.h>
-#include "rseq_asm_defs.h"
-#include "rseq_base.h"
+#include <allocator/rseq/rseq_asm_defs.h>
+#include <allocator/rseq/rseq_common.h>
+#include <allocator/rseq/rseq_base.h>
 
 
-__thread uint64_t _tlv_rand;
 
-//#define FAST_ABORT
 //////////////////////////////////////////////////////////////////////
-// General unless special case
-#define _RSEQ_MIGRATED      2
-#define _RSEQ_OTHER_FAILURE 1
-#define _RSEQ_SUCCESS       0
+
 
 /* Man pages
    https://elixir.bootlin.com/linux/latest/source/kernel/rseq.c

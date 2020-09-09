@@ -316,7 +316,6 @@ restarting_unset_bit_test(void * targ) {
 
 void *
 restarting_set_idx_test(void * targ) {
-    _tlv_rand                = rand() % 64;
     const uint32_t min_cores = cmath::min<uint32_t>(NPROCS, nthread);
     expected =
         cmath::min<uint32_t>(nthread * test_size, liter * min_cores * 64);

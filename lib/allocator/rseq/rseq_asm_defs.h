@@ -52,9 +52,9 @@
 
     //    "movq " V_TO_STR(TEMP_REGISTER) ", 8(%[rseq_abi])\n\t" 
 //   "leaq 3b (%%rip), (%%fs:__rseq_abi@tpoff+8)\n\t"           
-#define RSEQ_PREP_CS_DEF(TEMP_REGISTER)                               \
-    "leaq 3b (%%rip), " V_TO_STR(TEMP_REGISTER) "\n\t"                         \
-    "movq " V_TO_STR(TEMP_REGISTER) ", %%fs:__rseq_abi@tpoff+8\n\t"          \
+#define RSEQ_PREP_CS_DEF(TEMP_REGISTER)                                 \
+    "leaq 3b (%%rip), " V_TO_STR(TEMP_REGISTER) "\n\t"                  \
+    "movq " V_TO_STR(TEMP_REGISTER) ", %%fs:__rseq_abi@tpoff+8\n\t"     \
 
 
 
@@ -63,9 +63,11 @@
     "movq %%rax, 8(%[rseq_abi])\n\t"    // store in ptr field in __rseq_abi
 */
 
-//"cmpl %[start_cpu], 4(%[rseq_abi])\n\t"                             
+//"cmpl %[start_cpu], 4(%[rseq_abi])\n\t"
+
 #define RSEQ_CMP_CUR_VS_START_CPUS()                                           \
     "cmpl %[start_cpu], %%fs:__rseq_abi@tpoff+4\n\t"
+
 
 /*
     "cmpl %[start_cpu], 4(%[rseq_abi])\n\t" // get cpu in 4(%[rseq_abi]) and
@@ -81,6 +83,7 @@
     ".long 0x53053053\n\t"                                                     \
     "4:\n\t"                                                                   \
     ""
+
 /*
   ".pushsection __rseq_failure, \"ax\"\n\t" // create failure section
     ".byte 0x0f, 0xb9, 0x3d\n\t"            // Disassembler-friendly signature:

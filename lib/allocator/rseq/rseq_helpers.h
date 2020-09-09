@@ -8,7 +8,7 @@
 
 #include <misc/cpp_attributes.h>
 
-#include "rseq_defines.h"
+#include <allocator/rseq/rseq_defines.h>
 
 #define RSEQ_SAFE_ACCESS(X) (*(__volatile__  __typeof__(X) *)&(X))
 #define RSEQ_SAFE_WRITE(X, Y) RSEQ_SAFE_ACCESS(X) = (Y)
