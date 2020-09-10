@@ -1,0 +1,42 @@
+#ifndef _CORE_CACHE_H_
+#define _CORE_CACHE_H_
+
+#include <stdint.h>
+
+#include <misc/cpp_attributes.h>
+
+#include <optimized/bits.h>
+
+#include <rseq/rseq_base.h>
+
+
+<template uint32_t n>
+struct core_cache {
+    
+    
+    uint32_t idx;
+    uint64_t ptrs[n];
+
+    uint64_t pop(const uint32_t start_cpu) {
+        if(idx) {
+            uint64_t ret;
+            // clang-format off
+            asm volatile(
+                RSEQ_INFO_DEF(32)
+                RSEQ_CS_ARR_DEF()
+                RSEQ_PREP_CS_DEF(%[ret])
+                
+                
+
+
+        }
+        return 0;
+    }
+
+
+
+
+};
+
+
+#endif

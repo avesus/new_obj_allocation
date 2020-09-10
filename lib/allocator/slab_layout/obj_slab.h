@@ -18,7 +18,7 @@ template<typename T>
 struct slab {
     static constexpr const uint64_t capacity = 64 * 64;
 
-    uint64_t outer_avail_vec CACHE_ALIGN;
+    uint64_t outer_avail_vec L2_LOAD_ALIGN;
     uint64_t                 available_slots[64];
 
     // the freed_slots_lock is necesary to prevent a race condition
@@ -34,13 +34,13 @@ struct slab {
     uint64_t freed_slots_lock;
 
 
-    uint64_t outer_freed_vec CACHE_ALIGN;
+    uint64_t outer_freed_vec L2_LOAD_ALIGN;
     uint64_t                 freed_slots[64];
 
-    T obj_arr[64 * 64] CACHE_ALIGN;
+    T obj_arr[64 * 64] L2_LOAD_ALIGN;
 
     ~slab() = default;
-    slab() = default;
+    slab()  = default;
 
 
     uint32_t
@@ -201,7 +201,7 @@ struct slab {
         freed_slots_lock = 0;
         return FAILED_FULL;
     }
-} CACHE_ALIGN;
+} L2_LOAD_ALIGN;
 
 
 #endif
